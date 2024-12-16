@@ -1,0 +1,62 @@
+.register {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: center/cover url('~/src/assets/login.png');
+
+  .register-logo {
+    width: 200px;
+    height: 60px;
+    display: block;
+    margin: 0 auto 20px;
+  }
+
+  .register-container {
+    width: 400px;
+    height: 580px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 50px rgb(0 0 0 / 10%);
+
+    .ant-form-item-wrap {
+      display: flexbox;
+    }
+
+    .ant-form-item {
+      display: flex;
+    }
+
+    .antd-input {
+      width: 100%;
+    }
+
+    .remember-forget {
+      display: block;
+    }
+
+    .register-btn {
+      display: block;
+    }
+
+    .necessary-field.ant-form-item::before {
+      position: relative;
+      top: 11px;
+      margin-left: 6px;
+      margin-right: 6px;
+      color: red;
+      font-size: 15px;
+      font-family: SimSun, sans-serif;
+      line-height: 1;
+      content: '*';
+    }
+    
+  }
+
+  .register-checkbox-label {
+    color: #1890ff;
+  }
+}
