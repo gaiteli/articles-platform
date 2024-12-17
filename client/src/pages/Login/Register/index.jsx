@@ -1,23 +1,26 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import './index.scss'
 import { Card, Form, Input, Button, message } from 'antd'
 import logo from '/src/assets/react.svg'
 import { registerAPI } from '/src/apis/user' 
 
 
-export default function Register() {
+export default function Register(props) {
   const navigate = useNavigate()
 
+  const [form] = Form.useForm()   // 获取Form表单实例，以实现确认密码功能 ！记得在Form中关联form
+  //窗口显示时，对form进行赋值；否则调用Form.useForm()方法时Form element还未初始化，会报错
+  // https://blog.csdn.net/weixin_44944640/article/details/122258717
+  // useEffect(() => {
+  //   if(props.visible){
+  //     form.setFieldsValue(props.record);
+  //   }
+  // }, [props.visible]);
+
   const onFinish = async (values) => {
-
-    // const res = await myFetch('http://localhost:9000/register', values)
     const res = await registerAPI(values)
-    const data = res
-    console.log('拿到的token:' + data.token);
-
-    // 跳转到注册页
-    navigate('/signin')
+    navigate('/signin')   // 跳转到登录页
     message.success('注册成功')
   }
 
@@ -30,34 +33,32 @@ export default function Register() {
         <Form 
           validateTrigger="onBlur" 
           onFinish={onFinish}
-          initialValues={{
-            remember: true,
-          }}
           className='register-form'
+          form={form}   // 使用form属性将form对象与Form组件进行关联
         >
-          <div className='ant-form-item-wrap'><Form.Item
+          <Form.Item
             name="username"
-            className="necessary-field"
+            className="required"
             rules={[
               {
                 required: true,
                 message: '用户名不能为空',
               }
             ]}>
-            <Input size="large" placeholder="请输入用户名" className="antd-input"/>
-          </Form.Item></div>
-          <div className='ant-form-item-wrap'><Form.Item
+            <Input size="large" placeholder="请输入用户名" />
+          </Form.Item>
+          <Form.Item
             name="account"
-            className="necessary-field"
+            className="required"
             rules={[
               {
                 required: true,
                 message: '账户名不能为空',
               }
             ]}>
-            <Input size="large" placeholder="请输入账户名" className="antd-input"/>
-          </Form.Item></div>
-          <div className='ant-form-item-wrap'><Form.Item
+            <Input size="large" placeholder="请输入账户名" />
+          </Form.Item>
+          <Form.Item
             name="mobile"
             rules={[  
               {
@@ -65,11 +66,11 @@ export default function Register() {
                 message: '请输入正确的手机号格式',
               },
             ]}>
-            <Input size="large" placeholder="请输入手机号" className="antd-input"/>
-          </Form.Item></div>
-          <div className='ant-form-item-wrap'><Form.Item
+            <Input size="large" placeholder="请输入手机号" />
+          </Form.Item>
+          <Form.Item
             name="password"
-            className="necessary-field"
+            className="required"
             rules={[
               {
                 required: true,
@@ -77,31 +78,32 @@ export default function Register() {
               },
               {
                 min: 6,
-                message: '密码长度不能小于6个字符',
+                message: '密码长度至少6位',
               }
             ]}>
-            <Input.Password size="large" placeholder="请输入密码" className="antd-input"/>
-          </Form.Item></div>
-          <div className='ant-form-item-wrap'><Form.Item
-            className="necessary-field"
+            <Input.Password size="large" placeholder="请输入密码" />
+          </Form.Item>
+          <Form.Item
+            name="confirmPassword"
+            className="required"
+            dependencies={['password']} // 确保确认密码依赖密码字段
             rules={[
               {
                 required: true,
                 message: '确认密码不能为空',
               },
               {   // 确认密码的验证函数
-                validator: (rule, value, callback) => {
-                  const form = props.form;
+                validator: async (rule, value) => {
+                  console.log(form.getFieldValue('password'));
                   if (value && value !== form.getFieldValue('password')) {
-                    callback('两次输入的密码不一致！请重新确认')
-                  } else {
-                    callback()
-                  }
+                    return Promise.reject('密码不一致！请重新确认');
+                  } 
+                  return Promise.resolve();
                 }
               }
             ]}>
-            <Input.Password size="large" placeholder="请确认密码" className="antd-input"/>
-          </Form.Item></div>
+            <Input.Password size="large" placeholder="请确认密码" />
+          </Form.Item>
           {/* <Form.Item
             name="code"
             rules={[
@@ -118,6 +120,7 @@ export default function Register() {
               注册
             </Button>
           </Form.Item>
+          <Link to="/signin">已有账号？去登录</Link>
         </Form>
       </Card>
     </div>

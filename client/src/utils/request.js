@@ -38,19 +38,37 @@ request.interceptors.response.use((response) => {
   // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么
   // 监控401 token失效
-  console.log('401 error');
-  console.dir(error)
-  if (error.response.status === 401) {
-    message.warning({ // 注意：使用antd给出的静态方法message.warning，不要用钩子这里不能用
-      content: '账户信息已失效，请重新登录',
+  console.log('axios拦截到响应错误');
+  if (error.response.status === 400) {
+    const errorName = error.response.data.errors[0]
+    message.warning({
+      content: errorName+'\n2秒后自动跳转',
       duration: 2,
     })
     setTimeout(() => {
       removeToken()
       router.navigate('/signin')
       window.location.reload()
-    }, 1500)
-    
+    }, 1900)
+  }
+  if (error.response.status === 401) {
+    const errorName = error.response.data.errors[0]
+    if (errorName.includes('密码错误')) {
+      message.warning({
+        content: '密码错误，请检查！',
+        duration: 2,
+      })
+    } else {
+      message.warning({ // 注意：使用antd给出的静态方法message.warning，不要用钩子这里不能用
+        content: '账户信息已失效，请重新登录。\n2秒后自动跳转',
+        duration: 2,
+      })
+      // setTimeout(() => {
+      //   removeToken()
+      //   router.navigate('/signin')
+      //   window.location.reload()
+      // }, 1900)
+    }
   }
   return Promise.reject(error)
 })

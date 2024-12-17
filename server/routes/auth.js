@@ -25,7 +25,7 @@ router.post('/signup', async (req, res) => {
     const user = await User.create(body)
     delete user.dataValues.password   // sequelize中的固定用法，删除密码字段以免前台看到密码
 
-    success(res, '注册成功！', { user }, 201)
+    success(res, '注册成功！', {}, 201)
 
   } catch (error) {
     failure(res, error)

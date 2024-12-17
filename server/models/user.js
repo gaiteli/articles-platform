@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         async isUnique(value) {
           const user = await User.findOne({ where: { username: value }})
           if (user) {
-            throw new Error('邮箱已存在，请直接登陆。')
+            throw new Error('用户名已存在，请直接登陆。')
           }
         }
       }

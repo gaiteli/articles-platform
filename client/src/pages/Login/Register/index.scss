@@ -22,36 +22,22 @@
     transform: translate(-50%, -50%);
     box-shadow: 0 0 50px rgb(0 0 0 / 10%);
 
-    .ant-form-item-wrap {
-      display: flexbox;
+    .ant-form-item .ant-form-item-control-input-content {
+      margin-left: 8px;  
     }
-
-    .ant-form-item {
-      display: flex;
-    }
-
-    .antd-input {
-      width: 100%;
-    }
-
-    .remember-forget {
-      display: block;
-    }
-
-    .register-btn {
-      display: block;
-    }
-
-    .necessary-field.ant-form-item::before {
-      position: relative;
-      top: 11px;
-      margin-left: 6px;
-      margin-right: 6px;
-      color: red;
-      font-size: 15px;
-      font-family: SimSun, sans-serif;
-      line-height: 1;
+    
+    .required .ant-form-item-control-input::before {
       content: '*';
+      color: red;  
+      font-size: 15px;
+    }
+
+    .ant-form-item:not(.required,.register-btn) .ant-form-item-control-input-content {
+      margin-left: 14px;  
+    }
+
+    .ant-form-item-explain-error {
+      margin-left: 25px; 
     }
     
   }
