@@ -21,6 +21,14 @@
     top: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0 0 50px rgb(0 0 0 / 10%);
+
+    .ant-form-item-additional {
+      margin-left: 12px;
+    }
+
+    .ant-input-prefix {
+      margin-right: 8px;
+    }
   }
 
   .login-checkbox-label {

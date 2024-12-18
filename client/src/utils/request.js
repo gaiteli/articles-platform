@@ -54,10 +54,10 @@ request.interceptors.response.use((response) => {
   if (error.response.status === 401) {
     const errorName = error.response.data.errors[0]
     if (errorName.includes('密码错误')) {
-      message.warning({
-        content: '密码错误，请检查！',
-        duration: 2,
-      })
+      // message.warning({
+      //   content: '密码错误，请检查！',
+      //   duration: 2,
+      // })
     } else {
       message.warning({ // 注意：使用antd给出的静态方法message.warning，不要用钩子这里不能用
         content: '账户信息已失效，请重新登录。\n2秒后自动跳转',

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import './index.scss'
 import { Card, Form, Input, Button, message, Flex, Checkbox } from 'antd'
@@ -8,32 +8,47 @@ import myFetch from '/src/utils/myFetch.js'
 import { loginAPI } from '/src/apis/user'
 import { useGlobals, useGlobalsDispatch } from '/src/store/globalContext'
 import { setToken } from "/src/utils"
+import { useForm } from 'antd/es/form/Form'
 
 export default function Login() {
   const navigate = useNavigate()
   let { token } = useGlobals()
   const { tokenDispatch } = useGlobalsDispatch()
 
+  const [form] = Form.useForm() // 不要忘了在Form的属性中绑定
+
   const onFinish = async (values) => {
+    try {
+      const res = await loginAPI(values)
+      const token = res.data.token
+      console.log('拿到的token:' + token);
 
-    // const res = await myFetch('http://localhost:9000/login', values)
-    const res = await loginAPI(values)
-    const token = res.data.token
-    console.log('拿到的token:' + token);
+      // 把这一部分逻辑分离出去
+      if (token) {
+        await tokenDispatch({
+          type: 'add',
+          token: token,
+        })
+        await tokenDispatch({ type: 'display' }) // 打印token确认已经存入reduer中
 
-    // 把这一部分逻辑分离出去
-    if (token) {
-      await tokenDispatch({
-        type: 'add',
-        token: token,
-      })
-      await tokenDispatch({ type: 'display' }) // 打印token确认已经存入reduer中
-
-      setToken(token)
-      // 跳转到首页
-      navigate('/')
-      message.success('login success')
+        setToken(token)
+        // 跳转到首页
+        navigate('/')
+        message.success('login success')
+      }
+    } catch(error) {
+      // 获取后端发来的‘密码错误’提示，并显示在校验错误提示处
+      const errorName = error.response.data.errors[0]
+      form.setFields([
+        {
+          name: 'password',
+          errors: [errorName], // 修改错误提示
+        },
+      ]);
+      
     }
+    
+    
   }
 
   return (
@@ -42,7 +57,7 @@ export default function Login() {
         <img className="login-logo" src={logo} alt="" />
         {/* 登录表单 */}
         {/* 增加失焦时校验 */}
-        <Form validateTrigger="onBlur" onFinish={onFinish}>
+        <Form validateTrigger="onBlur" onFinish={onFinish} form={form}>
           <Form.Item
             name="login"
             rules={[
@@ -78,7 +93,8 @@ export default function Login() {
                 min: 6,
                 message: '密码长度不能小于6个字符',
               }
-            ]}>
+            ]}
+          >
             <Input.Password size="large" placeholder="请输入密码" prefix={<LockOutlined />} />
           </Form.Item>
           {/* <Form.Item
