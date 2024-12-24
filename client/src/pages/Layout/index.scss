@@ -1,38 +1,58 @@
+$siderMinWidth: 100px;
+$siderWidth: 12vw;
+$topBarHeight: 6vh;
+
 .ant-layout {
   height: 100%;
 }
 
 .header {
   padding: 0;
+  height: $topBarHeight;
+
+  .logo {
+    width: $siderWidth;
+    min-width: $siderMinWidth;
+    height: $topBarHeight;
+    background: url('/src/assets/react.svg') no-repeat center 50% / 5vh auto;
+    // 50%：与center一起，指定图像在垂直方向的位置；25%：缩放比；auto表示保持原宽高比
+  }
+
+  .user-info {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: $topBarHeight;
+    padding-right: 20px;
+    color: #fff;
+
+    .user-name {
+      margin-right: 20px;
+
+      .ant-dropdown-trigger .ant-space-item {
+        font-weight: 500;
+        color: #fff;
+      }
+    }
+  
+    .user-logout {
+      display: inline-block;
+      cursor: pointer;
+    }
+  }
 }
 
-.logo {
-  width: 200px;
-  height: 60px;
-  background: url('/src/assets/react.svg') no-repeat center 50% / 25% auto; 
-  // 50%：与center一起，指定图像在垂直方向的位置；25%：缩放比；auto表示保持原宽高比
+.site-layout-background {
+  .ant-menu {
+    min-width: $siderMinWidth;
+  }
 }
 
 .layout-content {
+  width: 100vw - $siderWidth;
   overflow-y: auto;
 }
 
-.user-info {
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding-right: 20px;
-  color: #fff;
-
-  .user-name {
-    margin-right: 20px;
-  }
-
-  .user-logout {
-    display: inline-block;
-    cursor: pointer;
-  }
-}
 .ant-layout-header {
   padding: 0 !important;
 }

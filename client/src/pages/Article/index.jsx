@@ -10,6 +10,7 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import img404 from '/src/assets/error.png'
 import { useChannels } from '../../utils/hooks/useChannels'
 import { delArticleAPI, getArticleListAPI } from '/src/apis/article'
+import './index.scss'
 
 const { Option } = Select
 const { RangePicker } = DatePicker
@@ -65,7 +66,9 @@ const Article = () => {
       render: data => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} onClick={() => navigate(`/publish?id=${data.id}`)} />
+            <Button type="primary" shape="circle" icon={<EditOutlined />} 
+              onClick={() => navigate(`/publish?id=${data.id}`)} 
+              />
             <Popconfirm
               title="删除文章"
               description="确认要删除当前文章吗?"
@@ -93,8 +96,8 @@ const Article = () => {
     channel_id: '',
     begin_pubdate: '',
     end_pubdate: '',
-    page: 1,
-    per_page: 4
+    currentPage: 1,
+    pageSize: ''
   })
 
   // 获取文章列表
@@ -105,7 +108,7 @@ const Article = () => {
       const res = await getArticleListAPI(reqData)
       const articlesList = res.data.articles
       setArticlesList(articlesList)
-      setCount(articlesList.length)
+      setCount(res.data.pagination.total)
     })()
   }, [reqData])
 
@@ -126,12 +129,13 @@ const Article = () => {
   }
 
   // 分页
-  const onPageChange = (page) => {
-    console.log('page change to: '+page)
+  const onPageChange = (currentPage, pageSize) => {
+    console.log('page change to: '+currentPage+'page size change to: '+pageSize)
     // 修改参数依赖项 引发数据的重新获取列表渲染
     setReqData({
       ...reqData,
-      page
+      currentPage,
+      pageSize
     })
   }
 
@@ -155,8 +159,13 @@ const Article = () => {
         }
         style={{ marginBottom: 20 }}
       >
-        <Form initialValues={{ status: '' }} onFinish={onFinish}>
-          <Form.Item label="状态" name="status">
+        <Form 
+          initialValues={{ status: '' }} 
+          layout='inline'
+          onFinish={onFinish}
+        >
+          <div className='form'>
+          <Form.Item label="状态" name="status" className="status">
             <Radio.Group>
               <Radio value={''}>全部</Radio>
               <Radio value={1}>待审核</Radio>
@@ -164,8 +173,9 @@ const Article = () => {
             </Radio.Group>
           </Form.Item>
 
-          <Form.Item label="频道" name="channel_id">
+          <Form.Item label="频道" name="channel_id" className='channel'>
             <Select
+              showSearch
               placeholder="请选择文章频道"
               style={{ width: 120 }}
             >
@@ -173,24 +183,24 @@ const Article = () => {
                 key={item.id} value={item.id}>{item.channel}</Option>)}
             </Select>
           </Form.Item>
-
           <Form.Item label="日期" name="date">
             <RangePicker locale={locale}></RangePicker> {/* locale属性控制中文显示*/}
           </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" style={{ marginLeft: 40 }}>
+          <Form.Item className="classify-button">
+            <Button type="primary" htmlType="submit" >
               筛选
             </Button>
           </Form.Item>
+          </div>
         </Form>
       </Card>
       {/* 表格区域 */}
       <Card title={`根据筛选条件共查询到 ${count} 条结果：`}>
         <Table rowKey="id" columns={columns} dataSource={list} pagination={{
           total: count,
-          pageSize: reqData.per_page,
-          onChange: onPageChange
+          // pageSize: reqData.pageSize, 貌似可以省略
+          onChange: onPageChange,
+          showSizeChanger: true
         }} />
       </Card>
     </div>

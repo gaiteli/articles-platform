@@ -1,10 +1,11 @@
-import React, {useState, useEffect} from 'react'
-import { Layout, Menu, Popconfirm } from 'antd'
+import React, { useState, useEffect } from 'react'
+import { Layout, Menu, Popconfirm, Dropdown, Space } from 'antd'
 import {
   HomeOutlined,
   DiffOutlined,
   EditOutlined,
   LogoutOutlined,
+  DownOutlined,
 } from '@ant-design/icons'
 import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -18,6 +19,10 @@ const items = [
     label: '首页',
     key: '/',
     icon: <HomeOutlined />,
+    // children: [
+    //   { label: "list", key: "/" },
+    //   { label: "add", key: "/add" }
+    // ]
   },
   {
     label: '文章管理',
@@ -30,6 +35,32 @@ const items = [
     icon: <EditOutlined />,
   },
 ]
+const userItems = [
+  {
+    label: (
+      <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+        1st menu item
+      </a>
+    ),
+    key: '0',
+  },
+  {
+    label: (
+      <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+        2nd menu item
+      </a>
+    ),
+    key: '1',
+  },
+  {
+    type: 'divider',
+  },
+  {
+    label: '3rd menu item（disabled）',
+    key: '3',
+    disabled: true,
+  },
+];
 
 export function GeekLayout() {
   const { token, user } = useGlobals()
@@ -44,7 +75,7 @@ export function GeekLayout() {
   // 反向高亮
   // 1. 获取当前路由路径
   const location = useLocation()
-  const selectedkey = location.pathname==='/home' ? '/' : location.pathname
+  const selectedkey = location.pathname === '/home' ? '/' : location.pathname
 
   // 触发个人用户信息action
   useEffect(() => {
@@ -52,7 +83,7 @@ export function GeekLayout() {
       // 旧api已废弃 userInfo = await getUserInfo() 
       const res = await getUserInfoAPI()
       const user = res.data.user
-      console.log('layout get user'+user);
+      console.log('layout get user' + user);
       await userDispatch({
         type: 'set',
         user: user
@@ -71,9 +102,19 @@ export function GeekLayout() {
       <Header className="header">
         <div className="logo" />
         <div className="user-info">
-          <span className="user-name">{user.username}</span>
+          <span className="user-name">
+            <Dropdown menu={{ items:userItems }}>{/* 需要写全，不能省略items： */}
+              <a onClick={(e) => e.preventDefault()}>
+                <Space>
+                  {user.username}
+                  {/* <span>&gt;</span> */}
+                  <DownOutlined />
+                </Space>
+              </a>
+            </Dropdown>
+          </span>
           <span className="user-logout">
-            <Popconfirm title="是否确认退出？" okText="退出" cancelText="取消" 
+            <Popconfirm title="是否确认退出？" okText="退出" cancelText="取消"
               onConfirm={onConfirm}>
               <LogoutOutlined /> 退出
             </Popconfirm>
@@ -81,11 +122,11 @@ export function GeekLayout() {
         </div>
       </Header>
       <Layout>
-        <Sider width={200} className="site-layout-background">
+        <Sider width={'12vw'} className="site-layout-background">
           <Menu
             mode="inline"
             theme="dark"
-            defaultSelectedKeys={['1']}
+            defaultSelectedKeys={["/article"]}
             selectedKeys={selectedkey}
             onClick={onMenuClick}
             items={items}

@@ -125,7 +125,7 @@ const Publish = () => {
           <Breadcrumb items={[
             { title: <Link to={'/'}>首页</Link> },
             // { title: `${articleId ? '编辑' : '发布'}文章` },
-            { title: 'publish article'}
+            { title: '发布文章'}
           ]}
           />
         }

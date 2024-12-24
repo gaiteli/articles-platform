@@ -1,0 +1,20 @@
+.form {
+  width: 100%;
+  display: flex;
+  justify-content: left;
+}
+
+.classify-button {
+  margin-left: auto;
+  justify-self: right;
+}
+
+.status {
+  border-right: 1.5px solid grey;
+  padding-right: 0px;
+}
+
+.channel {
+  border-right: 1.5px solid grey;
+  padding-right: 18px;
+}

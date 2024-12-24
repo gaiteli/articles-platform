@@ -27,13 +27,13 @@ router.get('/', async function(req, res, next) {
     //     }
     //   }
     // }
-  
+    const totalCount = await Article.count({})
     const {count, rows} = await Article.findAndCountAll(condition)
   
     success(res, 'articles acquired successfully' , {
       articles: rows,
       pagination: {
-        total: count,
+        total: totalCount,
         currentPage,
         pageSize,
       }
