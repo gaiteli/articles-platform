@@ -4,11 +4,9 @@ import './index.scss'
 import { Card, Form, Input, Button, message, Flex, Checkbox } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import logo from '/src/assets/react.svg'
-import myFetch from '/src/utils/myFetch.js'
 import { loginAPI } from '/src/apis/user'
 import { useGlobals, useGlobalsDispatch } from '/src/store/globalContext'
 import { setToken } from "/src/utils"
-import { useForm } from 'antd/es/form/Form'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -25,15 +23,10 @@ export default function Login() {
 
       // 把这一部分逻辑分离出去
       if (token) {
-        await tokenDispatch({
-          type: 'add',
-          token: token,
-        })
-        await tokenDispatch({ type: 'display' }) // 打印token确认已经存入reduer中
-
-        setToken(token)
-        // 跳转到首页
-        navigate('/')
+        await tokenDispatch({ type: 'add', token: token })  // token存入Context中
+        await tokenDispatch({ type: 'display' })    // 打印token确认已经存入
+        setToken(token)   // 存到localStorage
+        navigate('/')   // 跳转到首页
         message.success('login success')
       }
     } catch(error) {
@@ -45,10 +38,7 @@ export default function Login() {
           errors: [errorName], // 修改错误提示
         },
       ]);
-      
     }
-    
-    
   }
 
   return (

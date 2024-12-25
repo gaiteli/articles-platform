@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Card, Breadcrumb, Form, Button, Radio, DatePicker, 
-  Select, Popconfirm } from 'antd'
+  Select, Popconfirm, 
+  Tooltip} from 'antd'
 import locale from 'antd/es/date-picker/locale/zh_CN' // 引入汉化包 时间选择器显示中文
+import moment from 'moment';
 
 // 导入资源
 import { Table, Tag, Space } from 'antd'
@@ -18,6 +20,7 @@ const { RangePicker } = DatePicker
 const Article = () => {
   const navigate = useNavigate()
   const { channelList } = useChannels()
+
   // 准备列数据
   // 定义状态枚举
   const status = {
@@ -28,7 +31,8 @@ const Article = () => {
     {
       title: '封面',
       dataIndex: 'cover',
-      width: 120,
+      key: 'cover',
+      width: 100,
       render: cover => {
         // return <img src={cover.images[0] || img404} width={80} height={60} alt="" />
         return <img src={img404} width={80} height={60} alt="" />
@@ -37,29 +41,66 @@ const Article = () => {
     {
       title: '标题',
       dataIndex: 'title',
-      width: 220
+      key: 'title',
+      width: 200,
+    },
+    {
+      title: '作者',
+      dataIndex: 'userId',
+      key: 'userId',
+      width: 75
     },
     {
       title: '状态',
       dataIndex: 'status',
+      key: 'status',
+      width: 90,
       // data - 后端返回的状态status。data === 1 => 待审核；data === 2 => 审核通过
       render: data => status[data]
     },
     {
+      title: '分类',
+      dataIndex: 'channelId',
+      key: 'channelId',
+      width: 75,
+    },
+    {
+      title: '内容',
+      dataIndex: 'content',
+      key: 'content',
+      width: 150,
+      ellipsis: true,
+      render: (text) => {
+        return <Tooltip title={text} placement='top'>
+          {text}
+        </Tooltip>
+      }
+    },
+    {
       title: '发布时间',
-      dataIndex: 'pubdate'
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      width: 175,
+      // 格式化时间显示
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss')  
     },
     {
-      title: '阅读数',
-      dataIndex: 'read_count'
+      title: '阅读',
+      dataIndex: 'readCount',
+      key: 'readCount',
+      width: 60,
     },
     {
-      title: '评论数',
-      dataIndex: 'comment_count'
+      title: '评论',
+      dataIndex: 'commentCount',
+      key: 'commentCount',
+      width: 60,
     },
     {
-      title: '点赞数',
-      dataIndex: 'like_count'
+      title: '点赞',
+      dataIndex: 'likeCount',
+      key: 'likeCount',
+      width: 60,
     },
     {
       title: '操作',
@@ -89,16 +130,33 @@ const Article = () => {
     }
   ]
 
+
   // 筛选功能
   // 1. 准备参数
   const [reqData, setReqData] = useState({
-    status: '',
-    channel_id: '',
-    begin_pubdate: '',
-    end_pubdate: '',
+    status: 0,
+    channelId: '',
+    beginPubdate: '',
+    endPubdate: '',
     currentPage: 1,
-    pageSize: ''
+    pageSize: 10
   })
+
+  // 2. 获取筛选数据
+  const onFinish = (formValue) => {
+    console.log('筛选数据formValue: ')
+    console.dir(formValue)
+    // 3. 把表单收集到数据放到参数中(不可变的方式)
+    setReqData({
+      ...reqData,
+      channelId: formValue.channel_id,
+      status: formValue.status,
+      beginPubdate: formValue.date ? formValue.date[0].format('YYYY-MM-DD') : '',
+      endPubdate: formValue.date? formValue.date[1].format('YYYY-MM-DD') : ''
+    })
+    // 4. 重新拉取文章列表 + 渲染table逻辑重复的 - 复用
+    // reqData依赖项发生变化 重复执行副作用函数 
+  }
 
   // 获取文章列表
   const [list, setArticlesList] = useState([])
@@ -111,22 +169,6 @@ const Article = () => {
       setCount(res.data.pagination.total)
     })()
   }, [reqData])
-
-
-  // 2. 获取筛选数据
-  const onFinish = (formValue) => {
-    console.log(formValue)
-    // 3. 把表单收集到数据放到参数中(不可变的方式)
-    setReqData({
-      ...reqData,
-      channel_id: formValue.channel_id,
-      status: formValue.status,
-      begin_pubdate: formValue.date[0].format('YYYY-MM-DD'),
-      end_pubdate: formValue.date[1].format('YYYY-MM-DD')
-    })
-    // 4. 重新拉取文章列表 + 渲染table逻辑重复的 - 复用
-    // reqData依赖项发生变化 重复执行副作用函数 
-  }
 
   // 分页
   const onPageChange = (currentPage, pageSize) => {
@@ -160,14 +202,13 @@ const Article = () => {
         style={{ marginBottom: 20 }}
       >
         <Form 
-          initialValues={{ status: '' }} 
+          initialValues={{ status: 0 }} 
           layout='inline'
           onFinish={onFinish}
         >
-          <div className='form'>
           <Form.Item label="状态" name="status" className="status">
             <Radio.Group>
-              <Radio value={''}>全部</Radio>
+              <Radio value={0}>全部</Radio>
               <Radio value={1}>待审核</Radio>
               <Radio value={2}>审核通过</Radio>
             </Radio.Group>
@@ -183,15 +224,21 @@ const Article = () => {
                 key={item.id} value={item.id}>{item.channel}</Option>)}
             </Select>
           </Form.Item>
+
+          {/* <Form.Item label="日期" name="date"> */}
+            {/* <RangePicker locale={locale}></RangePicker> locale属性控制中文显示 */}
+          {/* </Form.Item> */}
+
           <Form.Item label="日期" name="date">
-            <RangePicker locale={locale}></RangePicker> {/* locale属性控制中文显示*/}
+            {/* 传入locale属性 控制中文显示*/}
+            <RangePicker locale={locale}></RangePicker>
           </Form.Item>
+
           <Form.Item className="classify-button">
             <Button type="primary" htmlType="submit" >
               筛选
             </Button>
           </Form.Item>
-          </div>
         </Form>
       </Card>
       {/* 表格区域 */}

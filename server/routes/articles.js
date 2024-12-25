@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {Article} = require('@models');
-const { Op } = require('sequelize')
+const { Sequelize, Op } = require('sequelize');
 const { NotFoundError } = require('@utils/errors')
 const { success, failure } = require('@utils/responses')
 
@@ -9,15 +9,47 @@ const { success, failure } = require('@utils/responses')
 router.get('/', async function(req, res, next) {
   try {
     const query = req.query
+    console.log(query)
+
     const currentPage = Math.abs(Number(query.currentPage)) || 1
     const pageSize = Math.abs(Number(query.pageSize)) || 10
     const offset = (currentPage - 1) * pageSize
+    const status = query.status;
+    const channelId = query.channelId;
+    const beginPubdate = query.beginPubdate ? query.beginPubdate : null;
+    const endPubdate = query.endPubdate ? query.endPubdate+' 23:59:59' : null; // 加时分秒是因为当天也要算在内，不然就把当天排除了
 
     const condition = {
       order: [['id', 'DESC']],
-      limit: pageSize,
-      offset: offset
+      where: {}
     }
+
+    // 筛选
+    if (status) {
+      if (status !== '0') {
+        condition.where.status = status; // Filter by status
+      }
+    }
+    if (channelId) {
+      condition.where.channelId = channelId; // Filter by channelId
+    }
+    if (beginPubdate && endPubdate) {
+      // Filter by date range
+      condition.where.createdAt = {
+        [Op.between]: [beginPubdate, endPubdate]
+      };
+    } else if (beginPubdate) {
+      // Filter by start date only
+      condition.where.createdAt = {
+        [Op.gte]: beginPubdate
+      };
+    } else if (endPubdate) {
+      // Filter by end date only
+      condition.where.createdAt = {
+        [Op.lte]: endPubdate
+      };
+    }
+    const totalCount = await Article.count(condition)
 
     // 模糊搜索
     // if (query.title) {
@@ -27,7 +59,10 @@ router.get('/', async function(req, res, next) {
     //     }
     //   }
     // }
-    const totalCount = await Article.count({})
+
+    // 分页
+    condition.limit = pageSize;
+    condition.offset = offset;
     const {count, rows} = await Article.findAndCountAll(condition)
   
     success(res, 'articles acquired successfully' , {
