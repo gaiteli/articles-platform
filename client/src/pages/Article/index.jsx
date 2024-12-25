@@ -72,7 +72,7 @@ const Article = () => {
       ellipsis: true,
       render: (text) => {
         return <Tooltip title={text} placement='top'>
-          {text}
+          <span style={{ display: 'inline-block', width: '100%' }}>{text}</span>
         </Tooltip>
       }
     },
