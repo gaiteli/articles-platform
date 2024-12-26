@@ -4,6 +4,7 @@ import {
   HomeOutlined,
   DiffOutlined,
   EditOutlined,
+  UserOutlined,
   LogoutOutlined,
   DownOutlined,
 } from '@ant-design/icons'
@@ -33,6 +34,11 @@ const items = [
     label: '创建文章',
     key: '/publish',
     icon: <EditOutlined />,
+  },
+  {
+    label: '用户管理',
+    key: '/user',
+    icon: <UserOutlined />,
   },
 ]
 const userItems = [

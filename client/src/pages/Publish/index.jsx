@@ -149,11 +149,12 @@ const Publish = () => {
           name="channel_id"
           rules={[{ required: true, message: '请选择文章频道' }]}
         >
-          <Select placeholder="请选择文章频道" style={{ width: 400 }}>
-            {/* value属性用户选中之后会自动收集起来作为接口的提交字段 */}
-            {channelList.map(item => 
-              <Option key={item.id} value={item.id}>{item.channel}</Option>)}
-          </Select>
+          <Select 
+            placeholder="请选择文章频道"
+            style={{ width: 400 }}
+            options={channelList.map(item => 
+              { return { value: item.id, label: item.channel } })}
+          />
         </Form.Item>
         <Form.Item label="封面">
           <Form.Item name="type">

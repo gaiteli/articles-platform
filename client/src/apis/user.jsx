@@ -21,10 +21,29 @@ export function registerAPI(formData) {
 
 
 // 获取用户信息
+// admin获取全部用户
+export function getAllUsersInfoAPI(params) {
+  return request({
+    method: 'GET',
+    url: '/admin/users',
+    params
+  })
+}
+
+// 普通用户
 export function getUserInfoAPI() {
   return request({
     method: 'GET',
     url: '/users/me',
+  })
+}
+
+// 更新用户信息
+export function updateUserInfoAPI(id, params) {
+  return request({
+    method: 'PUT',
+    url: `/admin/users/${id}`,
+    data: params
   })
 }
 

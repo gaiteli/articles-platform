@@ -8,9 +8,9 @@ module.exports = async (req, res, next) => {
     const user = req.user
 
     // 验证是否为管理员
-    if (user.role !== 100) {
-      throw new UnauthorizedError('没有权限! ')
-    }
+    // if (user.role !== 100) {
+    //   throw new UnauthorizedError('没有权限! ')
+    // }
 
     next()
 

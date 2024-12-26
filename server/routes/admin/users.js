@@ -9,49 +9,59 @@ const { success, failure } = require('@utils/responses')
 router.get('/', async function(req, res, next) {
   try {
     const query = req.query
+    console.log(query)
 
-    // 分页
     const currentPage = Math.abs(Number(query.currentPage)) || 1
     const pageSize = Math.abs(Number(query.pageSize)) || 10
     const offset = (currentPage - 1) * pageSize
+    const username = query.username
+    const status = query.status;
 
     const condition = {
       order: [['id', 'DESC']],
-      limit: pageSize,
-      offset: offset
+      where: {}
     }
 
+    // 筛选
+    if (status) {
+      if (status !== '9') {
+        condition.where.status = status; // Filter by status
+      }
+    }
 
     // 模糊搜索
-    if (query.account) {
-      condition.where = {
-        account: {
-          [Op.eq]: `%${query.account}%`
-        }
-      }
-    }
-    if (query.username) {
+    if (username) {
       condition.where = {
         username: {
-          [Op.eq]: `%${query.username}%`
+          [Op.like]: `%${username}%`
         }
       }
     }
-    if (query.role) {
-      condition.where = {
-        role: {
-          [Op.eq]: `%${query.role}%`
-        }
-      }
-    }
-  
-    // const users = await User.findAll(condition)
+    // if (query.account) {
+    //   condition.where = {
+    //     account: {
+    //       [Op.eq]: `%${query.account}%`
+    //     }
+    //   }
+    // }
+    // if (query.role) {
+    //   condition.where = {
+    //     role: {
+    //       [Op.eq]: `%${query.role}%`
+    //     }
+    //   }
+    // }
+    const totalCount = await User.count(condition)
+
+    // 分页
+    condition.limit = pageSize;
+    condition.offset = offset;
     const {count, rows} = await User.findAndCountAll(condition)
   
     success(res, 'query success' , {
       users: rows,
       pagination: {
-        total: count,
+        total: totalCount,
         currentPage,
         pageSize,
       }
@@ -74,19 +84,20 @@ router.get('/:id', async function (req, res, next) {
 })
 
 /* 创建用户 */
-router.post('/', async function (req, res, next) {
-  try {
+// router.post('/', async function (req, res, next) {
+//   try {
 
-    // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
-    const body = filterBody(req)
+//     // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
+//     const body = filterBody(req)
 
-    const user = await User.create(body)
+//     const user = await User.create(body)
+//     delete user.dataValues.password   // sequelize中的固定用法，删除密码字段以免前台看到密码
 
-    success(res, 'user created successfully', user, 201)  // 201表示创建了新的资源
-  } catch(error) {
-    failure(res, error)
-  }
-})
+//     success(res, 'user created successfully', user, 201)  // 201表示创建了新的资源
+//   } catch(error) {
+//     failure(res, error)
+//   }
+// })
 
 /* 删除用户: 一般做成禁用账号 */
 
@@ -95,12 +106,13 @@ router.post('/', async function (req, res, next) {
 router.put('/:id', async function (req, res, next) {
   try {
     
-    // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
-    const body = filterBody(req)
-
     const user = await getUser(req)
+
+    // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
+    const body = filterBody(req, user)
     
     await user.update(body)
+    delete user.dataValues.password   // sequelize中的固定用法，删除密码字段以免前台看到密码
 
     success(res, 'user updated successfully', user)
   } catch(error) {
@@ -130,15 +142,19 @@ async function getUser(req) {
 /*
  * 公共方法：白名单过滤
  */
-function filterBody(req) {
+function filterBody(req, user) {
   return {
-    account: req.body.account,
-    username: req.body.username,
-    password: req.body.password,
-    gender: req.body.gender || 99,
-    status: req.body.status || 0,
-    role: req.body.role || 0,
-    avatar: req.body.avatar
+    account: req.body.account || user.account,
+    username: req.body.username || user.username,
+    avatar: req.body.avatar || user.avatar,
+    gender: req.body.gender || user.gender,
+    password: req.body.password || user.password,
+    phone: req.body.phone || user.phone,
+    email: req.body.email || user.email,
+    introduction: req.body.introduction || user.introduction,
+    status: req.body.status ?? user.status,
+    role: req.body.role || user.role,
+
   }
 }
 

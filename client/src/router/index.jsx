@@ -10,6 +10,7 @@ import Article from "../pages/Article/index.jsx";
 import Publish from "../pages/Publish/index.jsx";
 
 import { AuthRoute } from "/src/components/AuthRoute.jsx";
+import User from "../pages/User/index.jsx";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "publish",
         element: <Publish />
+      },
+      {
+        path: "user",
+        element: <User />
       }
     ]
   },

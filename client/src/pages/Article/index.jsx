@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Card, Breadcrumb, Form, Button, Radio, DatePicker, 
-  Select, Popconfirm, 
-  Tooltip} from 'antd'
+import {
+  Card, Breadcrumb, Form, Button, Radio, DatePicker,
+  Select, Popconfirm,
+  Tooltip
+} from 'antd'
 import locale from 'antd/es/date-picker/locale/zh_CN' // 引入汉化包 时间选择器显示中文
 import moment from 'moment';
 
@@ -82,7 +84,7 @@ const Article = () => {
       key: 'createdAt',
       width: 175,
       // 格式化时间显示
-      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss')  
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss')
     },
     {
       title: '阅读',
@@ -107,9 +109,9 @@ const Article = () => {
       render: data => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} 
-              onClick={() => navigate(`/publish?id=${data.id}`)} 
-              />
+            <Button type="primary" shape="circle" icon={<EditOutlined />}
+              onClick={() => navigate(`/publish?id=${data.id}`)}
+            />
             <Popconfirm
               title="删除文章"
               description="确认要删除当前文章吗?"
@@ -152,7 +154,7 @@ const Article = () => {
       channelId: formValue.channel_id,
       status: formValue.status,
       beginPubdate: formValue.date ? formValue.date[0].format('YYYY-MM-DD') : '',
-      endPubdate: formValue.date? formValue.date[1].format('YYYY-MM-DD') : ''
+      endPubdate: formValue.date ? formValue.date[1].format('YYYY-MM-DD') : ''
     })
     // 4. 重新拉取文章列表 + 渲染table逻辑重复的 - 复用
     // reqData依赖项发生变化 重复执行副作用函数 
@@ -172,7 +174,7 @@ const Article = () => {
 
   // 分页
   const onPageChange = (currentPage, pageSize) => {
-    console.log('page change to: '+currentPage+'page size change to: '+pageSize)
+    console.log('page change to: ' + currentPage + 'page size change to: ' + pageSize)
     // 修改参数依赖项 引发数据的重新获取列表渲染
     setReqData({
       ...reqData,
@@ -199,10 +201,10 @@ const Article = () => {
             { title: '文章列表' },
           ]} />
         }
-        style={{ marginBottom: 20 }}
+        style={{ marginBottom: 10 }}
       >
-        <Form 
-          initialValues={{ status: 0 }} 
+        <Form
+          initialValues={{ status: 0 }}
           layout='inline'
           onFinish={onFinish}
         >
@@ -216,17 +218,14 @@ const Article = () => {
 
           <Form.Item label="频道" name="channel_id" className='channel'>
             <Select
-              showSearch
               placeholder="请选择文章频道"
               style={{ width: 120 }}
-            >
-              {channelList.map(item => <Option 
-                key={item.id} value={item.id}>{item.channel}</Option>)}
-            </Select>
+              options={channelList.map(item => { return { value: item.id, label: item.channel } })}
+            />
           </Form.Item>
 
           {/* <Form.Item label="日期" name="date"> */}
-            {/* <RangePicker locale={locale}></RangePicker> locale属性控制中文显示 */}
+          {/* <RangePicker locale={locale}></RangePicker> locale属性控制中文显示 */}
           {/* </Form.Item> */}
 
           <Form.Item label="日期" name="date">
