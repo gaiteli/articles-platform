@@ -15,7 +15,7 @@ router.get('/', async function(req, res, next) {
     const pageSize = Math.abs(Number(query.pageSize)) || 10
     const offset = (currentPage - 1) * pageSize
     const username = query.username
-    const status = query.status;
+    const status = Number(query.status)
 
     const condition = {
       order: [['id', 'DESC']],
@@ -23,15 +23,17 @@ router.get('/', async function(req, res, next) {
     }
 
     // 筛选
-    if (status) {
-      if (status !== '9') {
+    if (status != null) {
+      if (status !== 9) {
         condition.where.status = status; // Filter by status
       }
     }
 
     // 模糊搜索
-    if (username) {
+    if (username != null) {
+      console.log(username);
       condition.where = {
+        ...condition.where,   // 别漏了，不然前面的过滤条件就没了
         username: {
           [Op.like]: `%${username}%`
         }
