@@ -1,0 +1,28 @@
+.contentContainer {
+  width: 800px;
+  padding-bottom: 20px;
+  margin: 0 auto;
+  background-color: var(--background-color);
+  overflow: hidden;
+}
+
+.card {
+  width: '100%';
+
+  >div {
+    display: flex;
+    padding: 20px !important;
+    overflow: hidden;
+
+
+  }
+
+  img {
+    display: 'block' !important;
+    width: '7.5rem' !important;
+  }
+
+  .articleInfo {
+    margin-left: 60px;
+  }
+}

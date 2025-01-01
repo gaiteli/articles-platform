@@ -66,7 +66,7 @@ const Publish = () => {
   //     createArticleAPI(reqData)
   //   }
     // (附加)跳转
-    navigate('/article')
+    navigate('../article')
   }
 
 

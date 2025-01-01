@@ -12,9 +12,23 @@ import Publish from "../pages/Publish/index.jsx";
 import { AuthRoute } from "/src/components/AuthRoute.jsx";
 import User from "../pages/User/index.jsx";
 
+/* 文章平台前台页面 */
+import ArticlesPlatformFrontPage from "../pages/articles_platform/FrontPage/index.jsx";
+import ArticlesPlatformListPage from "../pages/articles_platform/ListPage/index.jsx";
+
+
 const router = createBrowserRouter([
+  // articles_platform 文章平台
   {
-    path: "/",
+    path: "/articles",
+    element: <ArticlesPlatformFrontPage />,
+  },
+  {
+    path: "/articles/list",
+    element: <ArticlesPlatformListPage />
+  },
+  {
+    path: "/admin",
     element: <AuthRoute><Layout /></AuthRoute>,
     // errorElement: <ErrorPage />,    //只能给root加才有效
     children:[

@@ -75,7 +75,7 @@ export function GeekLayout() {
   const navigate = useNavigate()
   const onMenuClick = (route) => {
     const path = route.key
-    navigate(path)
+    navigate('.'+path)  // 相对路径
   }
 
   // 反向高亮

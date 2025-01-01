@@ -26,7 +26,7 @@ export default function Login() {
         await tokenDispatch({ type: 'add', token: token })  // token存入Context中
         await tokenDispatch({ type: 'display' })    // 打印token确认已经存入
         setToken(token)   // 存到localStorage
-        navigate('/')   // 跳转到首页
+        navigate('/admin')   // 跳转到首页
         message.success('login success')
       }
     } catch(error) {

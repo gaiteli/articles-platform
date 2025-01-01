@@ -1,0 +1,117 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  position: sticky;
+  top: 0px;
+  width: 100%;
+  background-color: var(--background-color);
+  z-index: 99;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 1rem;
+
+  .logoSVG {
+    width: var(--logo-size);
+    height: var(--logo-size);
+    margin: 0 5px 0 20px;
+  }
+
+  .logoCharacter {
+    color: var(--first-color);
+    font-size: var(--h1-font-size);
+    font-weight: var(--logo-font-weight);
+    font-style: italic;
+  }
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+
+  .menuList {
+    display: inline-flex;
+
+    li {
+      margin: 10px 10px;
+    }
+
+    .menuLink {
+      font-size: var(--h2-font-size);
+      color: var(--first-color);
+    }
+  }
+
+  .searchForm {
+
+    .searchBoxContainer {
+      position: relative;
+      display: inline-block;
+      background-color: var(--background-color);
+      height: var(--logo-size);
+      margin-left: 20px;
+
+
+      .searchBox {
+        position: relative;
+        width: var(--logo-size);
+        height: var(--logo-size);
+        // border: 2px solid var(--first-color);
+        border: none;
+        outline: none;
+        // background-color: var(--background-color);
+        background-color: white;
+        font-size: var(--h3-font-size);
+        border-radius: var(--border-radius-normal);
+        transition: all .5s ease;
+      }
+
+      .searchBtn {
+        position: absolute;
+        width: var(--logo-size);
+        height: var(--logo-size);
+        left: 0;
+        top: 0;
+        background-color: white;
+        border: none;
+        border-radius: var(--border-radius-normal);
+        z-index: 10;
+      }
+
+      &:hover .searchBox {
+        transform: translateX(0.2vw);
+        width: 15vw;
+        display: inline-block;
+        margin-left: var(--logo-size);
+        border-radius: 0 var(--border-radius-normal) var(--border-radius-normal) 0;
+      }
+
+      &:hover .searchBtn {
+        transform: translateX(0.1vw);
+        border-radius: var(--border-radius-normal) 0 0 var(--border-radius-normal);
+      }
+    }
+  }
+}
+
+.icons {
+  margin-right: 3vw;
+
+  .iconsList {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  
+    li {
+      margin: 10px 5px;
+    }
+
+    .icon {
+      font-size: var(--h2-font-size);
+      color: var(--first-color);
+      margin: 0 5px 0 5px;
+    }
+  }
+}
