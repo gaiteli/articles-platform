@@ -1,8 +1,8 @@
 
 .contentContainer {
-  width: 80%;
+  position: relative;
+  width: 100%;
   
-  padding-bottom: 20px;
   margin: 0 auto;
   background-color: var(--background-color);
   overflow: hidden;
@@ -10,5 +10,36 @@
 
 .backgroundImage {
   width: 100%;
+}
+
+.content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 20rem;
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 750;
+    color: white;
+    text-align: center;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: normal;
+    color: white;
+    text-align: center;
+  }
+}
+
+.mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.25);
 }
 

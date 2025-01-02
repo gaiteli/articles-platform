@@ -8,9 +8,9 @@ import './index.scss'
 import { GlobalsProvider } from '/src/store/globalContext'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <GlobalsProvider>
       <RouterProvider router={router} />
     </GlobalsProvider>
-  </StrictMode>
+  // </StrictMode>
 )

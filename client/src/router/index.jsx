@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import TestPage from "../pages/TestPage/index.jsx";
 import Login from "../pages/Login/Login/index.jsx";
@@ -19,6 +19,10 @@ import ArticlesPlatformListPage from "../pages/articles_platform/ListPage/index.
 
 const router = createBrowserRouter([
   // articles_platform 文章平台
+  {
+    path: "/",
+    element: <Navigate replace to="/articles" />, // 重定向并且不保留历史记录'/'
+  },
   {
     path: "/articles",
     element: <ArticlesPlatformFrontPage />,

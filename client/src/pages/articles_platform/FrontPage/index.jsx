@@ -14,6 +14,11 @@ const ArticlesPlatformFrontPage = () => {
         <img className={styles.backgroundImage}
           src="/src/assets/articles_platform/home_pic.jpg"
         />
+        <div className={styles.content}>
+            <h1>GatesLee's study</h1>
+            <h4>One man's soliloquize</h4>
+        </div>
+        <div className={styles.mask}></div>
       </div>
     </>
   )
