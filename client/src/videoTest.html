@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matter.js Example</title>
+  <style>
+    .skill__content {
+      width: 100%;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="skill__content">
+    <img class="skill__img" src="./assets/react.svg" alt="React icon" crossorigin="Anonymous" style="display: none;">
+    <!-- 其他图片 -->
+    <canvas width="1462" height="646" style="background: transparent;"></canvas>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.14.2/matter.min.js"></script>
+  <script>
+    const { Engine, Render, Runner, Bodies, World, Mouse, MouseConstraint, Vertices } = Matter;
+    const engine = Engine.create();
+    const { world } = engine;
+
+    const skillContent = document.querySelector('.skill__content');
+    const render = Render.create({
+      element: skillContent,
+      engine: engine,
+      options: {
+        width: skillContent.clientWidth,
+        height: skillContent.clientHeight,
+        wireframes: false,
+        background: 'transparent'
+      }
+    });
+
+    // 添加墙壁
+    const wallThickness = 200;
+    const walls = [
+      Bodies.rectangle(skillContent.clientWidth / 2, -wallThickness / 2, skillContent.clientWidth, wallThickness, { isStatic: true, render: { visible: false } }),
+      Bodies.rectangle(skillContent.clientWidth / 2, skillContent.clientHeight + wallThickness / 2, skillContent.clientWidth, wallThickness, { isStatic: true, render: { visible: false } }),
+      Bodies.rectangle(-wallThickness / 2, skillContent.clientHeight / 2, wallThickness, skillContent.clientHeight, { isStatic: true, render: { visible: false } }),
+      Bodies.rectangle(skillContent.clientWidth + wallThickness / 2, skillContent.clientHeight / 2, wallThickness, skillContent.clientHeight, { isStatic: true, render: { visible: false } })
+    ];
+    World.add(world, walls);
+
+    // 加载图片并创建物体
+    const skillImgs = document.querySelectorAll('.skill__img');
+    skillImgs.forEach((img, i) => {
+      img.crossOrigin = "Anonymous";
+
+      img.onload = () => {
+        const scale = 0.5; // 调整缩放比例
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = img.naturalWidth * scale;
+        canvas.height = img.naturalHeight * scale;
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const vertices = extractVerticesFromImageData(imageData);
+
+        const randomX = Math.random() * skillContent.clientWidth;
+        const randomY = Math.random() * skillContent.clientHeight;
+
+        const body = Bodies.fromVertices(randomX, randomY, vertices, {
+          restitution: 0.5,
+          render: {
+            sprite: {
+              texture: img.src,
+              xScale: scale,
+              yScale: scale
+            }
+          }
+        }, true);
+
+        World.add(world, body);
+        img.style.display = 'none';
+      };
+
+      img.onerror = () => {
+        console.error('Failed to load image:', img.src);
+      };
+    });
+
+    // 提取顶点
+    function extractVerticesFromImageData(imageData) {
+      const { width, height, data } = imageData;
+      const threshold = 128;
+      const vertices = [];
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const index = (y * width + x) * 4;
+          const alpha = data[index + 3];
+          if (alpha > threshold) {
+            vertices.push({ x, y });
+          }
+        }
+      }
+
+      return Vertices.hull(vertices);
+    }
+
+    // 添加鼠标控制
+    const mouse = Mouse.create(render.canvas);
+    const mouseConstraint = MouseConstraint.create(engine, {
+      mouse: mouse,
+      constraint: {
+        stiffness: 0.2,
+        render: { visible: false }
+      }
+    });
+    World.add(world, mouseConstraint);
+
+    // 启动引擎和渲染器
+    Runner.run(engine);
+    Render.run(render);
+  </script>
+</body>
+</html>

@@ -1,3 +1,4 @@
+@import "tailwindcss";
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -558,6 +559,14 @@ video {
   visibility: visible;
 }
 
+.fixed {
+  position: fixed;
+}
+
+.relative {
+  position: relative;
+}
+
 .block {
   display: block;
 }
@@ -576,6 +585,39 @@ video {
 
 .hidden {
   display: none;
+}
+
+.h-\[5rem\] {
+  height: 5rem;
+}
+
+.w-\[5rem\] {
+  width: 5rem;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8,0,1,1);
+  }
+
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0,0,0.2,1);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+.resize {
+  resize: both;
+}
+
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
 .filter {

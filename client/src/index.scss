@@ -95,6 +95,43 @@ img {
   height: auto;
 }
 
+/*=============== Global ==================*/
+
+/* sidebar in listpage in article platform*/
+// .sidebar-enter {
+//   opacity: 0;
+//   transform: translateX(100%);
+// }
+
+// .sidebar-enter-active {
+//   opacity: 1;
+//   transform: translateX(0);
+//   transition: transform 1500ms ease-in-out;
+// }
+
+// .sidebar-enter-done {
+//   opacity: 1;
+//   transform: translateX(0);
+//   transition: all 0.5s;
+// }
+
+// .sidebar-exit {
+//   opacity: 1;
+//   transform: translateX(0);
+// }
+
+// .sidebar-exit-active {
+//   opacity: 0;
+//   transform: translateX(100%);
+//   transition: transform 1500ms ease-in-out;
+// }
+
+// .sidebar-exit-done {
+//   opacity: 0;
+//   transform: translateX(100%);
+//   transition: all 0.5s;
+// }
+
 // :root {
 //   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 //   line-height: 1.5;

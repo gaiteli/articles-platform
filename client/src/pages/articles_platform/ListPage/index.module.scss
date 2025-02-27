@@ -1,9 +1,28 @@
-.contentContainer {
+.container {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.mainColumnContainer {
   width: 800px;
   padding-bottom: 20px;
   margin: 0 auto;
   background-color: var(--background-color);
   overflow: hidden;
+  z-index: 1
+}
+
+#toggleButton {
+  position: fixed;
+  top: 50%;
+  left: calc(50% + 400px + 25px);  // 400为文章栏宽的1/2
+  transform: translateX(-50%);
+  z-index: 10;
+  cursor: pointer;
 }
 
 .card {
@@ -31,4 +50,51 @@
 
 .loadingCard {
   padding: 7px 20px;
+}
+
+/* 侧栏动画效果 */
+/* CSSTransition 的 classNames 属性支持传入一个对象，指定各个动画阶段的模块化 CSS 类名 */
+// CSSTransition 的动画原理就是在指定时刻添加添加类名和移除类名，通过 transition css属性达成平滑过渡，它并没有使用到 @keyframes
+
+.sidebarEnter {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.sidebarEnterActive {
+  opacity: 0.5;
+  transform: translateX(-66%);
+  transition: transform 500ms ease-in-out;
+}
+
+.sidebarEnterDone {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.5s;
+}
+
+.sidebarExit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sidebarExitActive {
+  opacity: 0.5;
+  transform: translateX(-66%);
+  transition: transform 500ms ease-in-out;
+}
+
+.sidebarExitDone {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: all 0.5s;
+}
+
+.sidebar {
+  top: 50px;
+  right: 0;
+  width: 300px;
+  background: #f4f4f4;
+  border-radius: 10px;
+  z-index: 0
 }
