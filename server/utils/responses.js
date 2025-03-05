@@ -20,6 +20,7 @@ function failure(res, error) {
     return res.status(400).json({
       status: false,
       message: '请求参数错误',
+      subType: '01',
       errors
     })
   } 
@@ -27,6 +28,7 @@ function failure(res, error) {
     return res.status(400).json({
       status: false,
       message: '请求参数错误',
+      subType: '02',
       errors: [error.message]
     })
   } 

@@ -15,13 +15,14 @@ import User from "../pages/User/index.jsx";
 /* 文章平台前台页面 */
 import ArticlesPlatformFrontPage from "../pages/articles_platform/FrontPage/index.jsx";
 import ArticlesPlatformListPage from "../pages/articles_platform/ListPage/index.jsx";
-
+import ArticlesPlatformArticleEditPage from "../pages/articles_platform/ArticleEditPage/index.jsx";
+import ArticlesPlatformArticlePage from "../pages/articles_platform/ArticlePage/index.jsx";
 
 const router = createBrowserRouter([
   // articles_platform 文章平台
   {
     path: "/",
-    element: <Navigate replace to="/articles" />, // 重定向并且不保留历史记录'/'
+    element: <Navigate replace to="/articles/list" />, // 重定向并且不保留历史记录'/'
   },
   {
     path: "/articles",
@@ -31,6 +32,15 @@ const router = createBrowserRouter([
     path: "/articles/list",
     element: <ArticlesPlatformListPage />
   },
+  {
+    path: "/articles/write",
+    element: <ArticlesPlatformArticleEditPage />
+  },
+  {
+    path: "/articles/:id",
+    element: <ArticlesPlatformArticlePage />
+  },
+  // 后台
   {
     path: "/admin",
     element: <AuthRoute><Layout /></AuthRoute>,

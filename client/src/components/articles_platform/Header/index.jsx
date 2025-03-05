@@ -12,10 +12,10 @@ import {
 import styles from './index.module.scss';
 
 
-export function Header() {
+export function Header({ position }) {
 
   return (
-    <div className={styles.header}>
+    <div className={`${styles.header} ${position === 'sticky' ? 'sticky top-0' : 'static'}`} >
       <div className={styles.logo}>
         <img className={styles.logoSVG} src='/src/assets/articles_platform/article_logo.svg' alt=""></img>
         <span className={styles.logoCharacter}>Jay's Articles</span>

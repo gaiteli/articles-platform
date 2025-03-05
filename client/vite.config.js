@@ -10,7 +10,9 @@ export default defineConfig({
       "@": resolve(__dirname, "/src"),
     },
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+  ],
   server: {
     open: true,   // 启动后自动打开浏览器
   }

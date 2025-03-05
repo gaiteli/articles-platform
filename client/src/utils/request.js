@@ -41,15 +41,23 @@ request.interceptors.response.use((response) => {
   console.log('axios拦截到响应错误');
   if (error.response.status === 400) {
     const errorName = error.response.data.errors[0]
-    message.warning({
-      content: errorName+'\n2秒后自动跳转',
-      duration: 2,
-    })
-    setTimeout(() => {
-      removeToken()
-      router.navigate('/signin')
-      window.location.reload()
-    }, 1900)
+    if (error.response.data.subType === '01') {
+      message.warning({
+        content: errorName+'\n请检查无误后再提交',
+        duration: 2,
+      })
+    }
+    if (error.response.data.subType === '02') {
+      message.warning({
+        content: errorName+'\n2秒后自动跳转',
+        duration: 2,
+      })
+      setTimeout(() => {
+        removeToken()
+        router.navigate('/signin')
+        window.location.reload()
+      }, 1900)
+    }
   }
   if (error.response.status === 401) {
     const errorName = error.response.data.errors[0]

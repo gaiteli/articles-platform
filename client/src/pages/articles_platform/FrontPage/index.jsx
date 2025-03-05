@@ -38,7 +38,7 @@ const ArticlesPlatformFrontPage = () => {
 
   return (
     <>
-      <Header />
+      <Header position="sticky" />
       <div className={styles.welcomeContainer}>
         <img className={styles.backgroundImage} ref={eleRef}
           src="/src/assets/articles_platform/home_pic.jpg"

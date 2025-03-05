@@ -61,7 +61,10 @@ const ArticlesPlatformListPage = () => {
 
   return (
     <>
-      <Header />
+      <Header position="sticky" />
+      <h1 className="text-3xl font-bold underline">
+        Hello world!
+      </h1>
       <div className={styles.container}>
         <div className={styles.mainColumnContainer}>
           <InfiniteScroll

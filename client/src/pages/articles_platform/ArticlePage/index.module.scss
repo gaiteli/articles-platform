@@ -1,0 +1,46 @@
+.pageWrapper {
+  min-height: 100vh;
+}
+
+.articleContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.titleContainer {
+  margin: 20px 0;
+  
+  .title {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .titleDivider {
+    border: none;
+    border-bottom: 1px solid #eee;
+    margin: 20px 0;
+  }
+}
+
+.contentContainer {
+  margin-top: 30px;
+
+  .quillContent {
+    font-size: 16px;
+    line-height: 1.6;
+    
+    // 移除 Quill 编辑器默认边框
+    .ql-container {
+      border: none !important;
+    }
+  }
+}
+
+.extraInfo {
+  margin-top: 30px;
+  color: #666;
+  font-size: 14px;
+}

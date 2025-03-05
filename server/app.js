@@ -23,6 +23,9 @@ const channelsRouter = require('./routes/channels')
 const articlesRouter = require('./routes/articles')
 const usersRouter = require('./routes/users')
 
+// 文章平台路由
+const articlePlatformArticlesRouter = require('./routes/articlesPlatform/articles')
+
 const allowCrossDomain = (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*'); // 或者指定具体的域名
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
@@ -35,8 +38,8 @@ const allowCrossDomain = (req, res, next) => {
   }
 };
 
-app.use(express.json())
-app.use(express.urlencoded())
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ limit: '100mb', extended: true }));
 // app.use(express.static(path.))
 app.use(allowCrossDomain)
 app.use('/', indexRouter)
@@ -49,6 +52,9 @@ app.use('/', authRouter)    // login / signup
 app.use('/users', login, usersRouter)
 app.use('/channels', channelsRouter)
 app.use('/articles', login, articlesRouter)
+
+app.use('/articles-platform', login, articlePlatformArticlesRouter)
+
 
 app.listen(PORT, () => {
   console.log(`server is running at port 9000`);

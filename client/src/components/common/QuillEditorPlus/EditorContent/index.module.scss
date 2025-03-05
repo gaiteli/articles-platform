@@ -1,0 +1,36 @@
+// 内容编辑器
+.quillContent {
+  border: none;
+  min-height: calc(100vh - 290px);
+  margin: 15px 0 50px;
+  height: auto;
+  background-color: white;
+
+  :global {
+
+    .ql-editor {
+      font-size: 15px;
+      line-height: 1.5;
+
+      img {
+        max-width: 100%;
+        height: auto;
+        margin: 10px 0;
+      }
+
+      pre {
+        background: #f5f5f5;
+        padding: 10px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+
+      code {
+        font-family: 'Courier New', Courier, monospace;
+        background: #f5f5f5;
+        padding: 2px 4px;
+        border-radius: 2px;
+      }
+    }
+  }
+}
