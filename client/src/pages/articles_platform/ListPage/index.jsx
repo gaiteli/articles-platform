@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { CSSTransition } from 'react-transition-group';
 
 import { Header } from '/src/components/articles_platform/Header'
 import {
@@ -12,14 +15,16 @@ import {
   Divider,
 } from 'antd';
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { CSSTransition } from 'react-transition-group';
+
 import styles from './index.module.scss'
 
 import { getArticleListAPI } from '/src/apis/article'
 
+const ARTICLE_SHOW_CONTENT_MAX_LENGTH = 175
+
 
 const ArticlesPlatformListPage = () => {
+  const navigate = useNavigate()
 
   // 控制副栏是否显示
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
@@ -55,6 +60,11 @@ const ArticlesPlatformListPage = () => {
     setLoading(false)
   }
 
+  // 点击文章item跳转到文章详情页
+  const handleClickArticlesListItem = (id) => {
+    navigate(`/articles/${id}`)
+  }
+
   useEffect(() => {
     loadMoreData()
   }, [])
@@ -74,7 +84,10 @@ const ArticlesPlatformListPage = () => {
             loader={
               <div className={styles.loadingCard}>
                 <Card className={styles.card}>
-                  <Skeleton.Image active style={{ width: '120px', height: '120px' }} />
+                  <Skeleton.Image     // 待加载用骨架屏
+                    active
+                    style={{ width: '120px', height: '120px' }}
+                  />
                   <Skeleton
                     paragraph={{
                       rows: 2,
@@ -87,7 +100,6 @@ const ArticlesPlatformListPage = () => {
                   />
                 </Card>
               </div>
-
             }
             endMessage={<Divider plain>已经到底了 🤐</Divider>}
             scrollableTarget="scrollableDiv"
@@ -97,11 +109,12 @@ const ArticlesPlatformListPage = () => {
               size='large'
               dataSource={list}
               renderItem={(item, index) => (
-                <List.Item style={{ borderBottom: 'none', padding: '7px 20px' }}>
+                <List.Item
+                  style={{ borderBottom: 'none', padding: '7px 20px'}}
+                >
                   <Card
                     // hoverable
                     className={styles.card}
-
                   >
                     <img
                       alt="avatar"
@@ -112,16 +125,19 @@ const ArticlesPlatformListPage = () => {
                         width: '7.5rem',
                       }}
                     />
-                    <div className={styles.articleInfo}>
+                    <div 
+                    className={styles.articleInfo}
+                    onClick={() => handleClickArticlesListItem(item.id)}
+                    >
                       <Typography.Title level={4}>
                         {item.title}
                       </Typography.Title>
                       <Typography.Text type="secondary">
                         {item.createdAt}
                       </Typography.Text>
-                      <Typography.Text style={{ display: 'block' }}>
+                      <div className={styles.articleContent}>
                         {item.content}
-                      </Typography.Text>
+                      </div>
                     </div>
                   </Card>
                 </List.Item>

@@ -7,6 +7,7 @@ import EditorToolbar from '../../../components/common/QuillEditorPlus/EditorTool
 import { createArticleAPI } from '/src/apis/articles_platform/article'
 import styles from './index.module.scss'
 import Quill from 'quill';
+import { addHeaderIdToHTML } from '/src/utils/quill';
 
 const Delta = Quill.import('delta');
 
@@ -34,9 +35,12 @@ const ArticlesPlatformArticlePage = () => {
       // 获取纯文本内容并去除首尾空格
       const plainText = quillRef.current?.getText()?.trim() || ''
       // 获取HTML内容
+      console.log(quillRef.current);
       const htmlContent = quillRef.current?.getSemanticHTML() || ''
       // 获取Delta内容
       const deltaContent = quillRef.current?.getContents()
+      // const { updatedHtmlContent } = addHeaderIdToHTML( htmlContent);
+      console.log(htmlContent);
 
       // 检查标题是否为空
       if (!title.trim()) {
@@ -49,6 +53,9 @@ const ArticlesPlatformArticlePage = () => {
         alert('请输入文章内容')
         return
       }
+
+      // 给标题添加ID，方便生成目录
+      
 
       const reqData = {
         title,
@@ -91,7 +98,7 @@ const ArticlesPlatformArticlePage = () => {
           {/* 内容编辑器 */}
           <div className={styles.contentContainer}>
             <EditorContent
-              toolbarContainerId="custom-toolbar-container"
+              toolbarContainerId="custom-toolbar-container"   // 工具栏挂载点
               ref={quillRef}
               readOnly={false}
               defaultValue={null}

@@ -40,6 +40,12 @@ router.get('/p/:id', async function (req, res, next) {
     try {
         const article = await getArticle(req)
 
+        // 更新浏览次数 +1
+        const body = {
+            readCount: article.readCount + 1,
+        }
+        await article.update(body)
+
         success(res, 'query success', article)
     } catch(error) {
         failure(res, error)
