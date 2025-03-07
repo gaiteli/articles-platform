@@ -26,9 +26,16 @@
 }
 
 .card {
-  // width: 100%;
-  height: 170px;
+  height: 175px;
 
+  .articleCover {
+    display: block;
+    width: 7.5rem; // 设置宽度为 7.5rem
+    margin-left: 10px;
+    transform: scale(0.8); // 缩小到 0.8 倍
+    transform-origin: center; // 设置缩放的中心点
+    filter: contrast(95%) brightness(97%) saturate(150%); // 调整色彩
+  }
 
   >div {
     display: flex;
@@ -38,19 +45,15 @@
 
   }
 
-  img {
-    display: 'block' !important;
-    width: '7.5rem' !important;
-  }
-
   span {
     overflow: hidden;
   }
 
   .articleInfo {
     width: calc(100% - 180px);
+    height: 135px;
     padding: 5px;
-    margin-left: 60px;
+    margin-left: 50px;
     cursor: pointer;
 
     &:hover {

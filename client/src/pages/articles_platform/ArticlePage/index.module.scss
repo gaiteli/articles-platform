@@ -13,7 +13,7 @@
 
 .titleContainer {
   margin: 0px 25px;
-  
+
   .title {
     font-size: 2rem;
     font-weight: bold;
@@ -49,12 +49,14 @@
       margin-bottom: 20px; // 段落间距
     }
 
-    h1, h2, h3 {
+    h1,
+    h2,
+    h3 {
       margin-top: 30px;
       margin-bottom: 15px;
       color: #222;
     }
-    
+
     // 移除 Quill 编辑器默认边框
     .ql-container {
       border: none !important;
@@ -63,9 +65,30 @@
 }
 
 .extraInfo {
-  margin: 30px 0 0 25px;
+  margin: 30px 25px 0 25px;
   color: #666;
   font-size: 14px;
+  vertical-align: center;
+
+  .bottomButton {
+    font-size: 15px;
+    padding: 8px 24px;
+    margin: 0 10px;
+    background: var(--button-background-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:disabled {
+      background: #d9d9d9;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      background: var(--button-background-color-hover);
+    }
+  }
 }
 
 // 侧边栏目录

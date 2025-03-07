@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Spin, message } from 'antd';
 import { Header } from '/src/components/articles_platform/Header'
 import EditorContent from '../../../components/common/QuillEditorPlus/EditorContent';
 import EditorToolbar from '../../../components/common/QuillEditorPlus/EditorToolbar';
+import { getArticleByIdAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
 
 import { createArticleAPI } from '/src/apis/articles_platform/article'
 import styles from './index.module.scss'
@@ -11,11 +13,15 @@ import { addHeaderIdToHTML } from '/src/utils/quill';
 
 const Delta = Quill.import('delta');
 
-const ArticlesPlatformArticlePage = () => {
+const ArticlesPlatformArticleEditPage = () => {
+  const { id } = useParams();  // 从路由中获取articleId，若undefined则为首次编辑
+  const articleId = id      // 因为名称要和路由中的参数名一致，所以这里重新赋值
+  const navigate = useNavigate()
 
   const [title, setTitle] = useState('')
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
 
   // debug
   const [isShowDebug, setIsShowDebug] = useState(false)
@@ -26,6 +32,30 @@ const ArticlesPlatformArticlePage = () => {
   // Use a ref to access the quill instance directly
   const quillRef = useRef(null)
 
+
+  // 编辑模式下加载文章数据
+  useEffect(() => {
+    if (articleId) {
+      const loadArticle = async () => {
+        setLoading(true);
+        try {
+          const res = await getArticleByIdAPI(articleId)
+          setTitle(res.data.title)
+          if (quillRef.current) {
+            quillRef.current?.setContents(res.data.deltaContent)
+            console.log('quill editor load success');
+          }
+        } catch (err) {
+          message.error('加载文章失败:' + err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadArticle();
+    }
+  }, [articleId]);
+
+
   // 提交文章
   const handleArticleSubmit = async () => {
     setLoading(true)
@@ -35,12 +65,10 @@ const ArticlesPlatformArticlePage = () => {
       // 获取纯文本内容并去除首尾空格
       const plainText = quillRef.current?.getText()?.trim() || ''
       // 获取HTML内容
-      console.log(quillRef.current);
       const htmlContent = quillRef.current?.getSemanticHTML() || ''
       // 获取Delta内容
       const deltaContent = quillRef.current?.getContents()
       // const { updatedHtmlContent } = addHeaderIdToHTML( htmlContent);
-      console.log(htmlContent);
 
       // 检查标题是否为空
       if (!title.trim()) {
@@ -55,7 +83,7 @@ const ArticlesPlatformArticlePage = () => {
       }
 
       // 给标题添加ID，方便生成目录
-      
+
 
       const reqData = {
         title,
@@ -63,8 +91,17 @@ const ArticlesPlatformArticlePage = () => {
         deltaContent: plainText ? deltaContent : null,
         channel_id: 1
       }
-      await createArticleAPI(reqData)
-      message.success('提交文章成功')
+
+      if (isEditMode) {
+        await updateArticleAPI({ id: articleId, ...reqData });
+        message.success('更新文章成功');
+        navigate(`/articles/${id}`)
+      } else {
+        await createArticleAPI(reqData);
+        message.success('提交文章成功');
+        navigate('/articles/list')
+      }
+
     } catch (err) {
       setError(err.message || '提交文章失败')
       message.error('提交文章失败，请重试')
@@ -115,7 +152,7 @@ const ArticlesPlatformArticlePage = () => {
               disabled={loading}
               className={styles.submitButton}
             >
-              {loading ? '提交中...' : '提交文章'}
+              {loading ? '提交中...' : isEditMode ? '提交更改' : '发布文章'}
             </button>
             <span>字数：{quillRef.current?.getText().replace(/\n/g, '').length || 0}</span>
           </div>
@@ -175,4 +212,4 @@ const ArticlesPlatformArticlePage = () => {
   )
 }
 
-export default ArticlesPlatformArticlePage
+export default ArticlesPlatformArticleEditPage

@@ -72,9 +72,6 @@ const ArticlesPlatformListPage = () => {
   return (
     <>
       <Header position="sticky" />
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
       <div className={styles.container}>
         <div className={styles.mainColumnContainer}>
           <InfiniteScroll
@@ -118,12 +115,8 @@ const ArticlesPlatformListPage = () => {
                   >
                     <img
                       alt="avatar"
-                      src="/src/assets/articles_platform/picture_loading_failure.svg"
-                      className={styles.articlePic}
-                      style={{    // 为啥移到scss中就无法应用了
-                        display: 'block',
-                        width: '7.5rem',
-                      }}
+                      src="/src/assets/articles_platform/no_picture_available.svg"
+                      className={styles.articleCover}
                     />
                     <div 
                     className={styles.articleInfo}

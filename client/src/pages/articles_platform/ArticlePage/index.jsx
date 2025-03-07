@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '/src/components/articles_platform/Header';
-import { getArticleByIdAPI } from '/src/apis/articles_platform/article';
+import { getArticleByIdAPI, deleteArticleAPI } from '/src/apis/articles_platform/article';
 
+import { Popconfirm } from 'antd';
 import styles from './index.module.scss';
 import Quill from 'quill';
 import moment from 'moment';
@@ -10,6 +11,7 @@ import moment from 'moment';
 const ArticlesPlatformArticlePage = () => {
 
   const { id } = useParams();
+  const navigate = useNavigate();
   const editorRef = useRef(null)
   const quillRef = useRef(null)
   const [article, setArticle] = useState({
@@ -103,10 +105,25 @@ const ArticlesPlatformArticlePage = () => {
         </div>
 
         {/* 额外信息栏 */}
-        <div className={styles.extraInfo}>
+        <div className={`${styles.extraInfo} flex flex-row justify-between`}>
           <span>
             阅读时间：约 {Math.ceil(articleLength / 1000)} 分钟
           </span>
+          <div className='flex flex-row justify-end'>
+            {/* <button onClick={() => ???} className={styles.bottomButton}>点赞</button> */}
+            <button onClick={() => navigate('./edit')} className={styles.bottomButton}>编辑</button>
+            <Popconfirm
+              description="是否删除这篇文章？"
+              onConfirm={() => ( async () => {
+                await deleteArticleAPI(id)
+                navigate('/articles/list')
+              } )() }
+              okText="确定"
+              cancelText="取消"
+            >
+              <button className={styles.bottomButton}>删除</button>
+            </Popconfirm>
+          </div>
         </div>
 
         {/* 右侧目录 */}

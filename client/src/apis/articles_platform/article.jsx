@@ -28,16 +28,16 @@ export function getArticleListAPI (params) {
 // 改-更新文章
 export function updateArticleAPI (data) {
   return request({
-    url: `/articles-platform/edit/${data.id}`,
+    url: `/articles-platform/p/${data.id}/edit`,
     method: 'PUT',
     data
   })
 }
 
 // 删-删除文章
-export function delArticleAPI (id) {
+export function deleteArticleAPI (id) {
   return request({
-    url: `/articles-platform/delete/${id}`,
+    url: `/articles-platform/${id}`,
     method: 'DELETE'
   })
 }

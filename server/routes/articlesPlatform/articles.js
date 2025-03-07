@@ -35,6 +35,43 @@ router.post('/write', async function (req, res, next) {
     }
 })
 
+/* 删除文章 */
+router.delete('/:id', async function (req, res, next) {
+    try {
+        // 查询当前文章
+        const article = await getArticle(req);
+
+        // 删除文章
+        await article.destroy();
+        success(res, 'article deleted successfully');
+    } catch (error) {
+        failure(res, error);
+    }
+});
+
+/* 更新文章 */
+router.put('/p/:id/edit', async function (req, res, next) {
+    try {
+        const { title, content, deltaContent, channelId } = req.body;
+
+        // 查询当前文章
+        const article = await getArticle(req);
+
+        // 更新文章内容
+        const body = {
+            title,
+            content,
+            deltaContent,
+            channelId: channelId ? channelId : 1,
+        };
+
+        await article.update(body);
+        success(res, 'article updated successfully', article);
+    } catch (error) {
+        failure(res, error);
+    }
+});
+
 /* 查询单个文章 */
 router.get('/p/:id', async function (req, res, next) {
     try {

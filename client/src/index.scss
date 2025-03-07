@@ -39,6 +39,7 @@ body {
 
   /* 背景色 */
   --background-color: hsl(230, 60%, 95%);
+  --background-color-deep: hsl(230, 50%, 20%);
   --container-color: hsl(230, 100%, 97%);
   --card-background-color: hsl(230, 60%, 98%);
 
@@ -81,6 +82,9 @@ body {
 
   /* border-radius */
   --border-radius-normal: 12px;
+
+  /* article card */
+  --card-height: 175px;
 
 }
 
