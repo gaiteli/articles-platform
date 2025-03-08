@@ -34,6 +34,12 @@ export function Header({ position }) {
               <span>文章</span>
             </Link>
           </li>
+          <li>
+            <Link to={'/articles/write'} className={styles.menuLink}>
+              <i></i>
+              <span>写作</span>
+            </Link>
+          </li>
         </ul>
         <form action="" className={styles.searchForm}>
           <div className={styles.searchBoxContainer}>

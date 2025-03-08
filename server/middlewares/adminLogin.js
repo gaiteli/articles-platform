@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('@models');
-const { UnauthorizedError } = require('@utils/errors');
 const { success, failure } = require('@utils/responses')
 
 module.exports = async (req, res, next) => {
@@ -9,7 +8,7 @@ module.exports = async (req, res, next) => {
 
     // 验证是否为管理员
     // if (user.role !== 100) {
-    //   throw new UnauthorizedError('没有权限! ')
+    //   throw new Unauthorized('没有权限! ')
     // }
 
     next()

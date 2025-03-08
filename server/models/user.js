@@ -3,6 +3,7 @@ const {
   Model
 } = require('sequelize');
 const bcrypt = require('bcryptjs')
+const {BadRequest} = require('http-errors');
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -12,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      models.User.hasMany(models.Attachment, {as: 'attachments'})
     }
   }
   User.init({
@@ -68,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
         if (value.length >= 6 && value.length <= 255) {
           this.setDataValue('password', bcrypt.hashSync(value, 8))
         } else {
-          throw new Error('密码长度至少6位')
+          throw new BadRequest('密码长度至少6位')
         }
       }
     },

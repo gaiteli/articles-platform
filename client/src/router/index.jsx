@@ -11,6 +11,7 @@ import Publish from "../pages/Publish/index.jsx";
 
 import { AuthRoute } from "/src/components/AuthRoute.jsx";
 import User from "../pages/User/index.jsx";
+import Attachment from "../pages/admin/Attachment/index.jsx";
 
 /* 文章平台前台页面 */
 import ArticlesPlatformFrontPage from "../pages/articles_platform/FrontPage/index.jsx";
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
       {
         path: "publish",
         element: <Publish />
+      },
+      {
+        path: "attachment",
+        element: <Attachment />
       },
       {
         path: "user",

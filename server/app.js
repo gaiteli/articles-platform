@@ -16,6 +16,7 @@ const indexRouter = require('./routes/index')
 const adminArticlesRouter = require('./routes/admin/articles')
 const adminUsersRouter = require('./routes/admin/users')
 const adminSigninRouter = require('./routes/admin/auth')
+const adminAttachmentsRouter = require('./routes/admin/attachments')
 
 // 前台路由
 const authRouter = require('./routes/auth')
@@ -25,6 +26,7 @@ const usersRouter = require('./routes/users')
 
 // 文章平台路由
 const articlePlatformArticlesRouter = require('./routes/articlesPlatform/articles')
+const uploadsRouter = require('./routes/articlesPlatform/uploads')
 
 const allowCrossDomain = (req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*'); // 或者指定具体的域名
@@ -47,6 +49,7 @@ app.use('/', indexRouter)
 app.use('/admin/signin', adminSigninRouter) // 注意登陆不能加login中间件
 app.use('/admin/articles', login, adminLogin, adminArticlesRouter) // 访问该路径对应的路由文件就是admin..
 app.use('/admin/users', login, adminLogin, adminUsersRouter)
+app.use('/admin/attachments', login, adminAttachmentsRouter)
 
 app.use('/', authRouter)    // login / signup
 app.use('/users', login, usersRouter)
@@ -54,7 +57,7 @@ app.use('/channels', channelsRouter)
 app.use('/articles', login, articlesRouter)
 
 app.use('/articles-platform', login, articlePlatformArticlesRouter)
-
+app.use('/uploads', login, uploadsRouter)
 
 app.listen(PORT, () => {
   console.log(`server is running at port 9000`);

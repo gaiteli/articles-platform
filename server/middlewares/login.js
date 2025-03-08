@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('@models');
-const { UnauthorizedError } = require('@utils/errors');
+const { Unauthorized } = require('http-errors')
 const { success, failure } = require('@utils/responses')
 
 module.exports = async (req, res, next) => {
@@ -8,11 +8,11 @@ module.exports = async (req, res, next) => {
     // 判断Token是否存在 
     const authHeader = req.headers['authorization']
     if (!authHeader) {
-      throw new UnauthorizedError('authorization field missing')
+      throw new Unauthorized('authorization field missing')
     }
     const token = authHeader.split(' ')[1]; // Bearer token 格式 => "Bearer <token>"
     if (!token) {
-      throw new UnauthorizedError('token missing')
+      throw new Unauthorized('token missing')
     }
 
     // token是否正确
@@ -25,7 +25,7 @@ module.exports = async (req, res, next) => {
     // 查询用户
     const user = await User.findByPk(userId)
     if (!user) {
-      throw new UnauthorizedError('用户不存在！')
+      throw new Unauthorized('用户不存在！')
     }
 
     // 通过验证，则将解析出的user对象挂载到req上，以供后续中间件使用

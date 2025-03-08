@@ -4,6 +4,7 @@ import {
   HomeOutlined,
   DiffOutlined,
   EditOutlined,
+  LinkOutlined,
   UserOutlined,
   LogoutOutlined,
   DownOutlined,
@@ -34,6 +35,11 @@ const items = [
     label: '创建文章',
     key: '/publish',
     icon: <EditOutlined />,
+  },
+  {
+    label: '附件管理',
+    key: '/attachment',
+    icon: <LinkOutlined />
   },
   {
     label: '用户管理',

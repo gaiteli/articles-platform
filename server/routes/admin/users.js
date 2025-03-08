@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {User} = require('@models');
 const { Op } = require('sequelize')
-const { NotFoundError } = require('@utils/errors')
+const { NotFound } = require('http-errors')
 const { success, failure } = require('@utils/responses')
 
 /* 查询用户列表 */
@@ -134,7 +134,7 @@ async function getUser(req) {
 
   // 如果没有找到，就抛出异常
   if (!user) {
-    throw new NotFoundError(`没有找到ID为${ id }的用户`)
+    throw new NotFound(`没有找到ID为${ id }的用户`)
   }
 
   // 找到用户，返回
