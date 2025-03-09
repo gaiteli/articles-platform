@@ -20,7 +20,7 @@ const upload = multer({
         destination: 'uploads'      // 自定义上传目录
     }),
     limits: {
-        fileSize: 1 * 1024 * 1024,      // 限制上传图片大小为1M
+        fileSize: 2 * 1024 * 1024,      // 限制上传图片大小为2M
     },
     fileFilter: function(req, file, cb) {
         // 只允许上传图片

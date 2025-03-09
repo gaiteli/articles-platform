@@ -20,8 +20,6 @@ import styles from './index.module.scss'
 
 import { getArticleListAPI } from '/src/apis/article'
 
-const ARTICLE_SHOW_CONTENT_MAX_LENGTH = 175
-
 
 const ArticlesPlatformListPage = () => {
   const navigate = useNavigate()
@@ -107,20 +105,22 @@ const ArticlesPlatformListPage = () => {
               dataSource={list}
               renderItem={(item, index) => (
                 <List.Item
-                  style={{ borderBottom: 'none', padding: '7px 20px'}}
+                  style={{ borderBottom: 'none', padding: '7px 20px' }}
                 >
                   <Card
                     // hoverable
                     className={styles.card}
                   >
-                    <img
-                      alt="avatar"
-                      src="/src/assets/articles_platform/no_picture_available.svg"
-                      className={styles.articleCover}
-                    />
-                    <div 
-                    className={styles.articleInfo}
-                    onClick={() => handleClickArticlesListItem(item.id)}
+                    <div className={styles.coverContainer}>
+                      <img
+                        alt="avatar"
+                        src={item.cover || "/src/assets/articles_platform/no_picture_available.svg"}
+                        className={styles.articleCover}
+                      />
+                    </div>
+                    <div
+                      className={styles.articleInfo}
+                      onClick={() => handleClickArticlesListItem(item.id)}
                     >
                       <Typography.Title level={4}>
                         {item.title}

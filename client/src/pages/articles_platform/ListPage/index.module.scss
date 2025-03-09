@@ -28,13 +28,22 @@
 .card {
   height: 175px;
 
-  .articleCover {
-    display: block;
-    width: 7.5rem; // 设置宽度为 7.5rem
-    margin-left: 10px;
-    transform: scale(0.8); // 缩小到 0.8 倍
-    transform-origin: center; // 设置缩放的中心点
-    filter: contrast(95%) brightness(97%) saturate(150%); // 调整色彩
+  .coverContainer {
+    width: 135px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .articleCover {
+      display: block;
+      width: 7.5rem; // 设置宽度为 7.5rem
+      height: 7.5rem;
+      margin-left: 5px;
+      transform: scale(0.9); // 缩小到 0.8 倍
+      transform-origin: center; // 设置缩放的中心点
+      filter: contrast(95%) brightness(97%) saturate(150%); // 调整色彩
+    }
+
   }
 
   >div {

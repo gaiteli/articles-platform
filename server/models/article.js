@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    cover: {
+      type: DataTypes.STRING(255), // 定义 cover 字段
+      allowNull: true, // 允许为空
+    },
     content: {
       type: DataTypes.TEXT,
       allowNull: false,

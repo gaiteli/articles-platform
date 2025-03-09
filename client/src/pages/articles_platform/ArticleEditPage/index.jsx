@@ -44,7 +44,9 @@ const ArticlesPlatformArticleEditPage = () => {
       const loadArticle = async () => {
         setLoading(true);
         try {
+          // 获取文章内容、标题、封面图url
           const res = await getArticleByIdAPI(articleId)
+          setCoverImageUrl(res.data.cover)
           setTitle(res.data.title)
           if (quillRef.current) {
             quillRef.current?.setContents(res.data.deltaContent)
@@ -77,13 +79,21 @@ const ArticlesPlatformArticleEditPage = () => {
 
       // 检查标题是否为空
       if (!title.trim()) {
-        alert('请输入文章标题')
+        message.error('请输入文章标题')
         return
+      }
+
+      // 提示用户确定不上传封面图
+      if (!coverImageUrl) {
+        // message.warning('确定不上传封面图？')  // 写一个组件让message有确定和取消按钮功能
+        if (!window.confirm('确定不上传封面图？')) {
+          return
+        }
       }
 
       // 检查纯文本是否只包含空白字符
       if (!plainText) {
-        alert('请输入文章内容')
+        message.error('请输入文章内容')
         return
       }
 
@@ -92,10 +102,12 @@ const ArticlesPlatformArticleEditPage = () => {
 
       const reqData = {
         title,
+        cover: coverImageUrl || null,
         content: htmlContent,
         deltaContent: plainText ? deltaContent : null,
         channel_id: 1
       }
+      console.log(reqData);
 
       if (isEditMode) {
         await updateArticleAPI({ id: articleId, ...reqData });
@@ -159,9 +171,10 @@ const ArticlesPlatformArticleEditPage = () => {
     }
     if (info.file.status === 'done') {
       message.success({ content: '上传成功', key: 'upload' });
-      // 假设后端返回的图片 URL 存储在 info.file.response.imageUrl 中
+      // 图片URL存储在info.file.response.url中，即info.file.response == res.data(上传回调的实参)
       setUploadLoading(false);
-      setImageUrl(info.file.response.imageUrl);
+      console.log(info.file);
+      setCoverImageUrl(info.file.response.url);
     } else if (info.file.status === 'error') {
       message.error({ content: '上传失败', key: 'upload' });
     }
@@ -174,7 +187,7 @@ const ArticlesPlatformArticleEditPage = () => {
     formData.append('image', file);
 
     try {
-      // 假设上传成功后后端返回的图片 URL 存储在 res.data.url 中
+      // 后端返回的图片URL存储在res.data.url中
       const res = await uploadAttachmentAPI(formData);
       console.log(res);
       onSuccess(res.data, file);
@@ -236,7 +249,6 @@ const ArticlesPlatformArticleEditPage = () => {
             listType="picture-card"
             className={styles.coverUpload}
             showUploadList={false}
-            // action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
             beforeUpload={beforeUpload}
             onChange={handleUploadOnchange}
             customRequest={handleUpload}

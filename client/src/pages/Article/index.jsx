@@ -36,8 +36,7 @@ const Article = () => {
       key: 'cover',
       width: 100,
       render: cover => {
-        // return <img src={cover.images[0] || img404} width={80} height={60} alt="" />
-        return <img src={img404} width={80} height={60} alt="" />
+        return <img src={cover || img404} width={80} height={60} alt="" />
       }
     },
     {

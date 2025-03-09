@@ -11,12 +11,13 @@ router.post('/write', async function (req, res, next) {
         console.log('进入文章平台-创建文章-router.post');
         console.log('user id: '+req.user.id);
 
-        const { title, content, deltaContent, channelId } = req.body;
+        const { title, cover, content, deltaContent, channelId } = req.body;
 
         // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
         const body = {
             userId: req.user.id,
             title: title,
+            cover: cover,
             content: content,
             deltaContent: deltaContent,
             channelId: channelId ? channelId : 1,
@@ -52,7 +53,8 @@ router.delete('/:id', async function (req, res, next) {
 /* 更新文章 */
 router.put('/p/:id/edit', async function (req, res, next) {
     try {
-        const { title, content, deltaContent, channelId } = req.body;
+        const { title, cover, content, deltaContent, channelId } = req.body;
+        console.log(cover)
 
         // 查询当前文章
         const article = await getArticle(req);
@@ -60,6 +62,7 @@ router.put('/p/:id/edit', async function (req, res, next) {
         // 更新文章内容
         const body = {
             title,
+            cover,
             content,
             deltaContent,
             channelId: channelId ? channelId : 1,
