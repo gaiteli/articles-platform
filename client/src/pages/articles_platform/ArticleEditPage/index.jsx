@@ -26,6 +26,7 @@ const ArticlesPlatformArticleEditPage = () => {
   const [error, setError] = useState(null);
   const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
   const [coverImageUrl, setCoverImageUrl] = useState(null)
+  const [fetchCoverError, setFetchCoverError] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false)
 
   // debug
@@ -46,6 +47,7 @@ const ArticlesPlatformArticleEditPage = () => {
         try {
           // 获取文章内容、标题、封面图url
           const res = await getArticleByIdAPI(articleId)
+          console.log(res.data.cover);
           setCoverImageUrl(res.data.cover)
           setTitle(res.data.title)
           if (quillRef.current) {
@@ -61,6 +63,11 @@ const ArticlesPlatformArticleEditPage = () => {
       loadArticle();
     }
   }, [articleId]);
+
+  // 修改antd Upload组件内部提示文字
+  useEffect(() => {
+    document.querySelector('.ant-upload button div').innerHTML = '上传封面'
+  }, [])
 
 
   // 提交文章
@@ -241,30 +248,34 @@ const ArticlesPlatformArticleEditPage = () => {
             >
               {loading ? '提交中...' : isEditMode ? '提交更改' : '发布文章'}
             </button>
-            <span>字数：{quillRef.current?.getText().replace(/\n/g, '').length || 0}</span>
+            <span style={{ color: 'grey'}}>
+              字数：{quillRef.current?.getText().replace(/\n/g, '').length || 0}
+            </span>
           </div>
-          <span>上传封面：</span>
-          <Upload
-            name="cover"
-            listType="picture-card"
-            className={styles.coverUpload}
-            showUploadList={false}
-            beforeUpload={beforeUpload}
-            onChange={handleUploadOnchange}
-            customRequest={handleUpload}
-          >
-            {coverImageUrl ? (
-              <img
-                src={coverImageUrl}
-                alt="cover"
-                style={{
-                  width: '100%',
-                }}
-              />
-            ) : (
-              uploadButton
-            )}
-          </Upload>
+          <aside className={styles.fixedArea}>
+            <Upload
+              name="cover"
+              listType="picture-card"
+              className={styles.coverUpload}
+              showUploadList={false}
+              beforeUpload={beforeUpload}
+              onChange={handleUploadOnchange}
+              customRequest={handleUpload}
+            >
+              {coverImageUrl && !fetchCoverError ? (
+                <img
+                  src={coverImageUrl}
+                  alt="cover"
+                  style={{ width: '100%' }}
+                  onError={() => setFetchCoverError(true)}
+                />
+              ) : (
+                uploadButton
+              )}
+            </Upload>
+          </aside>
+
+          {/* debug area */}
           {isShowDebug && (
             <>
               <div className={styles.debugArea}>

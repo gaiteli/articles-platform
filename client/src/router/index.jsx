@@ -1,6 +1,7 @@
 import React from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
+import ErrorPage from "../pages/ErrorPage/index.jsx";
 import TestPage from "../pages/TestPage/index.jsx";
 import Login from "../pages/Login/Login/index.jsx";
 import Register from "../pages/Login/Register/index.jsx";
@@ -85,6 +86,10 @@ const router = createBrowserRouter([
   {
     path: "/test-page",
     element: <TestPage />,
+  },
+  {
+    path: "*",
+    element: <ErrorPage />,
   },
   // {
   //   path: "official-home",

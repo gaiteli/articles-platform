@@ -78,16 +78,14 @@ export function GeekLayout() {
   const { token, user } = useGlobals()
   const { tokenDispatch, userDispatch } = useGlobalsDispatch()
 
+  const [currentMenuKey, setCurrentMenuKey] = useState('/article')
+
   const navigate = useNavigate()
   const onMenuClick = (route) => {
     const path = route.key
+    setCurrentMenuKey(path)
     navigate('.'+path)  // 相对路径
   }
-
-  // 反向高亮
-  // 1. 获取当前路由路径
-  const location = useLocation()
-  const selectedkey = location.pathname === '/home' ? '/' : location.pathname
 
   // 触发个人用户信息action
   useEffect(() => {
@@ -139,7 +137,7 @@ export function GeekLayout() {
             mode="inline"
             theme="dark"
             defaultSelectedKeys={["/article"]}
-            selectedKeys={selectedkey}
+            selectedKeys={[currentMenuKey]}
             onClick={onMenuClick}
             items={items}
             style={{ height: '100%', borderRight: 0 }}></Menu>

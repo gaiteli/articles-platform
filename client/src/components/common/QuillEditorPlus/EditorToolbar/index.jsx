@@ -81,6 +81,17 @@ const EditorToolbar = () => {
         <button className="ql-table-delete-row" value="TDR"></button>
         <button className="ql-table-delete-column" value="TDC"></button>
       </span>
+      {/* 编程语言 */}
+      <span className="ql-formats">
+        <select className="ql-language" defaultValue="Javascript">
+          <option value="C">C</option>
+          <option value="C++">C++</option>
+          <option value="C#">C#</option>
+          <option value="Java">Java</option>
+          <option value="Javascript">Javascript</option>
+          <option value="Python">Python</option>
+        </select>
+      </span>
     </div>
   );
 };

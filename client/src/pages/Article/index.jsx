@@ -23,6 +23,8 @@ const Article = () => {
   const navigate = useNavigate()
   const { channelList } = useChannels()
 
+  const [fetchCoverError, setFetchCoverError] = useState(false)
+
   // 准备列数据
   // 定义状态枚举
   const status = {
@@ -36,7 +38,25 @@ const Article = () => {
       key: 'cover',
       width: 100,
       render: cover => {
-        return <img src={cover || img404} width={80} height={60} alt="" />
+        // 如果获取不到封面图片，显示默认图片
+        if (cover && !fetchCoverError) {
+          return (
+            <img
+              src={cover}
+              alt="cover"
+              style={{ width: '100%' }}
+              onError={() => setFetchCoverError(true)}
+            />
+          );
+        } else {
+          return (
+            <img
+              src={img404}
+              alt="cover"
+              style={{ width: '100%' }}
+            />
+          );
+        }
       }
     },
     {

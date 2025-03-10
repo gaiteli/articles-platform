@@ -1,4 +1,5 @@
 import React, { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
+import hljs from 'highlight.js';
 import Quill from 'quill';
 import Markdown from 'quilljs-markdown';
 
@@ -11,6 +12,7 @@ import Header from "quill/formats/header";
 import { uploadAttachmentAPI } from '/src/apis/articles_platform/attachment';
 
 import "quill/dist/quill.snow.css";
+import 'highlight.js/styles/github.min.css';
 import styles from './index.module.scss'
 
 Quill.register('modules/markdown', Markdown);   // 注册Markdown作为Quill的扩展
@@ -105,6 +107,18 @@ const EditorContent = forwardRef(({
             },
           },
         },
+        // syntax: {  // 1.x已过时语法
+        //   highlight: text => hljs.highlightAuto(text).value
+        // },
+        syntax: {
+          hljs: {
+            highlight: (language, text) => {
+              let res = hljs.highlightAuto(text);
+              console.log('language:', language, 'res:', res);
+              return res
+            }
+          }
+        },
         markdown: {},   // 启用markdown模块
         table: true,    // 启用表格功能
       },
@@ -113,6 +127,42 @@ const EditorContent = forwardRef(({
     });
 
     ref.current = quill;    // 将Quill实例传递给父组件
+
+    // quill.on('text-change', () => {
+    //   document.querySelectorAll('pre code').forEach((block) => {
+    //     hljs.highlightBlock(block);
+    //   });
+    // });
+    // // document.querySelector('.ql-ui').addEventListener('change', (event) => {
+    // //   const language = event.target.value;
+    // //   hljs.configure({ languages: [language] }); // 更新配置
+    // //   document.querySelectorAll('pre code').forEach((block) => {
+    // //     hljs.highlightBlock(block); // 重新渲染代码块
+    // //   });
+    // // });
+
+    // quill.on('text-change', () => {
+    //   document.querySelectorAll('pre').forEach((pre) => {
+    //     if (!pre.querySelector('code')) {
+    //       pre.innerHTML = `<code>${pre.innerHTML}</code>`;
+    //     }
+    //     hljs.highlightBlock(pre.querySelector('code'));
+    //   });
+    // });
+
+    // 输入光标距离视口下缘一段距离即开始滚动
+    // 盒子长高多少，窗口就往下滑动多少
+    // const scrollThreshold = 50; // 距离视口下边缘的阈值（像素）
+    // const handleScroll = () => {
+    //   const { scrollTop, clientHeight, scrollHeight } = editorContainer;
+    //   const cursorPosition = quill.getSelection()?.index || 0;
+    //   const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
+
+    //   if (cursorPosition > distanceToBottom - scrollThreshold) {
+    //     editorContainer.scrollTop += 20; // 滚动 20 像素
+    //   }
+    // };
+    // editorContainer.addEventListener('scroll', handleScroll);
 
 
     if (defaultValueRef.current) {

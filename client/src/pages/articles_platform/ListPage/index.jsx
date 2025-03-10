@@ -24,14 +24,8 @@ import { getArticleListAPI } from '/src/apis/article'
 const ArticlesPlatformListPage = () => {
   const navigate = useNavigate()
 
-  // 控制副栏是否显示
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-
-  const toggleLayout = () => {
-    setIsSidebarVisible(!isSidebarVisible); // 切换时关闭副栏
-  };
-
-
+  const [fetchCoverError, setFetchCoverError] = useState(false);
   // 获取文章列表
   const [loading, setLoading] = useState(false);
   const [reqData, setReqData] = useState({
@@ -41,6 +35,7 @@ const ArticlesPlatformListPage = () => {
   const [count, setCount] = useState(0)
   const [list, setList] = useState([])
 
+  // 文章加载
   const loadMoreData = async () => {
     if (loading) {
       return;
@@ -57,6 +52,13 @@ const ArticlesPlatformListPage = () => {
     }));
     setLoading(false)
   }
+
+
+  // 控制副栏是否显示
+  const toggleLayout = () => {
+    setIsSidebarVisible(!isSidebarVisible); // 切换时关闭副栏
+  };
+
 
   // 点击文章item跳转到文章详情页
   const handleClickArticlesListItem = (id) => {
@@ -112,11 +114,20 @@ const ArticlesPlatformListPage = () => {
                     className={styles.card}
                   >
                     <div className={styles.coverContainer}>
-                      <img
-                        alt="avatar"
-                        src={item.cover || "/src/assets/articles_platform/no_picture_available.svg"}
-                        className={styles.articleCover}
-                      />
+                      {item.cover && !fetchCoverError ? (
+                        <img
+                          src={item.cover}
+                          alt="cover"
+                          className={styles.articleCover}
+                          onError={() => setFetchCoverError(true)}
+                        />
+                      ) : (
+                        <img
+                          src="/src/assets/articles_platform/no_picture_available.svg"
+                          alt="cover"
+                          className={styles.articleCover}
+                        />
+                      )}
                     </div>
                     <div
                       className={styles.articleInfo}

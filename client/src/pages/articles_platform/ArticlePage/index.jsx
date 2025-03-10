@@ -3,10 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '/src/components/articles_platform/Header';
 import { getArticleByIdAPI, deleteArticleAPI } from '/src/apis/articles_platform/article';
 
-import { Popconfirm } from 'antd';
+import { message, Popconfirm } from 'antd';
 import styles from './index.module.scss';
 import Quill from 'quill';
 import moment from 'moment';
+import ErrorPage from '../../ErrorPage';
 
 const ArticlesPlatformArticlePage = () => {
 
@@ -14,6 +15,7 @@ const ArticlesPlatformArticlePage = () => {
   const navigate = useNavigate();
   const editorRef = useRef(null)
   const quillRef = useRef(null)
+  const [fetchArticleError, setFetchArticleError] = useState(null);
   const [article, setArticle] = useState({
     title: '',
     deltaContent: null,
@@ -24,6 +26,7 @@ const ArticlesPlatformArticlePage = () => {
   const [headings, setHeadings] = useState([]); // 存储标题信息
   const [articleLength, setArticleLength] = useState(0);  // 文章长度
 
+
   // 获取文章详情
   useEffect(() => {
     const loadArticle = async () => {
@@ -31,12 +34,18 @@ const ArticlesPlatformArticlePage = () => {
         const res = await getArticleByIdAPI(id)
         setArticle(res.data)
       } catch (error) {
-        console.error('获取文章失败：', error)
+        console.log(error.response);
+        setFetchArticleError({
+          code: error.response.status,
+          type: error.response.data.message,
+          message: error.response.data.errors || '文章不存在'
+        })
       }
     };
     loadArticle()
   }, [id])
 
+  
   // 初始化 Quill 编辑器并设置内容、标题
   useEffect(() => {
     if (!article.deltaContent) return;
@@ -83,6 +92,20 @@ const ArticlesPlatformArticlePage = () => {
   };
 
 
+  // 文章加载出错（404），返回错误页面
+  if (fetchArticleError) {
+    return (
+      <div className={styles.pageWrapper}>
+        <Header position='sticky' />
+        <ErrorPage
+          errorCode={fetchArticleError.code}
+          type={fetchArticleError.type}
+          message={fetchArticleError.message}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={styles.pageWrapper}>
       <Header position='sticky' />
@@ -114,10 +137,10 @@ const ArticlesPlatformArticlePage = () => {
             <button onClick={() => navigate('./edit')} className={styles.bottomButton}>编辑</button>
             <Popconfirm
               description="是否删除这篇文章？"
-              onConfirm={() => ( async () => {
+              onConfirm={() => (async () => {
                 await deleteArticleAPI(id)
                 navigate('/articles/list')
-              } )() }
+              })()}
               okText="确定"
               cancelText="取消"
             >

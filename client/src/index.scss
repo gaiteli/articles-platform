@@ -28,7 +28,7 @@ body {
 
   /* 主色 */
   --first-color: hsl(230, 60%, 56%);
-  --primary-color: hsl(230, 60%, 56%);
+  --primary-color: hsl(230, 60%, 66%);
   --secondary-color: hsl(230, 70%, 16%);
   --accent-color: hsl(230, 16%, 45%);
 
@@ -38,13 +38,15 @@ body {
   --muted-text-color: hsl(230, 16%, 65%);
 
   /* 背景色 */
-  --background-color: hsl(230, 60%, 95%);
+  --background-color: hsl(230, 70%, 95%);
+  --background-color-light: hsl(230, 60%, 96%);
   --background-color-deep: hsl(230, 50%, 20%);
   --container-color: hsl(230, 100%, 97%);
   --card-background-color: hsl(230, 60%, 98%);
 
   /* 边框颜色 */
   --border-color: hsl(230, 16%, 85%);
+  --border-color-two: hsl(230, 60%, 70%);
 
   /* 按钮颜色 */
   --button-background-color: hsl(230, 60%, 56%);
@@ -160,6 +162,10 @@ img {
   &[data-list="unchecked"]::before {
     content: none;
   }
+}
+
+.ql-ui {    // 应对code-block语言选择框文字颜色问题
+  color: black;
 }
 
 
