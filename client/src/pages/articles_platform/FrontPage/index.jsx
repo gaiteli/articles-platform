@@ -4,7 +4,7 @@ import { Header } from '/src/components/articles_platform/Header'
 import { List, Card, Flex, Typography } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons'
 import styles from './index.module.scss'
-import debounce from '../../../utils/debounce';
+import {debounce} from '../../../utils/index.js';
 
 const ArticlesPlatformFrontPage = () => {
   const eleRef = useRef(null); // 使用 ref 来访问 DOM 元素

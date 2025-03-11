@@ -7,11 +7,20 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER.UNSIGNED
+        type: Sequelize.INTEGER.UNSIGNED,
       },
-      channel: {
+      name: {
         allowNull: false,
         type: Sequelize.STRING
+      },
+      code: {
+        allowNull: false,
+        type: Sequelize.INTEGER
+      },
+      rank: {
+        allowNull: false,
+        defaultValue: 1,
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,

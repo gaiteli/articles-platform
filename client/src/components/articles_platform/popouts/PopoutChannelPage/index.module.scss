@@ -1,0 +1,132 @@
+.popout {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100; /* 确保浮于上层 */
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.content {
+  width: 45%;
+  height: 70%;
+  min-height: 400px;
+  position: relative;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto; // 定义网格行
+  gap: 10px; // 网格间距
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  color: black;
+}
+
+.tip {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+
+/* 分类列表 */
+.infiniteScrollContainer {
+  overflow-y: scroll;
+  padding: 0;
+  margin: 0;
+}
+
+.categoryListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  &:last-child {
+    border-bottom: none;
+  }
+  &.selected {
+    background-color: #f0f0f0;
+  }
+}
+
+.categoryInfo {
+  display: flex;
+  width: 40%;
+  justify-content: space-between;
+}
+
+.categoryName {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.categoryCode {
+  color: #666;
+  font-size: 13px;
+}
+
+.selectButton {
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover {
+    background-color: #40a9ff;
+  }
+}
+
+
+.submitButton {
+  width: 100%;
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+  &:hover {
+    background-color: #40a9ff;
+  }
+}

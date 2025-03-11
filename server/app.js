@@ -17,6 +17,7 @@ const adminArticlesRouter = require('./routes/admin/articles')
 const adminUsersRouter = require('./routes/admin/users')
 const adminSigninRouter = require('./routes/admin/auth')
 const adminAttachmentsRouter = require('./routes/admin/attachments')
+const adminChannelsRouter = require('./routes/admin/channels')
 
 // 前台路由
 const authRouter = require('./routes/auth')
@@ -49,11 +50,12 @@ app.use('/', indexRouter)
 app.use('/admin/signin', adminSigninRouter) // 注意登陆不能加login中间件
 app.use('/admin/articles', login, adminLogin, adminArticlesRouter) // 访问该路径对应的路由文件就是admin..
 app.use('/admin/users', login, adminLogin, adminUsersRouter)
-app.use('/admin/attachments', login, adminAttachmentsRouter)
+app.use('/admin/attachments', login, adminLogin, adminAttachmentsRouter)
+app.use('/admin/channels', login, adminLogin, adminChannelsRouter)
 
 app.use('/', authRouter)    // login / signup
 app.use('/users', login, usersRouter)
-app.use('/channels', channelsRouter)
+app.use('/channels', login, channelsRouter)
 app.use('/articles', login, articlesRouter)
 
 app.use('/articles-platform', login, articlePlatformArticlesRouter)

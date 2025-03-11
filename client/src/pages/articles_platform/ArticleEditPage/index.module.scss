@@ -35,9 +35,11 @@ body {
 
 // 编辑器容器
 .editorContainer {
+  position: relative;
   max-width: 800px;
   margin: 0 auto;
   background-color: white;
+
 }
 
 // 优化加载状态的样式
@@ -111,6 +113,11 @@ aside.fixedArea {
   border-radius: 10px;
   padding: 10px; 
   z-index: 99; 
+
+  .chooseChannelButton {
+    border: 1px solid black;
+    margin: 10px 0px;
+  }
 }
 
 // debug

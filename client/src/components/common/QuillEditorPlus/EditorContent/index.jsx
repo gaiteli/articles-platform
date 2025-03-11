@@ -3,12 +3,6 @@ import hljs from 'highlight.js';
 import Quill from 'quill';
 import Markdown from 'quilljs-markdown';
 
-import Toolbar from "quill/modules/toolbar";
-import Snow from "quill/themes/snow";
-import Bold from "quill/formats/bold";
-import Italic from "quill/formats/italic";
-import Header from "quill/formats/header";
-
 import { uploadAttachmentAPI } from '/src/apis/articles_platform/attachment';
 
 import "quill/dist/quill.snow.css";

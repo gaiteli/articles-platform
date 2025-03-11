@@ -1,20 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Spin, message, Upload } from 'antd';
+import { Spin, message, Upload, Select } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import Quill from 'quill';
 
 import { Header } from '/src/components/articles_platform/Header'
 import EditorContent from '../../../components/common/QuillEditorPlus/EditorContent';
 import EditorToolbar from '../../../components/common/QuillEditorPlus/EditorToolbar';
+import PopoutChannelPage from '/src/components/articles_platform/popouts/PopoutChannelPage';
+
 import { getArticleByIdAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
 import { uploadAttachmentAPI } from '/src/apis/articles_platform/attachment';
-
 import { createArticleAPI } from '/src/apis/articles_platform/article'
 import styles from './index.module.scss'
-import Quill from 'quill';
+
 import { addHeaderIdToHTML } from '/src/utils/quill';
 
+
 const Delta = Quill.import('delta');
+const { Option } = Select;
 
 const ArticlesPlatformArticleEditPage = () => {
   const { id } = useParams();  // 从路由中获取articleId，若undefined则为首次编辑
@@ -28,6 +32,8 @@ const ArticlesPlatformArticleEditPage = () => {
   const [coverImageUrl, setCoverImageUrl] = useState(null)
   const [fetchCoverError, setFetchCoverError] = useState(false);
   const [uploadLoading, setUploadLoading] = useState(false)
+  const [isShowChannelPage, setIsShowChannelPage] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState(null)
 
   // debug
   const [isShowDebug, setIsShowDebug] = useState(false)
@@ -38,6 +44,11 @@ const ArticlesPlatformArticleEditPage = () => {
   // Use a ref to access the quill instance directly
   const quillRef = useRef(null)
 
+  // popout传回选中的分类
+  const handleSelectCategory = (category) => {
+    setSelectedCategory(category);
+    console.log('选中的分类:', category);
+  };
 
   // 编辑模式下加载文章数据
   useEffect(() => {
@@ -112,7 +123,7 @@ const ArticlesPlatformArticleEditPage = () => {
         cover: coverImageUrl || null,
         content: htmlContent,
         deltaContent: plainText ? deltaContent : null,
-        channel_id: 1
+        channelId: selectedCategory?.id || 1
       }
       console.log(reqData);
 
@@ -248,7 +259,7 @@ const ArticlesPlatformArticleEditPage = () => {
             >
               {loading ? '提交中...' : isEditMode ? '提交更改' : '发布文章'}
             </button>
-            <span style={{ color: 'grey'}}>
+            <span style={{ color: 'grey' }}>
               字数：{quillRef.current?.getText().replace(/\n/g, '').length || 0}
             </span>
           </div>
@@ -273,7 +284,19 @@ const ArticlesPlatformArticleEditPage = () => {
                 uploadButton
               )}
             </Upload>
+            <button
+              className={styles.chooseChannelButton}
+              onClick={() => setIsShowChannelPage(true)}
+            >选择文章分类</button>
           </aside>
+
+          {/* 分类选择弹出页 */}
+          {isShowChannelPage && (
+            <PopoutChannelPage
+              onClose={() => setIsShowChannelPage(false)}
+              onSubmit={handleSelectCategory}
+            />
+          )}
 
           {/* debug area */}
           {isShowDebug && (
