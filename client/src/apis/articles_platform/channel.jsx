@@ -8,3 +8,45 @@ export function getChannelsAPI(params) {
     params,
   });
 }
+
+
+// admin接口
+// GET all
+export function getChannelsAdminAPI(params) {
+  return request({
+    url: '/admin/channels',
+    method: 'GET',
+    params,
+  });
+}
+
+// GET by ID
+
+
+// POST
+export function addChannelAdminAPI(data) {
+  return request({
+    url: '/admin/channels',
+    method: 'POST',
+    data,
+  });
+}
+
+
+// PUT
+export function updateChannelAdminAPI (id,data) {
+  return request({
+    url: `/admin/channels/${id}`,
+    method: 'PUT',
+    data
+  })
+}
+
+
+// DELETE
+export function deleteChannelAdminAPI(id) {
+  return request({
+    url: `/admin/channels/${id}`,
+    method: 'DELETE',
+  });
+}

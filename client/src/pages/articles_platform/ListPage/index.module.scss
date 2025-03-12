@@ -8,13 +8,20 @@
 }
 
 .mainColumnContainer {
-  width: 800px;
+  width: 840px;
   padding-bottom: 20px;
   margin: 0 auto;
   background-color: var(--background-color);
   overflow: hidden;
-  z-index: 1
+  z-index: 1;
+
+  :global(.ant-card-body) {
+    padding: 0.75rem !important;
+  }
+ 
 }
+
+
 
 #toggleButton {
   position: fixed;
@@ -26,18 +33,18 @@
 }
 
 .card {
-  height: 175px;
+  height: 11.5rem;
 
   .coverContainer {
-    width: 135px;
+    width: 155px;
     display: flex;
     justify-content: center;
     align-items: center;
 
     .articleCover {
       display: block;
-      width: 7.5rem; // 设置宽度为 7.5rem
-      height: 7.5rem;
+      width: 10rem;
+      height: 10rem;
       margin-left: 5px;
       transform: scale(0.9); // 缩小到 0.8 倍
       transform-origin: center; // 设置缩放的中心点
@@ -60,7 +67,7 @@
 
   .articleInfo {
     width: calc(100% - 180px);
-    height: 135px;
+    height: 10rem;
     padding: 5px;
     margin-left: 50px;
     cursor: pointer;

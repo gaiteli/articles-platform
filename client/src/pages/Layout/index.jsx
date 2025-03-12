@@ -42,6 +42,11 @@ const items = [
     icon: <LinkOutlined />
   },
   {
+    label: '分类管理',
+    key: '/channel',
+    icon: <LinkOutlined />
+  },
+  {
     label: '用户管理',
     key: '/user',
     icon: <UserOutlined />,

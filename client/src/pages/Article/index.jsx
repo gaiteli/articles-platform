@@ -37,26 +37,16 @@ const Article = () => {
       dataIndex: 'cover',
       key: 'cover',
       width: 100,
-      render: cover => {
-        // 如果获取不到封面图片，显示默认图片
-        if (cover && !fetchCoverError) {
-          return (
-            <img
-              src={cover}
-              alt="cover"
-              style={{ width: '100%' }}
-              onError={() => setFetchCoverError(true)}
-            />
-          );
-        } else {
-          return (
-            <img
-              src={img404}
-              alt="cover"
-              style={{ width: '100%' }}
-            />
-          );
-        }
+      render: cover => {    
+        return (
+          <img
+            src={cover || img404}   // 如果获取不到封面图片，显示默认图片
+            alt="cover"
+            style={{ width: '100%' }}
+            onError={(e) =>
+              e.target.src = img404}
+          />
+        )
       }
     },
     {

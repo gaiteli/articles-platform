@@ -65,13 +65,13 @@ const Attachments = () => {
   // 表格列定义
   const columns = [
     {
-      title: '文件 ID',
+      title: '附件 ID',
       dataIndex: 'id',
       key: 'id',
       width: 100,
     },
     {
-      title: '文件',
+      title: '附件',
       dataIndex: 'fullpath',
       key: 'fullpath',
       width: 150,
@@ -101,7 +101,7 @@ const Attachments = () => {
       },
     },
     {
-      title: '文件名',
+      title: '附件名',
       dataIndex: 'filename',
       key: 'filename',
     },

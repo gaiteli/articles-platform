@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
-import { getChannelAPI } from "../../apis/article"
+import { getChannelsAdminAPI } from "../../apis/articles_platform/channel"
 
 function useChannels() {
   const [channelList, setChannelList] = useState([])
 
   useEffect(() => {
     (async () => {
-      const res = await getChannelAPI()
-      const channelList = res.data
+      const res = await getChannelsAdminAPI()
+      const channelList = res.data.channels
       setChannelList(channelList)
     })()
   }, [])

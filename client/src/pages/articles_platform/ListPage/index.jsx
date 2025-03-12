@@ -25,7 +25,6 @@ const ArticlesPlatformListPage = () => {
   const navigate = useNavigate()
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  const [fetchCoverError, setFetchCoverError] = useState(false);
   // 获取文章列表
   const [loading, setLoading] = useState(false);
   const [reqData, setReqData] = useState({
@@ -114,20 +113,13 @@ const ArticlesPlatformListPage = () => {
                     className={styles.card}
                   >
                     <div className={styles.coverContainer}>
-                      {item.cover && !fetchCoverError ? (
                         <img
-                          src={item.cover}
+                          src={item.cover || "/src/assets/articles_platform/no_picture_available.svg"}
                           alt="cover"
                           className={styles.articleCover}
-                          onError={() => setFetchCoverError(true)}
+                          onError={(e) => 
+                            e.target.src = "/src/assets/articles_platform/no_picture_available.svg"}
                         />
-                      ) : (
-                        <img
-                          src="/src/assets/articles_platform/no_picture_available.svg"
-                          alt="cover"
-                          className={styles.articleCover}
-                        />
-                      )}
                     </div>
                     <div
                       className={styles.articleInfo}

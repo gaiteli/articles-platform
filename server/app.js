@@ -1,5 +1,6 @@
 const express = require("express")
 const app = express()
+const cors = require("cors")
 const PORT = 9000
 
 // 引入路径别名
@@ -29,22 +30,18 @@ const usersRouter = require('./routes/users')
 const articlePlatformArticlesRouter = require('./routes/articlesPlatform/articles')
 const uploadsRouter = require('./routes/articlesPlatform/uploads')
 
-const allowCrossDomain = (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*'); // 或者指定具体的域名
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+// cors跨域
+const corsOptions = {
+  origin: [
+    'https://xxx.cn',
+    'http://localhost:5173'
+  ]
+}
+app.use(cors(corsOptions));
 
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(204); // 无内容响应 OPTIONS 请求
-  } else {
-    next();
-  }
-};
 
-app.use(express.json({ limit: '100mb' }));
-app.use(express.urlencoded({ limit: '100mb', extended: true }));
-// app.use(express.static(path.))
-app.use(allowCrossDomain)
+app.use(express.json({limit: '100mb'}));
+app.use(express.urlencoded({limit: '100mb', extended: true}));
 app.use('/', indexRouter)
 
 app.use('/admin/signin', adminSigninRouter) // 注意登陆不能加login中间件
@@ -64,26 +61,3 @@ app.use('/uploads', login, uploadsRouter)
 app.listen(PORT, () => {
   console.log(`server is running at port 9000`);
 })
-
-// const express = require('express');
-// const path = require('path');
-// const cookieParser = require('cookie-parser');
-// const logger = require('morgan');
-
-// const indexRouter = require('./routes/index');
-// const usersRouter = require('./routes/users');
-// const adminArticlesRouter = require('./routes/admin/articles');
-
-// const app = express();
-
-// app.use(logger('dev'));
-// app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-// app.use(cookieParser());
-// app.use(express.static(path.join(__dirname, 'public')));
-
-// app.use('/', indexRouter);
-// app.use('/users', usersRouter);
-// app.use('/admin/articles', adminArticlesRouter);
-
-// module.exports = app;

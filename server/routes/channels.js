@@ -20,7 +20,7 @@ router.get('/', async function(req, res, next) {
       offset: offset
     }
 
-    console.log('!!!!!!!!!!page:'+currentPage+'name:'+query.name)
+
     // 模糊搜索
     if (query.name) {
       condition.where = {
