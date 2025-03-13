@@ -13,6 +13,7 @@ export function getChannelsAPI(params) {
 // admin接口
 // GET all
 export function getChannelsAdminAPI(params) {
+  console.log(params);
   return request({
     url: '/admin/channels',
     method: 'GET',
@@ -24,11 +25,10 @@ export function getChannelsAdminAPI(params) {
 
 
 // POST
-export function addChannelAdminAPI(data) {
+export function addChannelAdminAPI() {
   return request({
     url: '/admin/channels',
     method: 'POST',
-    data,
   });
 }
 

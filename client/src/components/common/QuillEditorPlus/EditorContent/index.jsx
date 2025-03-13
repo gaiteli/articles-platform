@@ -2,6 +2,7 @@ import React, { forwardRef, useEffect, useLayoutEffect, useRef } from 'react';
 import hljs from 'highlight.js';
 import Quill from 'quill';
 import Markdown from 'quilljs-markdown';
+import { message } from 'antd';
 
 import { uploadAttachmentAPI } from '/src/apis/articles_platform/attachment';
 
@@ -80,6 +81,12 @@ const EditorContent = forwardRef(({
                 const file = input.files[0];
                 if (file) {
                   try {
+                    // 检查
+                    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+                    if (!isJpgOrPng) throw new Error('图片格式不正确，请提交jpeg/png格式')
+                    const isLt2M = file.size / 1024 / 1024 < 2;
+                    if (!isLt2M) throw new Error('图片大小不能超过 2MB！')
+
                     // 上传图片到OSS，获取图片URL
                     const formData = new FormData();
                     formData.append('image', file);
@@ -93,8 +100,7 @@ const EditorContent = forwardRef(({
                     quill.insertEmbed(range.index, 'image', imageUrl, Quill.sources.USER);
                     quill.setSelection(range.index + 1, Quill.sources.SILENT);
                   } catch (error) {
-                    console.error('图片上传失败:', error);
-                    alert('图片上传失败，请重试');
+                    message.error('图片上传失败，请重试! 原因：'+error)
                   }
                 }
               };

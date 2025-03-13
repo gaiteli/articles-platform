@@ -1,0 +1,44 @@
+.title {
+  nav {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.filterFillinArea {
+  width: 40rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 4px;
+  background-color: var(--background-color-light);
+  padding: 0.25rem 0 0.25rem 0.5rem;
+
+  :global(.ant-btn-primary) {
+    background-color: var(--button-background-color);
+
+    &:hover {
+      background-color: var(--button-background-color-hover) !important;
+    }
+  }
+}
+
+.sorterFillinArea {
+  width: 14rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 4px;
+  background-color: var(--background-color-light);
+  padding: 0.25rem 0 0.25rem 1rem;
+  margin-left: 1rem;
+
+  :global(.ant-select-selector) {
+    background-color: var(--button-background-color) !important;
+    color: white;
+
+    &:hover {
+      background-color: var(--button-background-color-hover) !important;
+    }
+  }
+}

@@ -19,7 +19,7 @@ request.interceptors.request.use((config) => {
   // 1. 获取到token
   // 2. 按照后端的格式要求做token拼接
   const token = getToken()
-  console.log('axios send token');
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }

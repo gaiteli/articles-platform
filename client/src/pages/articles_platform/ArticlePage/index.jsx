@@ -18,6 +18,7 @@ const ArticlesPlatformArticlePage = () => {
   const [fetchArticleError, setFetchArticleError] = useState(null);
   const [article, setArticle] = useState({
     title: '',
+    channel: '',
     deltaContent: null,
     createdAt: '1970-01-01 00:00',
     readCount: 0,
@@ -45,7 +46,7 @@ const ArticlesPlatformArticlePage = () => {
     loadArticle()
   }, [id])
 
-  
+
   // 初始化 Quill 编辑器并设置内容、标题
   useEffect(() => {
     if (!article.deltaContent) return;
@@ -109,7 +110,7 @@ const ArticlesPlatformArticlePage = () => {
   return (
     <div className={styles.pageWrapper}>
       <Header position='sticky' />
-      <div className={styles.articleContainer}>
+      <div className={styles.articleContainer} data-channel={article.channelName}>
 
         {/* 文章标题 */}
         <div className={styles.titleContainer}>

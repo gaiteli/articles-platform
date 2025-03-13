@@ -9,7 +9,6 @@ const { success, failure } = require('@utils/responses')
 router.get('/', async function(req, res, next) {
   try {
     const query = req.query
-    console.log(query)
 
     const currentPage = Math.abs(Number(query.currentPage)) || 1
     const pageSize = Math.abs(Number(query.pageSize)) || 10
@@ -31,7 +30,6 @@ router.get('/', async function(req, res, next) {
 
     // 模糊搜索
     if (username != null) {
-      console.log(username);
       condition.where = {
         ...condition.where,   // 别漏了，不然前面的过滤条件就没了
         username: {

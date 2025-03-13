@@ -14,24 +14,46 @@ router.get('/', async function(req, res, next) {
     const currentPage = Math.abs(Number(query.currentPage)) || 1
     const pageSize = Math.abs(Number(query.pageSize)) || 10
     const offset = (currentPage - 1) * pageSize
+    // 排序、筛选
+    const filters = query?.filters || {}
+    const sorter = query?.sorter || {}
+
+
+    // 获取筛选条件
+    const where = {};
+    if (filters.name) where.name = { [Op.like]: `%${filters.name}%` };  // 模糊搜索
+    if (filters.code) where.code = filters.code;
+    if (filters.rank) where.rank = filters.rank;
+
+    // 获取排序条件
+    const order = [];
+    console.log('!!!')
+    console.dir(sorter)
+    if (Object.keys(sorter).length > 0) {
+      console.log('entered')
+      const [field, direction] = sorter.split('_');
+      order.push([field, direction.toUpperCase()]);
+    }
+    //
+    //
+    // // 模糊搜索 旧API
+    // if (query.name) {
+    //   condition.where = {
+    //     name: {
+    //       [Op.like]: `%${query.name}%`
+    //     }
+    //   }
+    // }
+
 
     const condition = {
-      order: [['id', 'DESC']],
+      // order: [['id', 'DESC']],
+      where,
+      order,
       limit: pageSize,
       offset: offset
     }
 
-
-    // 模糊搜索
-    if (query.name) {
-      condition.where = {
-        name: {
-          [Op.like]: `%${query.name}%`
-        }
-      }
-    }
-  
-    // const channels = await Channel.findAll(condition)
     const {count, rows} = await Channel.findAndCountAll(condition)
   
     success(res, 'query success' , {
@@ -43,6 +65,7 @@ router.get('/', async function(req, res, next) {
       }
     })
   } catch(error) {
+    console.log('获取分类报错：'+error)
     failure(res, error)
   }
   
@@ -65,9 +88,9 @@ router.post('/', async function (req, res, next) {
 
     // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
     const body = {
-      name: req.body.name,
-      code: req.body.code,
-      rank: req.body.rank,
+      name: 'default',
+      code: 1000,
+      rank: 1000,
     }
 
     const channel = await Channel.create(body)

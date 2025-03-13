@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Button, Popconfirm, message, Input } from 'antd';
+import { Link } from 'react-router-dom';
+import { Card, Table, Button, Popconfirm, message, Input, Breadcrumb, Form, Select } from 'antd';
 import { CloseOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 import styles from './index.module.scss';
@@ -21,11 +22,16 @@ const Channels = () => {
   });
   const [loading, setLoading] = useState(false);
   // 新增分类
-  const [isAdding, setIsAdding] = useState(false); 
-  const [newChannel, setNewChannel] = useState({ name: '', code: '', rank: '' });
+  const [isAdding, setIsAdding] = useState(false);
+  // const [newChannel, setNewChannel] = useState({ name: '', code: '', rank: '' });
   // 更改分类
   const [editingId, setEditingId] = useState(null); // 当前正在编辑的分类 ID
   const [editingChannel, setEditingChannel] = useState({ name: '', code: '', rank: '' })
+  // 新增分类按钮禁用
+  const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(false)
+  // 筛选 & 排序条件
+  const [filters, setFilters] = useState({});
+  const [sorter, setSorter] = useState({});
 
 
   /* GET */
@@ -36,6 +42,8 @@ const Channels = () => {
       const res = await getChannelsAdminAPI({
         currentPage: params.current || pagination.current,
         pageSize: params.pageSize || pagination.pageSize,
+        filters: params.filters || filters, // 传递筛选条件
+        sorter: params.sorter || sorter, // 传递排序条件
       });
       console.log(res);
       setChannels(res.data.channels);
@@ -59,43 +67,74 @@ const Channels = () => {
   }, []);
 
   // 分页变化
-  const handleTableChange = (pagination) => {
+  const handleTableChange = (pagination, filters, sorter) => {
     setPagination(pagination);
-    fetchChannels(pagination);
+    setFilters(filters);
+    setSorter(sorter);
+    fetchChannels({ ...pagination, filters, sorter });
+  };
+
+  // 筛选表单提交
+  const handleFilterSubmit = (values) => {
+    setFilters(values);
+    fetchChannels({ current: 1, filters: values, sorter });
+  };
+
+  // 排序表单提交
+  const handleSorterChange = (value) => {
+    setSorter(value);
+    fetchChannels({ current: 1, filters, sorter: value });
   };
 
 
   /* POST */
   // 新增分类
-  const handleAdd = () => {
-    setIsAdding(true); // 显示新增输入框
-  };
-
-  // 提交新增分类
-  const handleSubmit = async () => {
+  const handleAdd = async () => {
     try {
-      // 调用新增分类接口
-      const res = await addChannelAdminAPI(newChannel);
-      message.success('新增分类成功');
+      setIsAddButtonDisabled(true)
+      setIsAdding(true); // 显示新增输入框
+      const res = await addChannelAdminAPI();
       console.log(res);
-      setIsAdding(false); // 隐藏新增输入框
-      setNewChannel({ name: '', code: '', rank: '' }); // 清空输入框
-      fetchChannels()
+      const newChannel = res.data; // 后端返回的新增分类数据
+
+      // 将新增分类插入列表的第一行，并进入编辑模式
+      setChannels([newChannel, ...channels]);
+      setEditingId(newChannel.id); // 设置编辑状态
+      setEditingChannel({ name: newChannel.name, code: newChannel.code, rank: newChannel.rank }); // 设置编辑数据
+
+      message.success('预创建成功，请完善信息');
     } catch (error) {
-      message.error('新增分类失败:' + error);
+      message.error('新增分类失败: ' + error.response.data.errors[0]);
+      setIsAddButtonDisabled(false)
+      setIsAdding(false)
+      setEditingId(null)
     }
   };
 
-  // 更新表格数据，呈现输入行
-  const dataSource = isAdding
-    ? [{ id: '自动分配', isAdding: true, ...newChannel }, ...channels] // 首行新增输入框
-    : channels
-    ;
+  // 提交新增分类
+  const handleCreateSubmit = async () => {
+    try {
+      console.log('!!!!!!!!');
+      await updateChannelAdminAPI(editingId, editingChannel);
+      message.success('创建分类成功');
+      fetchChannels(); // 重新加载分类列表
+      setIsAdding(false); // 隐藏新增输入框
+      setEditingId(null); // 清空编辑状态
+      setIsAddButtonDisabled(false)
+    } catch (error) {
+      message.error('新增分类失败: ' + error.response.data.errors[0]);
+    }
+  };
 
   // 取消新增分类
-  const handleCancelAdd = () => {
+  const handleCancelAdd = async () => {
+    setIsAddButtonDisabled(false)
     setIsAdding(false); // 隐藏新增输入框
-    setNewChannel({ name: '', code: '', rank: '' }); // 清空输入框
+    // setNewChannel({ name: '', code: '', rank: '' }); // 清空输入框
+    console.log(channels);
+    await deleteChannelAdminAPI(channels[0].id);
+    message.success('取消创建分类成功');
+    fetchChannels(); // 重新加载分类列表
   };
 
 
@@ -116,7 +155,7 @@ const Channels = () => {
       setEditingId(null); // 清空编辑状态
       fetchChannels(); // 重新加载分类列表
     } catch (error) {
-      message.error('修改分类失败:' + error);
+      message.error('修改分类失败: ' + error.response.data.errors[0]);
     }
   };
 
@@ -134,7 +173,7 @@ const Channels = () => {
       message.success('删除分类成功');
       fetchChannels(); // 重新加载分类列表
     } catch (error) {
-      message.error('删除分类失败:' + error);
+      message.error('删除分类失败: ' + error.response.data.errors[0]);
     }
   };
 
@@ -152,16 +191,7 @@ const Channels = () => {
       dataIndex: 'name',
       key: 'name',
       width: 200,
-      render: (text, record) => {
-        if (record.isAdding) {
-          return (
-            <Input
-              value={newChannel.name}
-              onChange={(e) => setNewChannel({ ...newChannel, name: e.target.value })}
-              placeholder="请输入分类名"
-            />
-          );
-        }
+      render: (text, record, index) => {
         if (record.id === editingId) {
           return (
             <Input
@@ -179,16 +209,7 @@ const Channels = () => {
       dataIndex: 'code',
       key: 'code',
       width: 100,
-      render: (code, record) => {
-        if (record.isAdding) {
-          return (
-            <Input
-              value={newChannel.code}
-              onChange={(e) => setNewChannel({ ...newChannel, code: e.target.value })}
-              placeholder="请输入分类编码"
-            />
-          );
-        }
+      render: (code, record, index) => {
         if (record.id === editingId) {
           return (
             <Input
@@ -206,16 +227,7 @@ const Channels = () => {
       dataIndex: 'rank',
       key: 'rank',
       width: 100,
-      render: (rank, record) => {
-        if (record.isAdding) {
-          return (
-            <Input
-              value={newChannel.rank}
-              onChange={(e) => setNewChannel({ ...newChannel, rank: e.target.value })}
-              placeholder="请输入优先级"
-            />
-          );
-        }
+      render: (rank, record, index) => {
         if (record.id === editingId) {
           return (
             <Input
@@ -232,35 +244,23 @@ const Channels = () => {
       title: '创建时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      render: (text, record) => {
-        if (record.isAdding) {
-          return '系统自动填写'
-        } else {
-          return new Date(text).toLocaleString()
-        }
-      }
+      render: (text) => new Date(text).toLocaleString()
     },
     {
       title: '修改时间',
       dataIndex: 'updatedAt',
       key: 'updatedAt',
-      render: (text, record) => {
-        if (record.isAdding) {
-          return '系统自动填写'
-        } else {
-          return new Date(text).toLocaleString()
-        }
-      }
+      render: (text) => new Date(text).toLocaleString()
     },
     {
       title: '操作',
       key: 'action',
       width: 200,
-      render: (_, record) => {
-        if (record.isAdding) {
+      render: (_, record, index) => {
+        if (isAdding && record.id === editingId) {
           return (
             <>
-              <Button type="link" icon={<PlusOutlined />} onClick={handleSubmit}>
+              <Button type="link" icon={<PlusOutlined />} onClick={handleCreateSubmit}>
                 提交
               </Button>
               <Button type="link" icon={<CloseOutlined />} onClick={handleCancelAdd}>
@@ -304,18 +304,67 @@ const Channels = () => {
 
   return (
     <div className={styles.attachmentsPage}>
-      {/* 新增按钮 */}
-      <div style={{ marginBottom: 16 }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-          新增
-        </Button>
-      </div>
+      {/* */}
+      <Card
+        title={
+          <div className={`${styles.title} flex justify-between align-center`}>
+            <Breadcrumb items={[
+              { title: <Link to={'/'}>首页</Link> },
+              { title: '分类列表' },
+            ]} />
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd} disabled={isAddButtonDisabled}>
+              新增分类
+            </Button>
+          </div>
+        }
+        style={{ marginBottom: 10 }}
+      >
+        <Form onFinish={handleFilterSubmit} layout="inline">
+          {/* 筛选区域 */}
+          <section className={styles.filterFillinArea}>
+            <Form.Item name="name" label="分类名" style={{ width: '14rem' }}>
+              <Input placeholder="搜索分类名" style={{ width: '10rem' }} />
+            </Form.Item>
+            <Form.Item name="code" label="分类编码" style={{ width: '9rem' }}>
+              <Input style={{ width: '4rem' }} />
+            </Form.Item>
+            <Form.Item name="rank" label="优先级" style={{ width: '8rem' }}>
+              <Input style={{ width: '4rem' }} />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit">
+                筛选
+              </Button>
+            </Form.Item>
+          </section>
+
+          {/* 排序 */}
+          <section className={styles.sorterFillinArea}>
+            <Form.Item label="排序" style={{ width: '12rem' }}>
+              <Select defaultValue='' options={[
+                { value: '', label: <span>默 认</span> },
+                { value: 'name_asc', label: <span>名称（A-Z）</span> },
+                { value: 'name_desc', label: <span>名称（Z-A）</span> },
+                { value: 'code_asc', label: <span>分类编码（升序）</span> },
+                { value: 'code_desc', label: <span>分类编码（降序）</span> },
+                { value: 'rank_desc', label: <span>优先级（高到低）</span> },
+                { value: 'rank_asc', label: <span>优先级（低到高）</span> },
+                { value: 'createdAt_desc', label: <span>创建时间（最新）</span> },
+                { value: 'createdAt_asc', label: <span>创建时间（最早）</span> },
+                { value: 'updatedAt_desc', label: <span>修改时间（最新）</span> },
+                { value: 'updatedAt_asc', label: <span>修改时间（最早）</span> },
+              ]} />
+            </Form.Item>
+          </section>
+        </Form>
+      </Card>
+
       {/* 表格区域 */}
       <Card >
         <Table
           rowKey="id"
           columns={columns}
-          dataSource={dataSource}
+          dataSource={channels}
           pagination={pagination}
           loading={loading}
           onChange={handleTableChange}

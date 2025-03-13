@@ -287,7 +287,7 @@ const ArticlesPlatformArticleEditPage = () => {
             <button
               className={styles.chooseChannelButton}
               onClick={() => setIsShowChannelPage(true)}
-            >选择文章分类</button>
+            >选择分类</button>
           </aside>
 
           {/* 分类选择弹出页 */}

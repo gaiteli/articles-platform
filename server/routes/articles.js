@@ -9,7 +9,6 @@ const { success, failure } = require('@utils/responses')
 router.get('/', async function(req, res, next) {
   try {
     const query = req.query
-    console.log(query)
 
     const currentPage = Math.abs(Number(query.currentPage)) || 1
     const pageSize = Math.abs(Number(query.pageSize)) || 10
@@ -92,8 +91,7 @@ router.get('/:id', async function (req, res, next) {
 /* 创建文章 */
 router.post('/', async function (req, res, next) {
   try {
-    console.log('进入创建文章router。post');
-    console.log('user id: '+req.user.id);
+
     // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
     const body = {
       userId: req.user.id,

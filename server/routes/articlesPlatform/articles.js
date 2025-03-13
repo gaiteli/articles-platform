@@ -8,8 +8,6 @@ const { success, failure } = require('@utils/responses')
 /* 创建文章 */
 router.post('/write', async function (req, res, next) {
     try {
-        console.log('进入文章平台-创建文章-router.post');
-        console.log('user id: '+req.user.id);
 
         const { title, cover, content, deltaContent, channelId } = req.body;
 
@@ -54,7 +52,6 @@ router.delete('/:id', async function (req, res, next) {
 router.put('/p/:id/edit', async function (req, res, next) {
     try {
         const { title, cover, content, deltaContent, channelId } = req.body;
-        console.log(cover)
 
         // 查询当前文章
         const article = await getArticle(req);

@@ -20,7 +20,6 @@ module.exports = async (req, res, next) => {
 
     // jwt 解析出
     const { userId } = decoded
-    console.log('jwt解析出userId：'+userId);
 
     // 查询用户
     const user = await User.findByPk(userId)
