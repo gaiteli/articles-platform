@@ -60,7 +60,7 @@ const EditorToolbar = () => {
         <button className="ql-link"></button>
         <button className="ql-image"></button>
         <button className="ql-video"></button>
-        <button className="ql-formula"></button>
+        <button className="ql-formula" disabled id={styles.formulaDisabled}></button>
       </span>
       {/* 杂项 */}
       <span className="ql-formats">
@@ -74,24 +74,13 @@ const EditorToolbar = () => {
         <button className="ql-clean"></button>
       </span>
       {/* 表格 */}
-      <span className="ql-formats">
+      {/* <span className="ql-formats">
         <button className="ql-table" value="TD"></button>
         <button className="ql-table-insert-row" value="TIR"></button>
         <button className="ql-table-insert-column" value="TIC"></button>
         <button className="ql-table-delete-row" value="TDR"></button>
         <button className="ql-table-delete-column" value="TDC"></button>
-      </span>
-      {/* 编程语言 */}
-      <span className="ql-formats">
-        <select className="ql-language" defaultValue="Javascript">
-          <option value="C">C</option>
-          <option value="C++">C++</option>
-          <option value="C#">C#</option>
-          <option value="Java">Java</option>
-          <option value="Javascript">Javascript</option>
-          <option value="Python">Python</option>
-        </select>
-      </span>
+      </span> */}
     </div>
   );
 };

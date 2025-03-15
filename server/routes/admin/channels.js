@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const { Sequelize } = require('sequelize');
 const {Channel} = require('@models');
 const { Op } = require('sequelize')
-const { NotFound } = require('http-errors');
+const { NotFound, BadRequest } = require('http-errors');
 const { success, failure } = require('@utils/responses')
 
 /* 查询分类列表 */
@@ -27,27 +28,17 @@ router.get('/', async function(req, res, next) {
 
     // 获取排序条件
     const order = [];
-    console.log('!!!')
-    console.dir(sorter)
     if (Object.keys(sorter).length > 0) {
-      console.log('entered')
+      // sorter不为空对象
       const [field, direction] = sorter.split('_');
       order.push([field, direction.toUpperCase()]);
+    } else {
+      // sorter为空，按默认排序按id进行
+      order.push(['id', 'DESC'])
     }
-    //
-    //
-    // // 模糊搜索 旧API
-    // if (query.name) {
-    //   condition.where = {
-    //     name: {
-    //       [Op.like]: `%${query.name}%`
-    //     }
-    //   }
-    // }
 
 
     const condition = {
-      // order: [['id', 'DESC']],
       where,
       order,
       limit: pageSize,
@@ -88,9 +79,9 @@ router.post('/', async function (req, res, next) {
 
     // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
     const body = {
-      name: 'default',
-      code: 1000,
-      rank: 1000,
+      name: '请填写分类名',
+      code: 0,
+      rank: 0,
     }
 
     const channel = await Channel.create(body)
@@ -117,12 +108,23 @@ router.delete('/:id', async function (req, res, next) {
 /* 更新分类 */
 router.put('/:id', async function (req, res, next) {
   try {
+
+    const {id} = req.params
+    const {name, code, rank} = req.body
+
+    const existingName = await Channel.findOne({ where: { name } });
+
+    if (existingName)
+      if (existingName.id !== Number(id)) throw new BadRequest('分类名已存在，请修改')
+    const existingCode = await Channel.findOne({ where: { code } });
+    if (existingCode)
+      if (existingCode.id !== Number(id)) throw new BadRequest('分类编号已存在，请修改')
     
     // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
     const body = {
-      name: req.body.name,
-      code: req.body.code,
-      rank: req.body.rank,
+      name: name,
+      code: code,
+      rank: rank,
     }
 
     const channel = await getChannel(req)

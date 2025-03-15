@@ -100,7 +100,7 @@ const EditorContent = forwardRef(({
                     quill.insertEmbed(range.index, 'image', imageUrl, Quill.sources.USER);
                     quill.setSelection(range.index + 1, Quill.sources.SILENT);
                   } catch (error) {
-                    message.error('图片上传失败，请重试! 原因：'+error)
+                    message.error('图片上传失败，请重试! 原因：' + error)
                   }
                 }
               };

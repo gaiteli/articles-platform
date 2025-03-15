@@ -25,3 +25,19 @@
     border-color: #999;
   }
 }
+
+#formulaDisabled {   // 禁用公式
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  background-color: #f5f5f5;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+  
+  // Add a disabled appearance
+  &::after {
+    border-color: #999;
+  }
+}

@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const {Article} = require('@models');
+const {Article, Channel} = require('@models');
 const { Sequelize, Op } = require('sequelize');
 const { NotFound } = require('http-errors')
 const { success, failure } = require('@utils/responses')
+const {getChannel} = require("ali-oss/lib/rtmp");
 
 /* 创建文章 */
 router.post('/write', async function (req, res, next) {
@@ -72,6 +73,65 @@ router.put('/p/:id/edit', async function (req, res, next) {
     }
 });
 
+
+/* 查询文章列表（接口复用） */
+router.get('/list', async function (req, res, next) {
+    try {
+        const query = req.query;
+
+        // 分页参数
+        const currentPage = Math.abs(Number(query.currentPage)) || 1;
+        const pageSize = Math.abs(Number(query.pageSize)) || 10;
+        const limit = Math.min(pageSize, Math.abs(Number(query.limit)) || pageSize); // 取 pageSize 和 limit 的最小值
+        const offset = (currentPage - 1) * pageSize;
+
+        // 排序方式
+        const sortBy = query.sortBy || 'createdAt'     // 默认按发布时间排序
+        const sortOrder = query.sortOrder || 'DESC'    // 默认降序
+
+        // 构建查询条件
+        const condition = {
+            order: [[sortBy, sortOrder]],
+            limit: limit,
+            offset: offset,
+            where: {},
+        };
+
+        // 模糊搜索标题
+        if (query.title) {
+            condition.where.title = {
+                [Op.like]: `%${query.title}%`,
+            };
+        }
+
+        // 按分类过滤
+        if (query.channel) {
+            condition.where.channel = query.channel;
+        }
+
+        // 按标签过滤
+        if (query.tags) {
+            condition.where.tags = {
+                [Op.contains]: query.tags.split(','), // 假设 tags 是数组字段
+            };
+        }
+
+        // 获取文章数据
+        const { count, rows } = await Article.findAndCountAll(condition);
+
+        success(res, 'query success', {
+            articles: rows,
+            pagination: {
+                total: count,
+                currentPage,
+                pageSize,
+            },
+        });
+    } catch (error) {
+        failure(res, error);
+    }
+});
+
 /* 查询单个文章 */
 router.get('/p/:id', async function (req, res, next) {
     try {
@@ -83,7 +143,22 @@ router.get('/p/:id', async function (req, res, next) {
         }
         await article.update(body)
 
-        success(res, 'query success', article)
+        const channel = await Channel.findByPk(article.channelId)
+
+        success(res, 'query success', {...article.dataValues, channelName: channel.name});
+    } catch(error) {
+        failure(res, error)
+    }
+})
+
+/* 编辑页面 查询单个文章 */
+router.get('/edit/:id', async function (req, res, next) {
+    try {
+        const article = await getArticle(req)
+
+        const channel = await Channel.findByPk(article.channelId)
+
+        success(res, 'query success', {...article.dataValues, channelName: channel.name});
     } catch(error) {
         failure(res, error)
     }

@@ -7,9 +7,11 @@ import { debounce } from '/src/utils';
 import styles from './index.module.scss';
 
 
-const PopoutChannelPage = ({ onClose, onSubmit }) => {
+const PopoutChannelPage = ({ chosenCategory, onClose, onSubmit }) => {
+  console.log('popout!');
+  console.log(chosenCategory);
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState(chosenCategory)
   // 获取分类列表
   const [categories, setCategories] = useState([])
   const [count, setCount] = useState(0)
@@ -18,6 +20,24 @@ const PopoutChannelPage = ({ onClose, onSubmit }) => {
     currentPage: 1,
     pageSize: 10
   })
+
+
+  // InfiniteScroll 加载更多数据函数
+  const loadMoreData = async () => {
+    const res = await getChannelsAPI(reqData);
+    const newList = res.data.channels
+    setCategories(prevList => [...prevList, ...newList])   // 追加数据
+    setCount(res.data.pagination.total)
+    setReqData(prevData => ({
+      ...prevData,
+      currentPage: prevData.currentPage + 1,    // 增加页码
+    }));
+  }
+
+  useEffect(() => {
+    loadMoreData()
+  }, [])
+
 
   // 获取文章分类信息
   const fetchCategories = async (keyword) => {
@@ -64,17 +84,6 @@ const PopoutChannelPage = ({ onClose, onSubmit }) => {
     }
   };
 
-  // InfiniteScroll 加载更多数据函数
-  const loadMoreData = async () => {
-    const res = await getChannelsAPI(reqData);
-    const newList = res.data.channels
-    setCategories(prevList => [...prevList, ...newList])   // 追加数据
-    setCount(res.data.pagination.total)
-    setReqData(prevData => ({
-      ...prevData,
-      currentPage: prevData.currentPage + 1,    // 增加页码
-    }));
-  }
 
   return (
     <div className={styles.popout}>
@@ -174,24 +183,3 @@ const PopoutChannelPage = ({ onClose, onSubmit }) => {
 };
 
 export default PopoutChannelPage;
-
-{/* <ul className={styles.categoryList}>
-            {categories.map((category) => (
-              <li
-                key={category.id}
-                className={`${styles.categoryItem} ${selectedCategory?.id === category.id ? styles.selected : ''
-                  }`}
-              >
-                <div className={styles.categoryInfo}>
-                  <span className={styles.categoryName}>{category.name}</span>
-                  <span className={styles.categoryCode}>{category.code}</span>
-                </div>
-                <button
-                  className={styles.selectButton}
-                  onClick={() => handleSelectCategory(category)}
-                >
-                  {selectedCategory?.id === category.id ? '已选择' : '选择'}
-                </button>
-              </li>
-            ))}
-          </ul> */}

@@ -82,8 +82,8 @@ const userItems = [
 export function GeekLayout() {
   const { token, user } = useGlobals()
   const { tokenDispatch, userDispatch } = useGlobalsDispatch()
-
-  const [currentMenuKey, setCurrentMenuKey] = useState('/article')
+  const location = useLocation()
+  const [currentMenuKey, setCurrentMenuKey] = useState('')
 
   const navigate = useNavigate()
   const onMenuClick = (route) => {
@@ -91,6 +91,12 @@ export function GeekLayout() {
     setCurrentMenuKey(path)
     navigate('.'+path)  // 相对路径
   }
+
+  // 根据url路径修改菜单高亮项
+  useEffect(() => {
+    const pathname = location.pathname
+    setCurrentMenuKey(pathname === '/admin' ? '/' : pathname.substring(pathname.lastIndexOf('/')))
+  })
 
   // 触发个人用户信息action
   useEffect(() => {
@@ -141,7 +147,7 @@ export function GeekLayout() {
           <Menu
             mode="inline"
             theme="dark"
-            defaultSelectedKeys={["/article"]}
+            defaultSelectedKeys={["/"]}
             selectedKeys={[currentMenuKey]}
             onClick={onMenuClick}
             items={items}

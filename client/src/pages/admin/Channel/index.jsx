@@ -67,11 +67,9 @@ const Channels = () => {
   }, []);
 
   // 分页变化
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = (pagination) => {
     setPagination(pagination);
-    setFilters(filters);
-    setSorter(sorter);
-    fetchChannels({ ...pagination, filters, sorter });
+    fetchChannels({ ...pagination });
   };
 
   // 筛选表单提交
@@ -341,19 +339,22 @@ const Channels = () => {
           {/* 排序 */}
           <section className={styles.sorterFillinArea}>
             <Form.Item label="排序" style={{ width: '12rem' }}>
-              <Select defaultValue='' options={[
-                { value: '', label: <span>默 认</span> },
-                { value: 'name_asc', label: <span>名称（A-Z）</span> },
-                { value: 'name_desc', label: <span>名称（Z-A）</span> },
-                { value: 'code_asc', label: <span>分类编码（升序）</span> },
-                { value: 'code_desc', label: <span>分类编码（降序）</span> },
-                { value: 'rank_desc', label: <span>优先级（高到低）</span> },
-                { value: 'rank_asc', label: <span>优先级（低到高）</span> },
-                { value: 'createdAt_desc', label: <span>创建时间（最新）</span> },
-                { value: 'createdAt_asc', label: <span>创建时间（最早）</span> },
-                { value: 'updatedAt_desc', label: <span>修改时间（最新）</span> },
-                { value: 'updatedAt_asc', label: <span>修改时间（最早）</span> },
-              ]} />
+              <Select
+                defaultValue='id_desc'
+                onChange={handleSorterChange}
+                options={[
+                  { value: 'id_desc', label: <span>默 认</span> },
+                  { value: 'name_asc', label: <span>名称（A-Z）</span> },
+                  { value: 'name_desc', label: <span>名称（Z-A）</span> },
+                  { value: 'code_asc', label: <span>分类编码（升序）</span> },
+                  { value: 'code_desc', label: <span>分类编码（降序）</span> },
+                  { value: 'rank_desc', label: <span>优先级（高到低）</span> },
+                  { value: 'rank_asc', label: <span>优先级（低到高）</span> },
+                  { value: 'createdAt_desc', label: <span>创建时间（最新）</span> },
+                  { value: 'createdAt_asc', label: <span>创建时间（最早）</span> },
+                  { value: 'updatedAt_desc', label: <span>修改时间（最新）</span> },
+                  { value: 'updatedAt_asc', label: <span>修改时间（最早）</span> },
+                ]} />
             </Form.Item>
           </section>
         </Form>

@@ -1,0 +1,50 @@
+.CategoryCard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0.6rem 0.5rem 0.4rem;
+  background-color: white;
+  color: var(--button-background-color);
+  border-radius: 4px;
+  animation: fadeIn 0.3s ease-in-out;
+  position: relative;
+  width: 100%;
+}
+
+.removeButton {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  background: none;
+  border: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--button-background-color);
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 50%; 
+  position: absolute; 
+  top: -0.25rem;
+  right: -0.75rem; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #ff7875;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fadeInAnimation {
+  animation: fadeIn 0.3s ease-in-out forwards; /* 手动触发动画 */
+}

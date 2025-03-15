@@ -1,5 +1,6 @@
-import {addHeaderIdToHTML} from "./addTitleId.js";
+import {generateUniqueId, generateTOC} from "./addTitleId.js";
 
 export {
-  addHeaderIdToHTML,
+  generateUniqueId,
+  generateTOC,
 }

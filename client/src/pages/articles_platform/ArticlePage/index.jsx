@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Header } from '/src/components/articles_platform/Header';
-import { getArticleByIdAPI, deleteArticleAPI } from '/src/apis/articles_platform/article';
-
 import { message, Popconfirm } from 'antd';
-import styles from './index.module.scss';
 import Quill from 'quill';
 import moment from 'moment';
+
 import ErrorPage from '../../ErrorPage';
+import { Header } from '/src/components/articles_platform/Header';
+import { getArticleByIdAPI, deleteArticleAPI } from '/src/apis/articles_platform/article';
+import { generateUniqueId } from '/src/utils/quill';
+
+import styles from './index.module.scss';
+import TOC from '../../../components/common/QuillEditorPlus/TOC';
+
 
 const ArticlesPlatformArticlePage = () => {
 
@@ -65,32 +69,30 @@ const ArticlesPlatformArticlePage = () => {
     setArticleLength(quill.getText().replace(/\n/g, '').length || 0)
 
     // 提取标题生成目录
-    const editorElement = editorRef.current;
-    const headingElements = editorElement.querySelectorAll('h1, h2, h3');
-    const headingList = Array.from(headingElements).map((heading) => ({
-      id: heading.id || heading.textContent.toLowerCase().replace(/\s+/g, '-'),
-      text: heading.textContent,
-      level: heading.tagName.toLowerCase()
-    }));
-    console.log(headingList);
-    setHeadings(headingList)
+    // 使用 setTimeout 确保内容渲染完成后再提取标题
+    setTimeout(() => {
+      const headingsNode = document.querySelectorAll('.ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4');
+      const headingsData = Array.from(headingsNode).map((heading, index) => {
+        const title = heading.textContent;
+        const level = heading.tagName.toLowerCase()
+        const id = generateUniqueId(title, index); // 生成唯一 ID
+        heading.setAttribute('id', id);
+
+        return {
+          id,
+          title,
+          level,
+        };
+      });
+
+      setHeadings(headingsData);
+    }, 0);
 
     // 清理函数
     return () => {
       quillRef.current = null
     };
   }, [article.deltaContent])
-
-
-  // 点击目录项滚动到对应位置
-  const scrollToHeading = (id) => {
-    console.log(id);
-    const headingElement = document.getElementById(id);
-    if (headingElement) {
-      console.log('get !');
-      headingElement.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
 
   // 文章加载出错（404），返回错误页面
@@ -119,6 +121,9 @@ const ArticlesPlatformArticlePage = () => {
             <span>发布于 {moment(article.createdAt).format('YYYY-MM-DD HH:mm')}</span>
             <span>浏览数 {article.readCount}</span>
             <span>点赞数 {article.likeCount}</span>
+            <span>
+              阅读时间：{articleLength < 250 ? `小于 1 分钟` : `约 ${Math.ceil(articleLength / 1000)} 分钟`}
+            </span>
           </div>
           <hr className={styles.titleDivider} />
         </div>
@@ -131,7 +136,7 @@ const ArticlesPlatformArticlePage = () => {
         {/* 额外信息栏 */}
         <div className={`${styles.extraInfo} flex flex-row justify-between`}>
           <span>
-            阅读时间：约 {Math.ceil(articleLength / 1000)} 分钟
+
           </span>
           <div className='flex flex-row justify-end'>
             {/* <button onClick={() => ???} className={styles.bottomButton}>点赞</button> */}
@@ -152,20 +157,7 @@ const ArticlesPlatformArticlePage = () => {
 
         {/* 右侧目录 */}
         <div className={styles.sidebar}>
-          <div className={styles.toc}>
-            <h3>目录</h3>
-            <ul>
-              {headings.map((heading) => (
-                <li
-                  key={heading.id}
-                  className={styles[`toc-${heading.level}`]}
-                  onClick={() => scrollToHeading(heading.id)}
-                >
-                  {heading.text}
-                </li>
-              ))}
-            </ul>
-          </div>
+          <TOC headings={headings} />
         </div>
 
       </div>

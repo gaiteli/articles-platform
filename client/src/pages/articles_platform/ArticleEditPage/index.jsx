@@ -9,12 +9,11 @@ import EditorContent from '../../../components/common/QuillEditorPlus/EditorCont
 import EditorToolbar from '../../../components/common/QuillEditorPlus/EditorToolbar';
 import PopoutChannelPage from '/src/components/articles_platform/popouts/PopoutChannelPage';
 
-import { getArticleByIdAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
+import { getArticleByIdAPI, getArticleByIdWhenEditAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
 import { uploadAttachmentAPI } from '/src/apis/articles_platform/attachment';
 import { createArticleAPI } from '/src/apis/articles_platform/article'
 import styles from './index.module.scss'
-
-import { addHeaderIdToHTML } from '/src/utils/quill';
+import { CategoryCard } from '../../../components/articles_platform/widgets/CategoryCard';
 
 
 const Delta = Quill.import('delta');
@@ -50,6 +49,15 @@ const ArticlesPlatformArticleEditPage = () => {
     console.log('选中的分类:', category);
   };
 
+  const handleClosePopout = () => {
+    setIsShowChannelPage(false);
+  }
+
+  // 处理分类删除
+  const handleRemoveCategory = () => {
+    setSelectedCategory(null); // 清空选中的分类
+  };
+
   // 编辑模式下加载文章数据
   useEffect(() => {
     if (articleId) {
@@ -57,16 +65,17 @@ const ArticlesPlatformArticleEditPage = () => {
         setLoading(true);
         try {
           // 获取文章内容、标题、封面图url
-          const res = await getArticleByIdAPI(articleId)
+          const res = await getArticleByIdWhenEditAPI(articleId)
           console.log(res.data.cover);
           setCoverImageUrl(res.data.cover)
           setTitle(res.data.title)
+          setSelectedCategory({ id: res.data.channelId, name: res.data.channelName })
           if (quillRef.current) {
             quillRef.current?.setContents(res.data.deltaContent)
             console.log('quill editor load success');
           }
         } catch (err) {
-          message.error('加载文章失败:' + err);
+          message.error('加载文章失败:' + err.response.errors[0]);
         } finally {
           setLoading(false);
         }
@@ -114,9 +123,7 @@ const ArticlesPlatformArticleEditPage = () => {
         message.error('请输入文章内容')
         return
       }
-
-      // 给标题添加ID，方便生成目录
-
+      
 
       const reqData = {
         title,
@@ -139,7 +146,8 @@ const ArticlesPlatformArticleEditPage = () => {
 
     } catch (err) {
       setError(err.message || '提交文章失败')
-      message.error('提交文章失败，请重试')
+      console.log(err);
+      message.error('提交文章失败，请重试! 错误：'+err.response.data.errors[0])
     } finally {
       setLoading(false)
     }
@@ -284,16 +292,30 @@ const ArticlesPlatformArticleEditPage = () => {
                 uploadButton
               )}
             </Upload>
-            <button
-              className={styles.chooseChannelButton}
-              onClick={() => setIsShowChannelPage(true)}
-            >选择分类</button>
+
+            {/* 分类选择按钮和显示区域 */}
+            <div className={styles.categoryContainer}>
+              <button
+                className={styles.chooseChannelButton}
+                onClick={() => setIsShowChannelPage(true)}
+              >
+                选择分类
+              </button>
+              {/* 显示已选分类的卡片 */}
+              {selectedCategory && (
+                <CategoryCard
+                  category={selectedCategory}
+                  onRemove={handleRemoveCategory}
+                />
+              )}
+            </div>
           </aside>
 
           {/* 分类选择弹出页 */}
           {isShowChannelPage && (
             <PopoutChannelPage
-              onClose={() => setIsShowChannelPage(false)}
+              chosenCategory={selectedCategory}
+              onClose={handleClosePopout}
               onSubmit={handleSelectCategory}
             />
           )}

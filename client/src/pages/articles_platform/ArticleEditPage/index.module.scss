@@ -47,7 +47,7 @@ body {
   .ant-spin-nested-loading {
     width: 100%;
   }
-  
+
   .ant-spin {
     max-height: none;
   }
@@ -91,12 +91,12 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  
+
   &:disabled {
     background: #d9d9d9;
     cursor: not-allowed;
   }
-  
+
   &:hover:not(:disabled) {
     background: var(--button-background-color-hover);
   }
@@ -106,21 +106,42 @@ body {
 //
 aside.fixedArea {
   position: fixed;
-  top: 150px; 
-  right: 175px; 
-  background-color: var(--background-color-light); 
-  border: 1.5px solid var(--border-color-two); 
+  top: 150px;
+  right: 10rem;
+  width: 10rem;
+  background-color: var(--background-color-light);
+  border: 1.5px solid var(--border-color-two);
   border-radius: 10px;
-  padding: 1rem; 
-  z-index: 99; 
+  padding: 1rem;
+  z-index: 99;
 
-  .chooseChannelButton {
-    // border: 1px solid black;
-    border-radius: 4px;
-    background-color: var(--button-background-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    margin: 1rem 0;
+  :global(.ant-upload) {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .categoryContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+
+    .chooseChannelButton {
+      background-color: var(--button-background-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      margin: 0.5rem 0 0 0;
+      width: 100%;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s, color 0.3s;
+      z-index: 1;
+    
+      &:hover {
+        background-color: var(--button-background-color-hover);
+      }
+    }
+    
   }
 }
 
