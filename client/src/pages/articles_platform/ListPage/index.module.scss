@@ -18,7 +18,7 @@
   :global(.ant-card-body) {
     padding: 0.75rem !important;
   }
- 
+
 }
 
 
@@ -76,6 +76,14 @@
       background-color: var(--card-background-color);
     }
 
+    :global(.ant-typography:first-of-type) {
+      height: 3.5rem;
+    }
+
+    :global(.ant-typography-secondary) {
+      height: 1.5rem;
+    }
+
     h1,
     h2,
     h3,
@@ -83,6 +91,8 @@
     h5,
     h6 {
       overflow: hidden;
+      display: flex;
+      align-items: center;
     }
 
     span {
@@ -90,13 +100,15 @@
     }
 
     .articleContent {
+      margin-top: 0.5rem;
+      margin-right: 1rem;
       max-height: 70px;
       /* 设置最大高度 */
       overflow: hidden;
       /* 隐藏超出部分 */
       display: -webkit-box;
       /* 使用 WebKit 的 box 模型 */
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
       /* 限制显示的行数 */
       -webkit-box-orient: vertical;
       /* 垂直排列 */

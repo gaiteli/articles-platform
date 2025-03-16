@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CSSTransition } from 'react-transition-group';
+import moment from 'moment';
 
 import { Header } from '/src/components/articles_platform/Header'
 import {
@@ -14,7 +15,7 @@ import {
   Skeleton,
   Divider,
 } from 'antd';
-import { RightOutlined, LeftOutlined } from '@ant-design/icons';
+import { RightOutlined, LeftOutlined, ClockCircleFilled, ClockCircleOutlined, HistoryOutlined, FolderOpenFilled, EyeOutlined, LikeOutlined } from '@ant-design/icons';
 
 import styles from './index.module.scss'
 
@@ -22,6 +23,7 @@ import { getArticleListAPI } from '/src/apis/article'
 
 
 const ArticlesPlatformListPage = () => {
+  moment.locale('zh-cn');
   const navigate = useNavigate()
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
@@ -113,13 +115,13 @@ const ArticlesPlatformListPage = () => {
                     className={styles.card}
                   >
                     <div className={styles.coverContainer}>
-                        <img
-                          src={item.cover || "/src/assets/articles_platform/no_picture_available.svg"}
-                          alt="cover"
-                          className={styles.articleCover}
-                          onError={(e) => 
-                            e.target.src = "/src/assets/articles_platform/no_picture_available.svg"}
-                        />
+                      <img
+                        src={item.cover || "/src/assets/articles_platform/no_picture_available.svg"}
+                        alt="cover"
+                        className={styles.articleCover}
+                        onError={(e) =>
+                          e.target.src = "/src/assets/articles_platform/no_picture_available.svg"}
+                      />
                     </div>
                     <div
                       className={styles.articleInfo}
@@ -129,10 +131,25 @@ const ArticlesPlatformListPage = () => {
                         {item.title}
                       </Typography.Title>
                       <Typography.Text type="secondary">
-                        {item.createdAt}
+                        <HistoryOutlined />
+                        <span style={{ marginLeft: '0.25rem', marginRight: '2rem'}}>
+                          {' ' + moment(item.createdAt).format('ll')}
+                        </span>
+                        <FolderOpenFilled />
+                        <span style={{ marginLeft: '0.25rem', marginRight: '2rem' }}>
+                          {' ' + item.channelName}
+                        </span>
+                        <EyeOutlined />
+                        <span style={{ marginLeft: '0.25rem', marginRight: '2rem' }}>
+                          {' ' + item.readCount}
+                        </span>
+                        <LikeOutlined />
+                        <span style={{ marginLeft: '0.25rem', marginRight: '2rem' }}>
+                          {' ' + item.likeCount}
+                        </span>
                       </Typography.Text>
                       <div className={styles.articleContent}>
-                        {item.content}
+                        {item.content.replace(/<[^>]+>/g, '')}
                       </div>
                     </div>
                   </Card>

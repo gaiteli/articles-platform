@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {Article} = require('@models');
+const {Article, Channel} = require('@models');
 const { Sequelize, Op } = require('sequelize');
 const { NotFound } = require('http-errors')
 const { success, failure } = require('@utils/responses')
@@ -63,9 +63,20 @@ router.get('/', async function(req, res, next) {
     condition.limit = pageSize;
     condition.offset = offset;
     const {count, rows} = await Article.findAndCountAll(condition)
+
+    // 加上分类名
+    const results = await Promise.all(
+      rows.map(async (article) => {
+        const channel = await Channel.findByPk(article.channelId);
+        return {
+          ...article.dataValues,
+          channelName: channel.name
+        };
+      })
+    );
   
     success(res, 'articles acquired successfully' , {
-      articles: rows,
+      articles: results,
       pagination: {
         total: totalCount,
         currentPage,

@@ -128,6 +128,13 @@ const EditorContent = forwardRef(({
 
     ref.current = quill;    // 将Quill实例传递给父组件
 
+    // placeholder清除/添加 补丁函数 （若官方修复则删除）
+    const qlEditorEle = document.querySelector(`.${styles.quillContent} .ql-editor`)
+    clearPlaceholderPatch(quill, qlEditorEle)
+
+
+    
+
     // quill.on('text-change', () => {
     //   document.querySelectorAll('pre code').forEach((block) => {
     //     hljs.highlightBlock(block);
@@ -190,5 +197,18 @@ const EditorContent = forwardRef(({
 );
 
 EditorContent.displayName = 'EditorContent';
+
+// placeholder清除/添加 补丁函数 （若官方修复则删除）
+function clearPlaceholderPatch(quill, ele) {
+  ele.addEventListener('focus', () => {
+    quill.root.classList.remove('ql-blank');
+  })
+  ele.addEventListener('blur', () => {
+    if (quill.getText() === '\n') {
+      // 隐藏占位符
+      quill.root.classList.add('ql-blank');
+    }
+  })
+}
 
 export default EditorContent;

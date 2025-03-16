@@ -9,6 +9,14 @@ export function getChannelsAPI(params) {
   });
 }
 
+// 获取频道 根据id
+export function getChannelByIdAPI(id) {
+  return request({
+    url: `/articles-platform/channels/${id}`,
+    method: 'GET',
+  });
+}
+
 
 // admin接口
 // GET all

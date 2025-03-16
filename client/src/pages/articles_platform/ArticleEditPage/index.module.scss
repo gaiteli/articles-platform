@@ -107,7 +107,7 @@ body {
 aside.fixedArea {
   position: fixed;
   top: 150px;
-  right: 10rem;
+  right: calc(50% - 600px);
   width: 10rem;
   background-color: var(--background-color-light);
   border: 1.5px solid var(--border-color-two);
@@ -118,6 +118,7 @@ aside.fixedArea {
   :global(.ant-upload) {
     width: 100% !important;
     height: auto !important;
+    aspect-ratio: 1 / 1;
   }
 
   .categoryContainer {

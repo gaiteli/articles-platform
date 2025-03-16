@@ -29,6 +29,7 @@ const usersRouter = require('./routes/users')
 // 文章平台路由
 const articlePlatformArticlesRouter = require('./routes/articlesPlatform/articles')
 const uploadsRouter = require('./routes/articlesPlatform/uploads')
+const articlePlatformChannelRouter = require('./routes/articlesPlatform/channels')
 
 // cors跨域
 const corsOptions = {
@@ -55,6 +56,7 @@ app.use('/users', login, usersRouter)
 app.use('/channels', login, channelsRouter)
 app.use('/articles', login, articlesRouter)
 
+app.use('/articles-platform/channels', login, articlePlatformChannelRouter)
 app.use('/articles-platform', login, articlePlatformArticlesRouter)
 app.use('/uploads', login, uploadsRouter)
 

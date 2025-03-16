@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Spin, message, Upload, Select } from 'antd';
+import { Spin, message, Upload, Select, Image } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import Quill from 'quill';
 
@@ -14,6 +14,7 @@ import { uploadAttachmentAPI } from '/src/apis/articles_platform/attachment';
 import { createArticleAPI } from '/src/apis/articles_platform/article'
 import styles from './index.module.scss'
 import { CategoryCard } from '../../../components/articles_platform/widgets/CategoryCard';
+import CoverUploader from '../../../components/articles_platform/widgets/CoverUploader';
 
 
 const Delta = Quill.import('delta');
@@ -29,7 +30,8 @@ const ArticlesPlatformArticleEditPage = () => {
   const [error, setError] = useState(null);
   const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
   const [coverImageUrl, setCoverImageUrl] = useState(null)
-  const [fetchCoverError, setFetchCoverError] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewImage, setPreviewImage] = useState('')
   const [uploadLoading, setUploadLoading] = useState(false)
   const [isShowChannelPage, setIsShowChannelPage] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -123,7 +125,7 @@ const ArticlesPlatformArticleEditPage = () => {
         message.error('请输入文章内容')
         return
       }
-      
+
 
       const reqData = {
         title,
@@ -147,81 +149,99 @@ const ArticlesPlatformArticleEditPage = () => {
     } catch (err) {
       setError(err.message || '提交文章失败')
       console.log(err);
-      message.error('提交文章失败，请重试! 错误：'+err.response.data.errors[0])
+      message.error('提交文章失败，请重试! 错误：' + err.response.data.errors[0])
     } finally {
       setLoading(false)
     }
   }
 
 
-  // 上传封面
-  // 上传按钮
-  const uploadButton = (
-    <button
-      style={{
-        border: 0,
-        background: 'none',
-      }}
-      type="button"
-    >
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div
-        style={{
-          marginTop: 8,
-        }}
-      >
-        Upload
-      </div>
-    </button>
-  )
+  // // 上传封面
+  // // 上传按钮
+  // const uploadButton = (
+  //   <button
+  //     style={{
+  //       border: 0,
+  //       background: 'none',
+  //     }}
+  //     type="button"
+  //   >
+  //     {loading ? <LoadingOutlined /> : <PlusOutlined />}
+  //     <div
+  //       style={{
+  //         marginTop: 8,
+  //       }}
+  //     >
+  //       Upload
+  //     </div>
+  //   </button>
+  // )
 
-  // 上传前检查文件格式和大小
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('只能上传 JPG 或 PNG 格式的图片！');
+  // // 上传前检查文件格式和大小
+  // const beforeUpload = (file) => {
+  //   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  //   if (!isJpgOrPng) {
+  //     message.error('只能上传 JPG 或 PNG 格式的图片！');
+  //   }
+  //   const isLt2M = file.size / 1024 / 1024 < 2;
+  //   if (!isLt2M) {
+  //     message.error('图片大小不能超过 2MB！');
+  //   }
+  //   return isJpgOrPng && isLt2M;
+  // };
+
+  // // antd Upload组件的onChange回调
+  // const handleUploadOnchange = async (info) => {
+  //   if (info.file.status === 'uploading') {
+  //     setUploadLoading(true);
+  //     message.loading({ content: '正在上传...', key: 'upload' });
+  //     return;
+  //   }
+  //   if (info.file.status === 'done') {
+  //     message.success({ content: '上传成功', key: 'upload' });
+  //     // 图片URL存储在info.file.response.url中，即info.file.response == res.data(上传回调的实参)
+  //     setUploadLoading(false);
+  //     console.log(info.file);
+  //     setCoverImageUrl(info.file.response.url);
+  //   } else if (info.file.status === 'error') {
+  //     message.error({ content: '上传失败', key: 'upload' });
+  //   }
+  // };
+
+  // // 上传回调
+  // const handleUpload = async (options) => {
+  //   const { file, onSuccess, onError } = options;
+  //   const formData = new FormData();
+  //   formData.append('image', file);
+
+  //   try {
+  //     // 后端返回的图片URL存储在res.data.url中
+  //     const res = await uploadAttachmentAPI(formData);
+  //     console.log(res);
+  //     onSuccess(res.data, file);
+  //   } catch (error) {
+  //     console.log('error in handleUpload func');
+  //     onError(error);
+  //   }
+  // }
+
+  // 图片预览
+  // 添加 getBase64 工具函数
+  const getBase64 = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('图片大小不能超过 2MB！');
-    }
-    return isJpgOrPng && isLt2M;
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
   };
 
-  // antd Upload组件的onChange回调
-  const handleUploadOnchange = async (info) => {
-    if (info.file.status === 'uploading') {
-      setUploadLoading(true);
-      message.loading({ content: '正在上传...', key: 'upload' });
-      return;
-    }
-    if (info.file.status === 'done') {
-      message.success({ content: '上传成功', key: 'upload' });
-      // 图片URL存储在info.file.response.url中，即info.file.response == res.data(上传回调的实参)
-      setUploadLoading(false);
-      console.log(info.file);
-      setCoverImageUrl(info.file.response.url);
-    } else if (info.file.status === 'error') {
-      message.error({ content: '上传失败', key: 'upload' });
-    }
-  };
-
-  // 上传回调
-  const handleUpload = async (options) => {
-    const { file, onSuccess, onError } = options;
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      // 后端返回的图片URL存储在res.data.url中
-      const res = await uploadAttachmentAPI(formData);
-      console.log(res);
-      onSuccess(res.data, file);
-    } catch (error) {
-      console.log('error in handleUpload func');
-      onError(error);
-    }
-  }
 
   return (
     <div className={styles.pageWrapper}>
@@ -271,45 +291,6 @@ const ArticlesPlatformArticleEditPage = () => {
               字数：{quillRef.current?.getText().replace(/\n/g, '').length || 0}
             </span>
           </div>
-          <aside className={styles.fixedArea}>
-            <Upload
-              name="cover"
-              listType="picture-card"
-              className={styles.coverUpload}
-              showUploadList={false}
-              beforeUpload={beforeUpload}
-              onChange={handleUploadOnchange}
-              customRequest={handleUpload}
-            >
-              {coverImageUrl && !fetchCoverError ? (
-                <img
-                  src={coverImageUrl}
-                  alt="cover"
-                  style={{ width: '100%' }}
-                  onError={() => setFetchCoverError(true)}
-                />
-              ) : (
-                uploadButton
-              )}
-            </Upload>
-
-            {/* 分类选择按钮和显示区域 */}
-            <div className={styles.categoryContainer}>
-              <button
-                className={styles.chooseChannelButton}
-                onClick={() => setIsShowChannelPage(true)}
-              >
-                选择分类
-              </button>
-              {/* 显示已选分类的卡片 */}
-              {selectedCategory && (
-                <CategoryCard
-                  category={selectedCategory}
-                  onRemove={handleRemoveCategory}
-                />
-              )}
-            </div>
-          </aside>
 
           {/* 分类选择弹出页 */}
           {isShowChannelPage && (
@@ -372,6 +353,33 @@ const ArticlesPlatformArticleEditPage = () => {
             </>
           )}
         </div>
+
+        {/* 侧边信息&上传区 */}
+        <aside className={styles.fixedArea}>
+
+          {/* 封面上传区 */}
+          <CoverUploader
+            coverImageUrl={coverImageUrl}
+            onCoverChange={setCoverImageUrl}
+          />
+
+          {/* 分类选择按钮和显示区域 */}
+          <div className={styles.categoryContainer}>
+            <button
+              className={styles.chooseChannelButton}
+              onClick={() => setIsShowChannelPage(true)}
+            >
+              选择分类
+            </button>
+            {/* 显示已选分类的卡片 */}
+            {selectedCategory && (
+              <CategoryCard
+                category={selectedCategory}
+                onRemove={handleRemoveCategory}
+              />
+            )}
+          </div>
+        </aside>
       </Spin>
     </div>
   )
