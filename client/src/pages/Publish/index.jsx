@@ -17,7 +17,7 @@ import './index.scss'
 
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { getChannelAPI, createArticleAPI, getArticleById, updateArticleAPI } from '/src/apis/article'
+import { createArticleAPI } from '/src/apis/article'
 import { BASE_URL } from '../../constants'
 import { useChannels } from '../../utils/hooks/useChannels'
 

@@ -8,7 +8,7 @@ export function AuthRoute({ children }) {
   if (token) {
     return <>{children}</>
   } else {
-    return <Navigate to={'/signin'} replace />
+    return <Navigate to={'/login'} replace />
   }
 
 }

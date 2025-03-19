@@ -54,7 +54,7 @@ request.interceptors.response.use((response) => {
       })
       setTimeout(() => {
         removeToken()
-        router.navigate('/signin')
+        router.navigate('/login')
         window.location.reload()
       }, 1900)
     }
@@ -73,7 +73,7 @@ request.interceptors.response.use((response) => {
       })
       // setTimeout(() => {
       //   removeToken()
-      //   router.navigate('/signin')
+      //   router.navigate('/login')
       //   window.location.reload()
       // }, 1900)
     }

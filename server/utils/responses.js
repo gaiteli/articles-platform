@@ -61,7 +61,7 @@ function success(res, message, data = {}, code = 200) {
 /*
  * 请求失败
  */
-function failure(res, error) {
+function failure(res, error, message) {
   // 默认相应为500，服务器错误
   let statusCode = 500
   let errors = '服务器错误'
@@ -90,7 +90,7 @@ function failure(res, error) {
 
   res.status(statusCode).json({
     status: false,
-    message: `请求失败: ${error.name}`,
+    message: message || `请求失败: ${error.name}`,
     errors: Array.isArray(errors) ? errors : [errors]
   })
 

@@ -77,26 +77,49 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,
     introduction: DataTypes.TEXT,
     status: {
-      type: DataTypes.TINYINT,
+      type: DataTypes.ENUM('active', 'inactive', 'banned'),
+      defaultValue: 'inactive',
       allowNull: false,
       validate: {
         notNull: { msg: '状态必须选择'},
         notEmpty: { msg: '状态不能为空！' },
-        isIn: {args: [[0, 1]], msg: '状态的值必须是：正常-0，异常-1'}
+        isIn: {
+          args: [['active', 'inactive', 'banned']],
+          msg: '状态的值必须是：正常-active，未激活-inactive，禁用-banned'
+        }
       }
     },
     role: {
-      type: DataTypes.TINYINT,
+      type: DataTypes.ENUM('guest', 'user', 'author', 'editor', 'admin', 'super'),
+      defaultValue: 'guest',
       allowNull: false,
       validate: {
-        notNull: { msg: '用户组必须选择'},
+        notNull: { msg: '用户组必须选择' },
         notEmpty: { msg: '用户组不能为空！' },
-        isIn: {args: [[0, 100]], msg: '用户组的值必须是：普通用户-0，管理员-100'}
+        isIn: {
+          args: [['super', 'admin', 'editor', 'author', 'user', 'guest']],
+          msg: '用户组的值必须是：超级管理员-super，管理员-admin，编辑-editor，作者-author，用户-user，访客-guest'
+        }
       }
     },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
-    isDelete: DataTypes.TINYINT
+    isDelete: DataTypes.TINYINT,
+    location: DataTypes.STRING,
+    articlesCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    readsCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    likesCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    lastLogin: DataTypes.DATE,
+    customFields: DataTypes.JSON,
   }, {
     sequelize,
     modelName: 'User',

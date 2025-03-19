@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {Article, Channel} = require('@models');
 const { Sequelize, Op } = require('sequelize');
-const { NotFound } = require('http-errors')
+const { NotFound, Forbidden } = require('http-errors')
 const { success, failure } = require('@utils/responses')
 const {getChannel} = require("ali-oss/lib/rtmp");
 
@@ -56,6 +56,16 @@ router.put('/p/:id/edit', async function (req, res, next) {
 
         // 查询当前文章
         const article = await getArticle(req);
+
+        // 所有权限判定
+        // 1. 编辑自己的文章需要是作者本人或管理员
+        const user = req.user
+        if (user.id !== article.userId) {
+            if (!['admin', 'super'].includes(user.role)) {
+                throw new Forbidden('没有相应权限！')
+            }
+        }
+
 
         // 更新文章内容
         const body = {

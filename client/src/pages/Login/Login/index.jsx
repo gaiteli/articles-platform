@@ -110,7 +110,7 @@ export default function Login() {
               登录
             </Button>
           </Form.Item>
-          <Link to="/signup">没有账号？去注册</Link>
+          <Link to="/register">没有账号？去注册</Link>
         </Form>
       </Card>
     </div>

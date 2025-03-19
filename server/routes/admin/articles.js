@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {Article} = require('@models');
+const {Article, Channel} = require('@models');
 const { Op } = require('sequelize')
 const { NotFound } = require('http-errors');
 const { success, failure } = require('@utils/responses')
@@ -10,34 +10,75 @@ router.get('/', async function(req, res, next) {
   try {
     const query = req.query
 
-    // 分页
     const currentPage = Math.abs(Number(query.currentPage)) || 1
     const pageSize = Math.abs(Number(query.pageSize)) || 10
     const offset = (currentPage - 1) * pageSize
+    const status = query.status;
+    const channelId = query.channelId;
+    const beginPubdate = query.beginPubdate ? query.beginPubdate : null;
+    const endPubdate = query.endPubdate ? query.endPubdate+' 23:59:59' : null; // 加时分秒是因为当天也要算在内，不然就把当天排除了
 
     const condition = {
       order: [['id', 'DESC']],
-      limit: pageSize,
-      offset: offset
+      where: {}
     }
 
-
-    // 模糊搜索
-    if (query.title) {
-      condition.where = {
-        title: {
-          [Op.like]: `%${query.title}%`
-        }
+    // 筛选
+    if (status) {
+      if (status !== '0') {
+        condition.where.status = status; // Filter by status
       }
     }
-  
-    // const articles = await Article.findAll(condition)
+    if (channelId) {
+      condition.where.channelId = channelId; // Filter by channelId
+    }
+    if (beginPubdate && endPubdate) {
+      // Filter by date range
+      condition.where.createdAt = {
+        [Op.between]: [beginPubdate, endPubdate]
+      };
+    } else if (beginPubdate) {
+      // Filter by start date only
+      condition.where.createdAt = {
+        [Op.gte]: beginPubdate
+      };
+    } else if (endPubdate) {
+      // Filter by end date only
+      condition.where.createdAt = {
+        [Op.lte]: endPubdate
+      };
+    }
+    const totalCount = await Article.count(condition)
+
+    // 模糊搜索
+    // if (query.title) {
+    //   condition.where = {
+    //     title: {
+    //       [Op.like]: `%${query.title}%`
+    //     }
+    //   }
+    // }
+
+    // 分页
+    condition.limit = pageSize;
+    condition.offset = offset;
     const {count, rows} = await Article.findAndCountAll(condition)
-  
-    success(res, 'query success' , {
-      articles: rows,
+
+    // 加上分类名
+    const results = await Promise.all(
+      rows.map(async (article) => {
+        const channel = await Channel.findByPk(article.channelId);
+        return {
+          ...article.dataValues,
+          channelName: channel.name
+        };
+      })
+    );
+
+    success(res, 'articles acquired successfully' , {
+      articles: results,
       pagination: {
-        total: count,
+        total: totalCount,
         currentPage,
         pageSize,
       }
@@ -65,8 +106,14 @@ router.post('/', async function (req, res, next) {
 
     // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
     const body = {
+      userId: req.user.id,
       title: req.body.title,
       content: req.body.content,
+      channelId: req.body.channel_id,
+      status: 1,
+      readCount: 0,
+      commentCount: 0,
+      likeCount: 0
     }
 
     const article = await Article.create(body)

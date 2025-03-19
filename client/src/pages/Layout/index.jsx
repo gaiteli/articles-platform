@@ -115,7 +115,7 @@ export function GeekLayout() {
   // 退出登录确认回调
   const onConfirm = () => {
     removeUserInfo(tokenDispatch, userDispatch)
-    navigate('/signin')
+    navigate('/login')
   }
 
   return (

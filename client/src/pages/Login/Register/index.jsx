@@ -20,7 +20,7 @@ export default function Register(props) {
 
   const onFinish = async (values) => {
     const res = await registerAPI(values)
-    navigate('/signin')   // 跳转到登录页
+    navigate('/login')   // 跳转到登录页
     message.success('注册成功')
   }
 
@@ -120,7 +120,7 @@ export default function Register(props) {
               注册
             </Button>
           </Form.Item>
-          <Link to="/signin">已有账号？去登录</Link>
+          <Link to="/login">已有账号？去登录</Link>
         </Form>
       </Card>
     </div>

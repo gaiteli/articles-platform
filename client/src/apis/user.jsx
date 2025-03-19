@@ -4,7 +4,7 @@ import { request, removeToken } from "/src/utils";
 // 登录
 export function loginAPI(formData) {
   return request({
-    url: '/signin',
+    url: '/login',
     method: 'POST',
     data: formData
   })
@@ -13,7 +13,7 @@ export function loginAPI(formData) {
 // 注册
 export function registerAPI(formData) {
   return request({
-    url: '/signup',
+    url: '/register',
     method: 'POST',
     data: formData
   })

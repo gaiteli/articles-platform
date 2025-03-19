@@ -3,7 +3,7 @@ import {request} from '/src/utils';
 // 获取频道
 export function getChannelsAPI(params) {
   return request({
-    url: '/channels',
+    url: '/articles-platform/channels',
     method: 'GET',
     params,
   });

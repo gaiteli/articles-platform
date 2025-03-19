@@ -8,7 +8,8 @@
   "_moduleAliases": {
     "@models": "./models",
     "@utils": "./utils",
-    "@middlewares": "./middlewares"
+    "@middlewares": "./middlewares",
+    "@controllers": "./controllers"
   },
   "dependencies": {
     "ali-oss": "^6.22.0",
