@@ -5,12 +5,12 @@ import router from './router/index.jsx'
 import { RouterProvider } from 'react-router-dom'
 import 'normalize.css'
 import './index.scss'
-import { GlobalsProvider } from '/src/store/globalContext'
+import { AuthProvider } from '/src/store/AuthContext'
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>
-    <GlobalsProvider>
+    <AuthProvider>
       <RouterProvider router={router} />
-    </GlobalsProvider>
+    </AuthProvider>
   // </StrictMode>
 )

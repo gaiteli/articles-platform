@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState, useContext } from 'react';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Spin, message, Upload, Select, Image } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import Quill from 'quill';
 
+import { AuthContext } from '/src/store/AuthContext';
 import { Header } from '/src/components/articles_platform/Header'
 import EditorContent from '../../../components/common/QuillEditorPlus/EditorContent';
 import EditorToolbar from '../../../components/common/QuillEditorPlus/EditorToolbar';
@@ -20,14 +21,14 @@ import CoverUploader from '../../../components/articles_platform/widgets/CoverUp
 const Delta = Quill.import('delta');
 const { Option } = Select;
 
-const ArticlesPlatformArticleEditPage = () => {
+const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
   const { id } = useParams();  // 从路由中获取articleId，若undefined则为首次编辑
   const articleId = id      // 因为名称要和路由中的参数名一致，所以这里重新赋值
   const navigate = useNavigate()
+  const { user } = useContext(AuthContext)
 
   const [title, setTitle] = useState('')
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
   const [coverImageUrl, setCoverImageUrl] = useState(null)
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -45,20 +46,6 @@ const ArticlesPlatformArticleEditPage = () => {
   // Use a ref to access the quill instance directly
   const quillRef = useRef(null)
 
-  // popout传回选中的分类
-  const handleSelectCategory = (category) => {
-    setSelectedCategory(category);
-    console.log('选中的分类:', category);
-  };
-
-  const handleClosePopout = () => {
-    setIsShowChannelPage(false);
-  }
-
-  // 处理分类删除
-  const handleRemoveCategory = () => {
-    setSelectedCategory(null); // 清空选中的分类
-  };
 
   // 编辑模式下加载文章数据
   useEffect(() => {
@@ -68,7 +55,19 @@ const ArticlesPlatformArticleEditPage = () => {
         try {
           // 获取文章内容、标题、封面图url
           const res = await getArticleByIdWhenEditAPI(articleId)
-          console.log(res.data.cover);
+
+          // 鉴权，不能编辑他人的文章
+          if (!isAuthorized) {
+            if (res.data.userId !== user.id) {    // 不是自己的文章，不能编辑
+              return <Navigate to="/error" replace state={{ 
+                code: 403,
+                type: '没有权限',
+                message: '无权编辑他人文章' 
+              }} />;
+            }
+          }
+
+          // 展示文章相关内容
           setCoverImageUrl(res.data.cover)
           setTitle(res.data.title)
           setSelectedCategory({ id: res.data.channelId, name: res.data.channelName })
@@ -76,6 +75,7 @@ const ArticlesPlatformArticleEditPage = () => {
             quillRef.current?.setContents(res.data.deltaContent)
             console.log('quill editor load success');
           }
+          
         } catch (err) {
           message.error('加载文章失败:' + err.response.errors[0]);
         } finally {
@@ -91,11 +91,26 @@ const ArticlesPlatformArticleEditPage = () => {
     document.querySelector('.ant-upload button div').innerHTML = '上传封面'
   }, [])
 
+  
+  // popout传回选中的分类
+  const handleSelectCategory = (category) => {
+    setSelectedCategory(category);
+    console.log('选中的分类:', category);
+  };
+
+  const handleClosePopout = () => {
+    setIsShowChannelPage(false);
+  }
+
+  // 处理分类删除
+  const handleRemoveCategory = () => {
+    setSelectedCategory(null); // 清空选中的分类
+  };
+
 
   // 提交文章
   const handleArticleSubmit = async () => {
     setLoading(true)
-    setError(null)
 
     try {
       // 获取纯文本内容并去除首尾空格
@@ -147,8 +162,6 @@ const ArticlesPlatformArticleEditPage = () => {
       }
 
     } catch (err) {
-      setError(err.message || '提交文章失败')
-      console.log(err);
       message.error('提交文章失败，请重试! 错误：' + err.response.data.errors[0])
     } finally {
       setLoading(false)

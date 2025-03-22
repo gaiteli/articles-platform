@@ -5,9 +5,10 @@ const {Channel} = require('@models');
 const { Op } = require('sequelize')
 const { NotFound, BadRequest } = require('http-errors');
 const { success, failure } = require('@utils/responses')
+const {authorize} = require("@middlewares/auth");
 
 /* 查询分类列表 */
-router.get('/', async function(req, res, next) {
+router.get('/', authorize(['article:create'], '查询分类列表'), async function(req, res, next) {
   try {
     const query = req.query
 
@@ -63,7 +64,7 @@ router.get('/', async function(req, res, next) {
 });
 
 /* 查询单个分类 */
-router.get('/:id', async function (req, res, next) {
+router.get('/:id', authorize(['article:create']), async function (req, res, next) {
   try {
     const channel = await getChannel(req)
 

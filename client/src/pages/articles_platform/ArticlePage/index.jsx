@@ -1,22 +1,52 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { message, Popconfirm } from 'antd';
 import Quill from 'quill';
 import moment from 'moment';
 
-import ErrorPage from '../../ErrorPage';
+import ErrorPage from '/src/pages/errors/ErrorPage';
 import { Header } from '/src/components/articles_platform/Header';
 import { getArticleByIdAPI, deleteArticleAPI } from '/src/apis/articles_platform/article';
 import { generateUniqueId } from '/src/utils/quill';
+import { withPermission } from '/src/components/withPermission'
 
 import styles from './index.module.scss';
 import TOC from '../../../components/common/QuillEditorPlus/TOC';
+
+// 带权限校验的按钮
+const EditButton = ({ id, $disabled }) => {
+  const navigate = useNavigate();
+  return (
+    <button onClick={() => navigate(`./edit`)} className={styles.bottomButton} disabled={$disabled}>
+      编辑
+    </button>
+  );
+};
+
+const DeleteButton = ({ id, $disabled }) => {
+  const navigate = useNavigate();
+  return (
+    <Popconfirm
+      description="是否删除这篇文章？"
+      onConfirm={() => (async () => {
+        await deleteArticleAPI(id);
+        navigate('/articles/list');
+      })()}
+      okText="确定"
+      cancelText="取消"
+    >
+      <button className={styles.bottomButton} disabled={$disabled}>删除</button>
+    </Popconfirm>
+  );
+};
+
+const EditButtonWithPermission = withPermission(EditButton);
+const DeleteButtonWithPermission = withPermission(DeleteButton);
 
 
 const ArticlesPlatformArticlePage = () => {
 
   const { id } = useParams();
-  const navigate = useNavigate();
   const editorRef = useRef(null)
   const quillRef = useRef(null)
   const [fetchArticleError, setFetchArticleError] = useState(null);
@@ -97,16 +127,11 @@ const ArticlesPlatformArticlePage = () => {
 
   // 文章加载出错（404），返回错误页面
   if (fetchArticleError) {
-    return (
-      <div className={styles.pageWrapper}>
-        <Header position='sticky' />
-        <ErrorPage
-          errorCode={fetchArticleError.code}
-          type={fetchArticleError.type}
-          message={fetchArticleError.message}
-        />
-      </div>
-    );
+    return <Navigate to="/error" replace state={{
+      code: fetchArticleError.code,
+      type: fetchArticleError.type,
+      message: fetchArticleError.message
+    }} />;
   }
 
   return (
@@ -140,18 +165,8 @@ const ArticlesPlatformArticlePage = () => {
           </span>
           <div className='flex flex-row justify-end'>
             {/* <button onClick={() => ???} className={styles.bottomButton}>点赞</button> */}
-            <button onClick={() => navigate('./edit')} className={styles.bottomButton}>编辑</button>
-            <Popconfirm
-              description="是否删除这篇文章？"
-              onConfirm={() => (async () => {
-                await deleteArticleAPI(id)
-                navigate('/articles/list')
-              })()}
-              okText="确定"
-              cancelText="取消"
-            >
-              <button className={styles.bottomButton}>删除</button>
-            </Popconfirm>
+            <EditButtonWithPermission type="editOwnResource" resource={article} id={article.id} />
+            <DeleteButtonWithPermission type="deleteOwnResource" resource={article} id={article.id} />
           </div>
         </div>
 

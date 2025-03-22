@@ -48,16 +48,19 @@ const adminAuthenticate = async (req, res, next) => {
 }
 
 // 权限检查中间件
-const authorize = (requiredPermission) => {
+const authorize = (requiredPermissions = null, message = '') => {
   return (req, res, next) => {
+
+    if (!requiredPermissions) return next();
+
     // 从用户角色中获取权限
     const userPermissions = ROLE_PERMISSIONS[req.user.role] || [];
 
     // 检查是否拥有所需权限
-    const hasPermission = userPermissions.includes(requiredPermission);
+    const hasPermission = requiredPermissions.some(p => userPermissions.includes(p));
 
     if (!hasPermission) {
-      throw new Forbidden('没有相应权限！')
+      throw new Forbidden(`没有${message}权限`);
     }
 
     next();

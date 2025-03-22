@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken')
 
 /** 
  * 管理员登录
- * POST /admin/signin
+ * POST /admin/login
  */
 router.post('/', async (req, res) => {
   try {

@@ -4,8 +4,9 @@ const { success, failure } = require('@utils/responses')
 const { config, client, singleFileUpload } = require('@utils/aliyun')
 const { BadRequest } = require('http-errors')
 const { Attachment } = require('@models')
+const {authorize} = require("@middlewares/auth");
 
-router.post('/aliyun', function (req, res, next) {
+router.post('/aliyun', authorize(['article:create'], '上传文件'), function (req, res, next) {
     try {
         singleFileUpload(req, res, async function(error) {
             if (error) {

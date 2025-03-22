@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import React, { useState, useContext } from 'react'
+import { useNavigate, Link, useLocation } from 'react-router-dom'
 import './index.scss'
 import { Card, Form, Input, Button, message, Flex, Checkbox } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import logo from '/src/assets/react.svg'
 import { loginAPI } from '/src/apis/user'
-import { useGlobals, useGlobalsDispatch } from '/src/store/globalContext'
 import { setToken } from "/src/utils"
+import { AuthContext } from '/src/store/AuthContext';
 
 export default function Login() {
+  const { setAuthState }  = useContext(AuthContext)
   const navigate = useNavigate()
-  let { token } = useGlobals()
-  const { tokenDispatch } = useGlobalsDispatch()
+  const location = useLocation();
 
   const [form] = Form.useForm() // 不要忘了在Form的属性中绑定
 
@@ -19,18 +19,17 @@ export default function Login() {
     try {
       const res = await loginAPI(values)
       const token = res.data.token
-      console.log('拿到的token:' + token);
+      const user = res.data.user
+      setToken(token)   // 存到localStorage
+      setAuthState({user: user, permissions: []})
 
-      // 把这一部分逻辑分离出去
-      if (token) {
-        await tokenDispatch({ type: 'add', token: token })  // token存入Context中
-        await tokenDispatch({ type: 'display' })    // 打印token确认已经存入
-        setToken(token)   // 存到localStorage
-        navigate('/admin')   // 跳转到首页
-        message.success('login success')
-      }
-    } catch(error) {
+      // 获取跳转前的页面路径
+      const { from } = location.state || { from: { pathname: '/' } };
+      navigate(from)
+      message.success('登陆成功！')
+    } catch (error) {
       // 获取后端发来的‘密码错误’提示，并显示在校验错误提示处
+      console.log(error);
       const errorName = error.response.data.errors[0]
       form.setFields([
         {
@@ -58,20 +57,6 @@ export default function Login() {
             ]}>
             <Input size="large" placeholder="请输入用户名或账号名" prefix={<UserOutlined />} />
           </Form.Item>
-          {/* <Form.Item
-            name="mobile"
-            rules={[  // 多条校验逻辑 先校验第一条 第一条通过之后再校验第二条
-              {
-                required: true,
-                message: '请输入手机号',
-              },
-              {
-                pattern: /^1[3-9]\d{9}$/,
-                message: '请输入正确的手机号格式',
-              },
-            ]}>
-            <Input size="large" placeholder="请输入手机号" />
-          </Form.Item> */}
           <Form.Item
             name="password"
             rules={[
@@ -87,16 +72,6 @@ export default function Login() {
           >
             <Input.Password size="large" placeholder="请输入密码" prefix={<LockOutlined />} />
           </Form.Item>
-          {/* <Form.Item
-            name="code"
-            rules={[
-              {
-                required: true,
-                message: '请输入验证码',
-              },
-            ]}>
-            <Input size="large" placeholder="请输入验证码" />
-          </Form.Item> */}
           <Form.Item className="remember-forget">
             <Flex justify="space-between" align="center">
               <Form.Item name="remember" valuePropName="checked" noStyle>

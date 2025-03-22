@@ -4,6 +4,7 @@ const {NotFound} = require('http-errors');
 const authController = require('@controllers/authController');
 const { success, failure } = require('@utils/responses')
 const {User} = require('@models');
+const {ROLE_PERMISSIONS} = require("../../constants/permissions");
 
 /**
  * 查询当前登陆用户
@@ -11,7 +12,14 @@ const {User} = require('@models');
 router.get('/me', async function(req, res, next) {
   try {
     const user = await getUser(req)
-    success(res, '查询当前用户信息成功。', {user})
+    success(res, '查询当前用户信息成功。', {
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        permissions: ROLE_PERMISSIONS[user.role] || []
+      }
+    })
   } catch(error) {
     failure(res, error)
   }

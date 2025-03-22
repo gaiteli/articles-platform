@@ -1,5 +1,5 @@
 // 用户有关的所有请求
-import { request, removeToken } from "/src/utils";
+import { request } from "/src/utils";
 
 // 登录
 export function loginAPI(formData) {
@@ -45,11 +45,4 @@ export function updateUserInfoAPI(id, params) {
     url: `/admin/users/${id}`,
     data: params
   })
-}
-
-// 退出清理用户信息
-export function removeUserInfo(tokenDispatch, userDispatch) {
-  tokenDispatch({type: 'remove'})
-  userDispatch({type: 'remove'})
-  removeToken()
 }

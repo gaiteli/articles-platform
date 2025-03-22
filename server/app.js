@@ -22,7 +22,7 @@ const usersRouter = require('./routes/articlesPlatform/users')
 // 后台路由
 const adminArticlesRouter = require('./routes/admin/articles')
 const adminUsersRouter = require('./routes/admin/users')
-const adminSigninRouter = require('./routes/admin/auth')
+const adminAuthRouter = require('./routes/admin/auth')
 const adminAttachmentsRouter = require('./routes/admin/attachments')
 const adminChannelsRouter = require('./routes/admin/channels')
 
@@ -39,12 +39,12 @@ app.use(express.json({limit: '100mb'}));
 app.use(express.urlencoded({limit: '100mb', extended: true}));
 
 app.use('/', authRouter)    // /login /signup
-app.use('/users', authenticate, usersRouter)    // /me /permissions
+app.use('/articles-platform', authenticate, articlePlatformArticlesRouter)    // 在子路由中分别判断权限
 app.use('/articles-platform/channels', authenticate, articlePlatformChannelRouter)
-app.use('/articles-platform', authenticate, articlePlatformArticlesRouter)
+app.use('/users', authenticate, usersRouter)        // /me /permissions
 app.use('/uploads', authenticate, uploadsRouter)
 
-app.use('/admin/signin', adminSigninRouter)
+// app.use('/admin/login', adminAuthRouter)
 app.use('/admin/articles', authenticate, adminAuthenticate, adminArticlesRouter)
 app.use('/admin/users', authenticate, adminAuthenticate, adminUsersRouter)
 app.use('/admin/attachments', authenticate, adminAuthenticate, adminAttachmentsRouter)

@@ -5,9 +5,11 @@ const { Sequelize, Op } = require('sequelize');
 const { NotFound, Forbidden } = require('http-errors')
 const { success, failure } = require('@utils/responses')
 const {getChannel} = require("ali-oss/lib/rtmp");
+const { ROLE_PERMISSIONS } = require("@constants/permissions")
+const {authorize} = require("@middlewares/auth")
 
 /* 创建文章 */
-router.post('/write', async function (req, res, next) {
+router.post('/write', authorize(['article:create'], '创建文章'), async function (req, res, next) {
     try {
 
         const { title, cover, content, deltaContent, channelId } = req.body;
@@ -36,10 +38,18 @@ router.post('/write', async function (req, res, next) {
 })
 
 /* 删除文章 */
-router.delete('/:id', async function (req, res, next) {
+router.delete('/:id', authorize(), async function (req, res, next) {
     try {
         // 查询当前文章
         const article = await getArticle(req);
+
+        // 权限判定
+        const canEdit = ROLE_PERMISSIONS[req.user.role].includes(['admin:access'])
+          || req.user.id === article.userId
+        if ( !canEdit ) {
+            throw new Forbidden('没有删除文章的权限！');
+        }
+
 
         // 删除文章
         await article.destroy();
@@ -50,22 +60,22 @@ router.delete('/:id', async function (req, res, next) {
 });
 
 /* 更新文章 */
-router.put('/p/:id/edit', async function (req, res, next) {
+router.put('/p/:id/edit', authorize(), async function (req, res, next) {
     try {
-        const { title, cover, content, deltaContent, channelId } = req.body;
-
         // 查询当前文章
+        console.log(req.user)
         const article = await getArticle(req);
-
-        // 所有权限判定
-        // 1. 编辑自己的文章需要是作者本人或管理员
-        const user = req.user
-        if (user.id !== article.userId) {
-            if (!['admin', 'super'].includes(user.role)) {
-                throw new Forbidden('没有相应权限！')
-            }
+        console.log('查到了文章！！！！！')
+        console.log('role:'+req.user.role)
+        // 权限判定
+        const canEdit = ROLE_PERMISSIONS[req.user.role].includes(['admin:access'])
+          || req.user.id === article.userId
+        console.log(canEdit);
+        if ( !canEdit ) {
+            throw new Forbidden('没有更改文章的权限！');
         }
-
+        console.log('权限权限！！！！！')
+        const { title, cover, content, deltaContent, channelId } = req.body;
 
         // 更新文章内容
         const body = {
@@ -85,7 +95,7 @@ router.put('/p/:id/edit', async function (req, res, next) {
 
 
 /* 查询文章列表（接口复用） */
-router.get('/list', async function (req, res, next) {
+router.get('/list', authorize(), async function (req, res, next) {
     try {
         const query = req.query;
 
@@ -143,7 +153,7 @@ router.get('/list', async function (req, res, next) {
 });
 
 /* 查询单个文章 */
-router.get('/p/:id', async function (req, res, next) {
+router.get('/p/:id', authorize(), async function (req, res, next) {
     try {
         const article = await getArticle(req)
 
@@ -162,7 +172,7 @@ router.get('/p/:id', async function (req, res, next) {
 })
 
 /* 编辑页面 查询单个文章 */
-router.get('/edit/:id', async function (req, res, next) {
+router.get('/edit/:id', authorize(), async function (req, res, next) {
     try {
         const article = await getArticle(req)
 

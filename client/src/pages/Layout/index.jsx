@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Layout, Menu, Popconfirm, Dropdown, Space } from 'antd'
 import {
   HomeOutlined,
@@ -11,9 +11,9 @@ import {
 } from '@ant-design/icons'
 import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
-// import getUserInfo from '../../utils/getUserInfo'
-import { getUserInfoAPI, removeUserInfo } from '../../apis/user'
-import { useGlobals, useGlobalsDispatch } from '/src/store/globalContext'
+import { getUserInfoAPI } from '../../apis/user'
+import { removeToken } from '../../utils/token'
+import { AuthContext } from '/src/store/authContext'
 
 const { Header, Sider } = Layout
 const items = [
@@ -21,10 +21,6 @@ const items = [
     label: '首页',
     key: '/',
     icon: <HomeOutlined />,
-    // children: [
-    //   { label: "list", key: "/" },
-    //   { label: "add", key: "/add" }
-    // ]
   },
   {
     label: '文章管理',
@@ -80,8 +76,7 @@ const userItems = [
 ];
 
 export function GeekLayout() {
-  const { token, user } = useGlobals()
-  const { tokenDispatch, userDispatch } = useGlobalsDispatch()
+  const { user, removeAuth }  = useContext(AuthContext)
   const location = useLocation()
   const [currentMenuKey, setCurrentMenuKey] = useState('')
 
@@ -101,20 +96,16 @@ export function GeekLayout() {
   // 触发个人用户信息action
   useEffect(() => {
     (async () => {
-      // 旧api已废弃 userInfo = await getUserInfo() 
       const res = await getUserInfoAPI()
       const user = res.data.user
       console.log('layout get user' + user);
-      await userDispatch({
-        type: 'set',
-        user: user
-      })
     })()
-  }, [userDispatch])
+  }, [])
 
   // 退出登录确认回调
   const onConfirm = () => {
-    removeUserInfo(tokenDispatch, userDispatch)
+    removeToken()
+    removeAuth()
     navigate('/login')
   }
 

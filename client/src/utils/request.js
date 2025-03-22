@@ -3,9 +3,8 @@ import axios from "axios"
 import { getToken, removeToken } from "./token"
 import router from "/src/router"
 import { message } from "antd"
-// 1. 根域名配置
-// 2. 超时时间
-// 3. 请求拦截器 / 响应拦截器
+import { useContext, useEffect } from 'react';
+import { AuthContext } from '/src/store/AuthContext';
 
 const request = axios.create({
   baseURL: 'http://localhost:9000',
@@ -19,7 +18,7 @@ request.interceptors.request.use((config) => {
   // 1. 获取到token
   // 2. 按照后端的格式要求做token拼接
   const token = getToken()
-  
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -31,54 +30,96 @@ request.interceptors.request.use((config) => {
 // 添加响应拦截器
 // 在响应返回到客户端之前 做拦截 重点处理返回的数据
 request.interceptors.response.use((response) => {
-  // 2xx 范围内的状态码都会触发该函数。
-  // 对响应数据做点什么
+  // 2xx 范围内的状态码触发
   return response.data
 }, (error) => {
-  // 超出 2xx 范围的状态码都会触发该函数。
-  // 对响应错误做点什么
-  // 监控401 token失效
-  console.log('axios拦截到响应错误');
-  if (error.response.status === 400) {
-    const errorName = error.response.data.errors[0]
-    if (error.response.data.subType === '01') {
-      message.warning({
-        content: errorName+'\n请检查无误后再提交',
-        duration: 2,
-      })
+  // 超出 2xx 范围的状态码触发
+  console.log('axios拦截到响应错误', error);
+  const { response } = error
+  console.log(response)
+
+  if (response) {
+    switch (response.status) {
+
+      case 400:
+        const errorName = response.data.errors[0];
+        if (response.data.subType === '01') {
+          message.warning({
+            content: errorName + '\n请检查无误后再提交',
+            duration: 2,
+          })
+        }
+        if (response.data.subType === '02') {
+          message.warning({
+            content: errorName + '\n2秒后自动跳转',
+            duration: 2,
+          })
+          setTimeout(() => relogin, 1900)
+        }
+        break;
+
+      case 401:
+        const unauthorizedError = response.data.errors[0];
+        if (unauthorizedError.includes('密码错误')) {
+          message.warning({
+            content: '密码错误，请检查！',
+            duration: 2,
+          });
+        } else {
+          message.warning({ // 注意：使用antd给出的静态方法message.warning，不要用钩子这里不能用
+            content: '账户信息已失效，请重新登录。\n2秒后自动跳转',
+            duration: 2,
+          });
+          setTimeout(() => relogin(), 1900);
+        }
+        break;
+
+      case 403:
+        // <Navigate to=''
+        message.error({
+          content: '您没有权限访问该资源。',
+          duration: 2,
+        });
+        break;
+
+      case 404:
+        // 处理 404 未找到
+        message.error({
+          content: '请求的资源未找到。',
+          duration: 2,
+        });
+        break;
+
+      case 500:
+        // 处理 500 服务器错误
+        message.error({
+          content: '服务器内部错误，请稍后再试。',
+          duration: 2,
+        });
+        break;
+
+      default:
+        message.error({
+          content: `未知错误: code:${response.status}, message:${response.data.errors[0]}`,
+          duration: 2,
+        });
+        break;
     }
-    if (error.response.data.subType === '02') {
-      message.warning({
-        content: errorName+'\n2秒后自动跳转',
-        duration: 2,
-      })
-      setTimeout(() => {
-        removeToken()
-        router.navigate('/login')
-        window.location.reload()
-      }, 1900)
-    }
+  } else {
+    // 服务器未返回状态码，可能是网络错误
+    message.error({
+      content: '网络请求失败，请检查您的网络连接。',
+      duration: 2,
+    });
   }
-  if (error.response.status === 401) {
-    const errorName = error.response.data.errors[0]
-    if (errorName.includes('密码错误')) {
-      // message.warning({
-      //   content: '密码错误，请检查！',
-      //   duration: 2,
-      // })
-    } else {
-      message.warning({ // 注意：使用antd给出的静态方法message.warning，不要用钩子这里不能用
-        content: '账户信息已失效，请重新登录。\n2秒后自动跳转',
-        duration: 2,
-      })
-      // setTimeout(() => {
-      //   removeToken()
-      //   router.navigate('/login')
-      //   window.location.reload()
-      // }, 1900)
-    }
-  }
+
   return Promise.reject(error)
 })
+
+function relogin() {
+  removeToken();
+  router.navigate('/login', { replace: true });
+  // window.location.reload();
+}
 
 export { request }

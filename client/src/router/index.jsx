@@ -1,11 +1,13 @@
 import React from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
-import ErrorPage from "../pages/ErrorPage/index.jsx";
-import TestPage from "../pages/TestPage/index.jsx";
-import Login from "../pages/Login/Login/index.jsx";
-import Register from "../pages/Login/Register/index.jsx";
-import {GeekLayout as Layout} from "../pages/Layout/index.jsx";
+/* 文章平台前台页面 */
+import ArticlesPlatformFrontPage from "../pages/articles_platform/FrontPage/index.jsx";
+import ArticlesPlatformListPage from "../pages/articles_platform/ListPage/index.jsx";
+import ArticlesPlatformArticleEditPage from "../pages/articles_platform/ArticleEditPage/index.jsx";
+import ArticlesPlatformArticlePage from "../pages/articles_platform/ArticlePage/index.jsx";
+
+import { GeekLayout as Layout } from "../pages/Layout/index.jsx";
 import Home from "../pages/Home/index.jsx";
 import Article from "../pages/Article/index.jsx";
 import Publish from "../pages/Publish/index.jsx";
@@ -15,11 +17,11 @@ import User from "../pages/User/index.jsx";
 import Attachment from "../pages/admin/Attachment/index.jsx";
 import Channel from "../pages/admin/Channel/index.jsx"
 
-/* 文章平台前台页面 */
-import ArticlesPlatformFrontPage from "../pages/articles_platform/FrontPage/index.jsx";
-import ArticlesPlatformListPage from "../pages/articles_platform/ListPage/index.jsx";
-import ArticlesPlatformArticleEditPage from "../pages/articles_platform/ArticleEditPage/index.jsx";
-import ArticlesPlatformArticlePage from "../pages/articles_platform/ArticlePage/index.jsx";
+import ErrorPage from "../pages/errors/ErrorPage/index.jsx";
+import TestPage from "../pages/TestPage/index.jsx";
+import Login from "../pages/Login/Login/index.jsx";
+import Register from "../pages/Login/Register/index.jsx";
+import ErrorPageWithHeader from "../pages/errors/ErrorPageWithHeader/index.jsx";
 
 const router = createBrowserRouter([
   // articles_platform 文章平台
@@ -33,26 +35,42 @@ const router = createBrowserRouter([
   },
   {
     path: "/articles/list",
-    element: <ArticlesPlatformListPage />
-  },
-  {
-    path: "/articles/write",
-    element: <ArticlesPlatformArticleEditPage />
-  },
-  {
-    path: "/articles/:id/edit",
-    element: <ArticlesPlatformArticleEditPage />
+    element: (
+      <ArticlesPlatformListPage />
+    )
   },
   {
     path: "/articles/:id",
-    element: <ArticlesPlatformArticlePage />
+    element: (
+      <ArticlesPlatformArticlePage />
+    )
   },
-  // 后台
+  {
+    path: "/articles/write",
+    element: (
+      <AuthRoute whitelistRoles={['user', 'admin', 'super']}>
+        <ArticlesPlatformArticleEditPage />
+      </AuthRoute>
+    )
+  },
+  {
+    path: "/articles/:id/edit",
+    element: (
+      <AuthRoute whitelistRoles={['admin', 'super']}>
+        <ArticlesPlatformArticleEditPage />
+      </AuthRoute>
+    )
+  },
+  // 后台+
   {
     path: "/admin",
-    element: <AuthRoute><Layout /></AuthRoute>,
+    element: (
+      <AuthRoute whitelistRoles={['admin', 'super']}>
+        <Layout />
+      </AuthRoute>
+    ),
     // errorElement: <ErrorPage />,    //只能给root加才有效
-    children:[
+    children: [
       { index: true, element: <Home /> },
       {
         path: "home",
@@ -80,6 +98,7 @@ const router = createBrowserRouter([
       }
     ]
   },
+  // 权限提升和兜底等
   {
     path: "/login",
     element: <Login />
@@ -93,36 +112,13 @@ const router = createBrowserRouter([
     element: <TestPage />,
   },
   {
+    path: "/error",
+    element: <ErrorPageWithHeader />
+  },
+  {
     path: "*",
     element: <ErrorPage />,
   },
-  // {
-  //   path: "official-home",
-  //   element: <OfficialExampleHomePage />,
-  //   loader: officialHomeLoader,
-  //   action: officialHomeAction,
-  //   children: [
-  //     { index: true, element: <Index /> },
-  //     {
-  //       path: "contacts/:contactId",
-  //       element: <Contact />,
-  //       loader: contactLoader,
-  //       action: contactAction,
-  //     },
-  //     // edit界面在侧边栏右contact位置显示，故放在这里
-  //     {
-  //       path: "contacts/:contactId/edit",
-  //       element: <EditContact />,
-  //       loader: contactLoader, // 这是偷懒了，不同路由不应该共用一个loader
-  //       action: editAction,
-  //     },
-  //     {
-  //       path: "contacts/:contactId/destroy",
-  //       action: destroyAction,
-  //       errorElement: <div>发生了一个错误</div>
-  //     },
-  //   ],
-  // },
 ])
 
 export default router

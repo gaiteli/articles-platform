@@ -1,46 +1,30 @@
-// const PERMISSIONS = {
-//   // 文章相关权限
-//   ARTICLE: {
-//     CREATE: 'article:create',
-//     EDIT: 'article:edit',
-//     DELETE: 'article:delete',
-//     MANAGE: 'article:manage'
-//   },
-//
-//   // 用户相关权限
-//   USER: {
-//     MANAGE: 'user:manage'
-//   },
-// };
+const guest = [
+  'article:read',
+]
+const user = [
+  'article:create',
+  'article:edit',
+  'article:delete',
+  ...guest,
+]
+const admin = [
+  'admin:access',
+  'article:manage',
+  'user:manage',
+  ...user,
+]
+const superAdmin = [
+  ...admin,
+]
 
 // 角色权限映射
 const ROLE_PERMISSIONS =  {
-  guest: [],
-  user: [],
-  author: [
-    'article:create',
-    'article:edit',
-    'article:delete',
-  ],
-  editor: [
-    'article:create',
-    'article:edit',
-    'article:delete',
-  ],
-  admin: [
-    'article:manage',
-    'user:manage',
-    'article:create',
-    'article:edit',
-    'article:delete'
-  ],
-  super: [
-    'article:manage',
-    'user:manage',
-    'article:create',
-    'article:edit',
-    'article:delete'
-  ]
+  guest: guest,
+  user: user,
+  // author:
+  // editor:
+  admin: admin,
+  super: superAdmin,
 }
 
 module.exports = { ROLE_PERMISSIONS };
