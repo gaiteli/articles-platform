@@ -1,47 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate, Navigate } from 'react-router-dom';
-import { message, Popconfirm } from 'antd';
+import { useParams, Navigate } from 'react-router-dom';
+import { message } from 'antd';
 import Quill from 'quill';
 import moment from 'moment';
 
-import ErrorPage from '/src/pages/errors/ErrorPage';
 import { Header } from '/src/components/articles_platform/Header';
-import { getArticleByIdAPI, deleteArticleAPI } from '/src/apis/articles_platform/article';
+import { getArticleByIdAPI, hasLikedArticleAPI, likeArticleAPI } from '/src/apis/articles_platform/article';
 import { generateUniqueId } from '/src/utils/quill';
-import { withPermission } from '/src/components/withPermission'
 
 import styles from './index.module.scss';
 import TOC from '../../../components/common/QuillEditorPlus/TOC';
-
-// 带权限校验的按钮
-const EditButton = ({ id, $disabled }) => {
-  const navigate = useNavigate();
-  return (
-    <button onClick={() => navigate(`./edit`)} className={styles.bottomButton} disabled={$disabled}>
-      编辑
-    </button>
-  );
-};
-
-const DeleteButton = ({ id, $disabled }) => {
-  const navigate = useNavigate();
-  return (
-    <Popconfirm
-      description="是否删除这篇文章？"
-      onConfirm={() => (async () => {
-        await deleteArticleAPI(id);
-        navigate('/articles/list');
-      })()}
-      okText="确定"
-      cancelText="取消"
-    >
-      <button className={styles.bottomButton} disabled={$disabled}>删除</button>
-    </Popconfirm>
-  );
-};
-
-const EditButtonWithPermission = withPermission(EditButton);
-const DeleteButtonWithPermission = withPermission(DeleteButton);
+import {
+  DeleteButtonWithPermission,
+  EditButtonWithPermission,
+  LikeButtonWithPermission,
+} from '../../../components/permission/buttons';
 
 
 const ArticlesPlatformArticlePage = () => {
@@ -60,6 +33,7 @@ const ArticlesPlatformArticlePage = () => {
   });
   const [headings, setHeadings] = useState([]); // 存储标题信息
   const [articleLength, setArticleLength] = useState(0);  // 文章长度
+  const [hasLiked, setHasLiked] = useState(false)
 
 
   // 获取文章详情
@@ -67,6 +41,8 @@ const ArticlesPlatformArticlePage = () => {
     const loadArticle = async () => {
       try {
         const res = await getArticleByIdAPI(id)
+        const hasLikeData = await hasLikedArticleAPI(id)
+        setHasLiked(hasLikeData.data.hasLiked)
         setArticle(res.data)
       } catch (error) {
         console.log(error.response);
@@ -125,6 +101,19 @@ const ArticlesPlatformArticlePage = () => {
   }, [article.deltaContent])
 
 
+  // 处理点赞/取消点赞
+  const handleLike = async () => {
+    try {
+      console.log('进入点赞处理onclick');
+      await likeArticleAPI(id)
+      setHasLiked(!hasLiked);       // setHasLiked(prev => !prev);
+      message.success(hasLiked ? '取消点赞成功' : '点赞成功');
+    } catch (error) {
+      message.error('操作失败');
+    }
+  };
+
+
   // 文章加载出错（404），返回错误页面
   if (fetchArticleError) {
     return <Navigate to="/error" replace state={{
@@ -164,9 +153,24 @@ const ArticlesPlatformArticlePage = () => {
 
           </span>
           <div className='flex flex-row justify-end'>
-            {/* <button onClick={() => ???} className={styles.bottomButton}>点赞</button> */}
-            <EditButtonWithPermission type="editOwnResource" resource={article} id={article.id} />
-            <DeleteButtonWithPermission type="deleteOwnResource" resource={article} id={article.id} />
+            <LikeButtonWithPermission
+              type="likeArticle"
+              resource={article}
+              onClick={handleLike}
+              hasLiked={hasLiked}
+              className={styles.LikeButton}
+            />
+            <EditButtonWithPermission
+              type="editOwnResource"
+              resource={article}
+              id={article.id}
+              className={styles.bottomButton} />
+            <DeleteButtonWithPermission
+              type="deleteOwnResource"
+              resource={article}
+              id={article.id}
+              className={styles.bottomButton}
+            />
           </div>
         </div>
 

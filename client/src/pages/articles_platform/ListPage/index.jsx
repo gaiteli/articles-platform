@@ -19,7 +19,7 @@ import { RightOutlined, LeftOutlined, ClockCircleFilled, ClockCircleOutlined, Hi
 
 import styles from './index.module.scss'
 
-import { getArticleListAPI } from '/src/apis/article'
+import { getArticleListAPI } from '/src/apis/articles_platform/article'
 
 
 const ArticlesPlatformListPage = () => {

@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const {Article, Channel} = require('@models');
+const {Article, Channel, Like, User} = require('@models');
 const { Sequelize, Op } = require('sequelize');
-const { NotFound, Forbidden } = require('http-errors')
+const { NotFound, Forbidden, BadRequest } = require('http-errors')
 const { success, failure } = require('@utils/responses')
 const {getChannel} = require("ali-oss/lib/rtmp");
 const { ROLE_PERMISSIONS } = require("@constants/permissions")
-const {authorize} = require("@middlewares/auth")
+const { authenticate, authorize} = require("@middlewares/auth")
 
 /* 创建文章 */
-router.post('/write', authorize(['article:create'], '创建文章'), async function (req, res, next) {
+router.post('/write', authenticate, authorize(['article:create'], '创建文章'), async function (req, res, next) {
     try {
 
         const { title, cover, content, deltaContent, channelId } = req.body;
@@ -38,7 +38,7 @@ router.post('/write', authorize(['article:create'], '创建文章'), async funct
 })
 
 /* 删除文章 */
-router.delete('/:id', authorize(), async function (req, res, next) {
+router.delete('/:id', authenticate, authorize(), async function (req, res, next) {
     try {
         // 查询当前文章
         const article = await getArticle(req);
@@ -60,21 +60,17 @@ router.delete('/:id', authorize(), async function (req, res, next) {
 });
 
 /* 更新文章 */
-router.put('/p/:id/edit', authorize(), async function (req, res, next) {
+router.put('/p/:id/edit', authenticate, authorize(), async function (req, res, next) {
     try {
         // 查询当前文章
-        console.log(req.user)
         const article = await getArticle(req);
-        console.log('查到了文章！！！！！')
-        console.log('role:'+req.user.role)
         // 权限判定
         const canEdit = ROLE_PERMISSIONS[req.user.role].includes(['admin:access'])
           || req.user.id === article.userId
-        console.log(canEdit);
-        if ( !canEdit ) {
+        if (!canEdit) {
             throw new Forbidden('没有更改文章的权限！');
         }
-        console.log('权限权限！！！！！')
+
         const { title, cover, content, deltaContent, channelId } = req.body;
 
         // 更新文章内容
@@ -139,7 +135,7 @@ router.get('/list', authorize(), async function (req, res, next) {
         // 获取文章数据
         const { count, rows } = await Article.findAndCountAll(condition);
 
-        success(res, 'query success', {
+        success(res, '获取文章列表成功', {
             articles: rows,
             pagination: {
                 total: count,
@@ -172,7 +168,7 @@ router.get('/p/:id', authorize(), async function (req, res, next) {
 })
 
 /* 编辑页面 查询单个文章 */
-router.get('/edit/:id', authorize(), async function (req, res, next) {
+router.get('/edit/:id', authenticate, authorize(), async function (req, res, next) {
     try {
         const article = await getArticle(req)
 
@@ -180,6 +176,69 @@ router.get('/edit/:id', authorize(), async function (req, res, next) {
 
         success(res, 'query success', {...article.dataValues, channelName: channel.name});
     } catch(error) {
+        failure(res, error)
+    }
+})
+
+
+/* 点赞 */
+router.post('/p/:id/like', authenticate, authorize(), async function (req, res, next) {
+    try {
+        // 查询当前文章
+        const article = await getArticle(req);
+        const { id: articleId } = article
+        const userId = req.user.id;
+
+        // 权限判定
+        const canLike = userId !== article.userId
+        console.log(canLike);
+        if (!canLike) {
+            throw new Forbidden('不能点赞自己的文章');
+        }
+        console.log('权限权限！！！！！')
+
+        // 检查是否已点赞
+        const existingLike = await Like.findOne({ where: { articleId, userId } });
+
+        if (!existingLike) {
+            console.log('existing like passed!'+existingLike);
+            await Like.create({ articleId, userId });
+            await article.increment('likeCount');
+            success(res, '点赞成功');
+        } else {
+            await existingLike.destroy();
+            await article.decrement('likeCount');
+            success(res, '取消点赞成功')
+        }
+
+    } catch (error) {
+        console.log(error)
+        failure(res, error);
+    }
+})
+
+/* 用户是否对该篇文章点过赞 */
+router.get('/p/:id/like', authenticate, authorize(), async function (req, res, next) {
+    try {
+        const { id } = req.params;      // 获取文章id
+        const userId = req.user.id;
+
+        const user = await User.findByPk(userId, {
+            include: {
+                model: Article,
+                as: 'likeArticles',
+            }
+        })
+
+        const likeArticles = user.likeArticles
+
+        // 判断点赞过的文章里是否有这篇文章
+        const hasLiked = likeArticles && likeArticles.some(article => article.id === id);
+
+        success(res, '查询用户是否点赞该文章成功', {hasLiked: hasLiked});
+
+    } catch (error) {
+        console.log(error)
         failure(res, error)
     }
 })

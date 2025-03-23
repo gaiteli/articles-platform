@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useContext } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
-import { Spin, message, Upload, Select, Image } from 'antd';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { Spin, message } from 'antd';
 import Quill from 'quill';
 
 import { AuthContext } from '/src/store/AuthContext';
@@ -10,8 +9,7 @@ import EditorContent from '../../../components/common/QuillEditorPlus/EditorCont
 import EditorToolbar from '../../../components/common/QuillEditorPlus/EditorToolbar';
 import PopoutChannelPage from '/src/components/articles_platform/popouts/PopoutChannelPage';
 
-import { getArticleByIdAPI, getArticleByIdWhenEditAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
-import { uploadAttachmentAPI } from '/src/apis/articles_platform/attachment';
+import { getArticleByIdWhenEditAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
 import { createArticleAPI } from '/src/apis/articles_platform/article'
 import styles from './index.module.scss'
 import { CategoryCard } from '../../../components/articles_platform/widgets/CategoryCard';
@@ -19,7 +17,6 @@ import CoverUploader from '../../../components/articles_platform/widgets/CoverUp
 
 
 const Delta = Quill.import('delta');
-const { Option } = Select;
 
 const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
   const { id } = useParams();  // 从路由中获取articleId，若undefined则为首次编辑
@@ -31,9 +28,6 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
   const [loading, setLoading] = useState(false);
   const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
   const [coverImageUrl, setCoverImageUrl] = useState(null)
-  const [previewOpen, setPreviewOpen] = useState(false)
-  const [previewImage, setPreviewImage] = useState('')
-  const [uploadLoading, setUploadLoading] = useState(false)
   const [isShowChannelPage, setIsShowChannelPage] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
 
@@ -167,93 +161,6 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
       setLoading(false)
     }
   }
-
-
-  // // 上传封面
-  // // 上传按钮
-  // const uploadButton = (
-  //   <button
-  //     style={{
-  //       border: 0,
-  //       background: 'none',
-  //     }}
-  //     type="button"
-  //   >
-  //     {loading ? <LoadingOutlined /> : <PlusOutlined />}
-  //     <div
-  //       style={{
-  //         marginTop: 8,
-  //       }}
-  //     >
-  //       Upload
-  //     </div>
-  //   </button>
-  // )
-
-  // // 上传前检查文件格式和大小
-  // const beforeUpload = (file) => {
-  //   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-  //   if (!isJpgOrPng) {
-  //     message.error('只能上传 JPG 或 PNG 格式的图片！');
-  //   }
-  //   const isLt2M = file.size / 1024 / 1024 < 2;
-  //   if (!isLt2M) {
-  //     message.error('图片大小不能超过 2MB！');
-  //   }
-  //   return isJpgOrPng && isLt2M;
-  // };
-
-  // // antd Upload组件的onChange回调
-  // const handleUploadOnchange = async (info) => {
-  //   if (info.file.status === 'uploading') {
-  //     setUploadLoading(true);
-  //     message.loading({ content: '正在上传...', key: 'upload' });
-  //     return;
-  //   }
-  //   if (info.file.status === 'done') {
-  //     message.success({ content: '上传成功', key: 'upload' });
-  //     // 图片URL存储在info.file.response.url中，即info.file.response == res.data(上传回调的实参)
-  //     setUploadLoading(false);
-  //     console.log(info.file);
-  //     setCoverImageUrl(info.file.response.url);
-  //   } else if (info.file.status === 'error') {
-  //     message.error({ content: '上传失败', key: 'upload' });
-  //   }
-  // };
-
-  // // 上传回调
-  // const handleUpload = async (options) => {
-  //   const { file, onSuccess, onError } = options;
-  //   const formData = new FormData();
-  //   formData.append('image', file);
-
-  //   try {
-  //     // 后端返回的图片URL存储在res.data.url中
-  //     const res = await uploadAttachmentAPI(formData);
-  //     console.log(res);
-  //     onSuccess(res.data, file);
-  //   } catch (error) {
-  //     console.log('error in handleUpload func');
-  //     onError(error);
-  //   }
-  // }
-
-  // 图片预览
-  // 添加 getBase64 工具函数
-  const getBase64 = (file) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-
-  const handlePreview = async (file) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setPreviewImage(file.url || file.preview);
-    setPreviewOpen(true);
-  };
 
 
   return (

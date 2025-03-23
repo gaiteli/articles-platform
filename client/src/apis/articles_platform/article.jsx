@@ -75,3 +75,19 @@ export function deleteArticleAPI(id) {
   })
 }
 
+
+// 点赞
+export function likeArticleAPI(id) {
+  return request({
+    url: `/articles-platform/p/${id}/like`,
+    method: 'POST'
+  })
+}
+
+// 查询用户是否点赞该文章
+export function hasLikedArticleAPI(id) {
+  return request({
+    url: `/articles-platform/p/${id}/like`,
+    method: 'GET'
+  })
+}
