@@ -8,7 +8,7 @@ import { AuthContext } from '/src/store/AuthContext';
 
 const request = axios.create({
   baseURL: 'http://localhost:9000',
-  timeout: 5000
+  timeout: 10000
 })
 
 // 添加请求拦截器
@@ -54,7 +54,7 @@ request.interceptors.response.use((response) => {
             content: errorName + '\n2秒后自动跳转',
             duration: 2,
           })
-          setTimeout(() => relogin, 1900)
+          setTimeout(() => relogin(), 1900)
         }
         break;
 

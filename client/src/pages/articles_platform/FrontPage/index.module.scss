@@ -8,7 +8,9 @@
   overflow: hidden;
 
   .backgroundImage {
-    width: 100%;
+    width: 100vw;
+    height: 50vw;
+    overflow: hidden;
     z-index: -99; 
   }
 
@@ -51,9 +53,9 @@
 
   #scrollDownPrompt {
     position: absolute;
-    left: 50%;
+    left: 47%;
     bottom: 50px;
-    transform: translateX(-50%);
+    // transform: translateX(-50%);
     cursor: pointer;
   }
 }

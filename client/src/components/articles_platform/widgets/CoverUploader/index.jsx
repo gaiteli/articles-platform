@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, Image, message } from 'antd';
 import { LoadingOutlined, PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { uploadAttachmentAPI } from '/src/apis/articles_platform/attachment';
+import { uploadCoverAPI } from '/src/apis/articles_platform/attachment';
 import styles from './index.module.scss';
 
 const CoverUploader = ({ coverImageUrl, onCoverChange }) => {
@@ -20,7 +20,7 @@ const CoverUploader = ({ coverImageUrl, onCoverChange }) => {
 
   // 上传前检查
   const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    const isJpgOrPng = ['image/jpg','image/jpeg','image/png'].includes(file.type)
     if (!isJpgOrPng) {
       message.error('只能上传 JPG 或 PNG 格式的图片！');
     }
@@ -54,7 +54,7 @@ const CoverUploader = ({ coverImageUrl, onCoverChange }) => {
     formData.append('image', file);
 
     try {
-      const res = await uploadAttachmentAPI(formData);
+      const res = await uploadCoverAPI(formData);
       onSuccess(res.data, file);
     } catch (error) {
       console.error('Upload error:', error);

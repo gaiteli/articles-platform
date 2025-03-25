@@ -6,6 +6,7 @@ import ArticlesPlatformFrontPage from "../pages/articles_platform/FrontPage/inde
 import ArticlesPlatformListPage from "../pages/articles_platform/ListPage/index.jsx";
 import ArticlesPlatformArticleEditPage from "../pages/articles_platform/ArticleEditPage/index.jsx";
 import ArticlesPlatformArticlePage from "../pages/articles_platform/ArticlePage/index.jsx";
+import ArticlesPlatformSettingsPage from "../pages/articles_platform/SettingsPage/index.jsx";
 
 import { GeekLayout as Layout } from "../pages/Layout/index.jsx";
 import Home from "../pages/Home/index.jsx";
@@ -61,11 +62,19 @@ const router = createBrowserRouter([
       </AuthRoute>
     )
   },
+  {
+    path: "/articles/settings",
+    element: (
+      <AuthRoute whitelistRoles={['user', 'admin', 'super']}>
+        <ArticlesPlatformSettingsPage />
+      </AuthRoute>
+    )
+  },
   // 后台+
   {
     path: "/admin",
     element: (
-      <AuthRoute whitelistRoles={['admin', 'super']}>
+      <AuthRoute requiredPermissions={['admin:access']}>
         <Layout />
       </AuthRoute>
     ),

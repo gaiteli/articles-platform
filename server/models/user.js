@@ -121,6 +121,7 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 0
     },
     lastLogin: DataTypes.DATE,
+    bgImageUrl: DataTypes.STRING(255),
     customFields: DataTypes.JSON,
   }, {
     sequelize,

@@ -1,25 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
-
-import { Header } from '/src/components/articles_platform/Header'
+import { useEffect, useRef, useState, useContext } from 'react';
 import { List, Card, Typography, Spin } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons'
-import styles from './index.module.scss'
-import { debounce } from '../../../utils/index.js';
 
+import styles from './index.module.scss'
+import { Header } from '/src/components/articles_platform/Header'
+import Footer from '/src/components/articles_platform/Footer';
+import { debounce } from '../../../utils/index.js';
 import { getRecentArticlesAPI, getPopularArticlesAPI } from '/src/apis/articles_platform/article';
 import SmallArticleList from '../../../components/articles_platform/pageComponents/frontPage/SmallArticleList/index.jsx';
-
+import { AuthContext } from '/src/store/AuthContext';
 const { Title, Text } = Typography;
 
 
 const ArticlesPlatformFrontPage = () => {
+  const { user } = useContext(AuthContext)
   const eleRef = useRef(null);
   const [showScrollBottom, setShowScrollBottom] = useState(true)
   const [recentArticles, setRecentArticles] = useState([]);
   const [popularArticles, setPopularArticles] = useState([]);
   const [loading, setLoading] = useState(false);
 
-
+  
   // 获取最近文章
   const fetchRecentArticles = async () => {
     setLoading(true)
@@ -71,8 +72,7 @@ const ArticlesPlatformFrontPage = () => {
   };
 
   useEffect(() => {
-    // 在组件挂载时执行某些操作（可选）
-    console.log(eleRef.current);
+    console.log(eleRef.current.src);
     document.body.addEventListener('mousemove', debounce(scrollListener, 500))
 
     return () => {
@@ -88,7 +88,8 @@ const ArticlesPlatformFrontPage = () => {
         <img
           className={styles.backgroundImage}
           ref={eleRef}
-          src="/src/assets/articles_platform/home_pic.jpg"
+          // src="/src/assets/articles_platform/home_pic.jpg"
+          src={user.bgImageUrl || "/src/assets/articles_platform/home_pic.png"}
         />
         <div className={styles.titles}>
           <h1>GatesLee's study</h1>
@@ -127,6 +128,7 @@ const ArticlesPlatformFrontPage = () => {
         </section>
         </section>
       </Spin>
+      <Footer />
     </>
   )
 }

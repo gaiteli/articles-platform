@@ -10,6 +10,7 @@ const initialState = {
     id: null,
     username: null,
     role: 'guest',
+    bgImageUrl: null,
   },
   permissions: [],
   isLoading: true,
@@ -32,6 +33,17 @@ export const AuthProvider = ({ children }) => {
       isLoading: false
     });
   }
+
+  // 主动更新用户信息的方法
+  const updateUserInfo = (newUserInfo) => {
+    setAuthState(prev => ({
+      ...prev,
+      user: {
+        ...prev.user,
+        ...newUserInfo
+      }
+    }));
+  };
   
   // 初始化时获取用户信息
   useEffect(() => {
@@ -49,7 +61,8 @@ export const AuthProvider = ({ children }) => {
           user: {
             id: userData.id,
             username: userData.username,
-            role: userData.role
+            role: userData.role,
+            bgImageUrl: userData.bgImageUrl,
           },
           permissions: userData.permissions,
           isLoading: false
@@ -69,7 +82,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ ...authState, setAuthState, removeAuth }}>
+    <AuthContext.Provider value={{ ...authState, setAuthState, removeAuth, updateUserInfo }}>
       {children}
     </AuthContext.Provider>
   );

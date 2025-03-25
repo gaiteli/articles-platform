@@ -1,5 +1,6 @@
 import React from 'react';
 import { List } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 
 import styles from './index.module.scss';
@@ -103,6 +104,7 @@ moment.locale('zh-cn', {
 
 const SmallArticleList = ({ articles }) => {
   moment.locale('zh-cn');
+  const navigate = useNavigate()
 
   return (
     <List
@@ -110,7 +112,7 @@ const SmallArticleList = ({ articles }) => {
       dataSource={articles}
       renderItem={article => (
         <List.Item className={styles.customListItem}>
-          <div className={styles.customListItemContent}>
+          <div className={styles.customListItemContent} onClick={() => navigate(`./${article.id}`)}>
             <div className={styles.customListItemTitle}>
               {article.title}
             </div>

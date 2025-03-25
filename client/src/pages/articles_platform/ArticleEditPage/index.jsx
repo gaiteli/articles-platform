@@ -13,7 +13,7 @@ import { getArticleByIdWhenEditAPI, updateArticleAPI } from '/src/apis/articles_
 import { createArticleAPI } from '/src/apis/articles_platform/article'
 import styles from './index.module.scss'
 import { CategoryCard } from '../../../components/articles_platform/widgets/CategoryCard';
-import CoverUploader from '../../../components/articles_platform/widgets/CoverUploader';
+import {CoverUploader} from '/src/components/common/Upload';
 
 
 const Delta = Quill.import('delta');
@@ -279,7 +279,7 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
 
           {/* 封面上传区 */}
           <CoverUploader
-            coverImageUrl={coverImageUrl}
+            coverUrl={coverImageUrl}
             onCoverChange={setCoverImageUrl}
           />
 

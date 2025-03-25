@@ -1,0 +1,54 @@
+.footer {
+  background-color: var(--background-color);
+  text-align: center;
+  padding: 20px;
+  margin-top: 20px;
+
+  .links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+
+    .linkGroup {
+      width: 200px;
+      margin: auto;
+    }
+    
+    .linkGroup h4 {
+      margin-bottom: 10px;
+    }
+    
+    .linkGroup ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .linkGroup li {
+      margin-bottom: 5px;
+    }
+    
+    .linkGroup a {
+      text-decoration: none;
+    }
+    
+    .linkGroup a:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .copyright {
+    margin-bottom: 10px;
+  }
+  
+  .record {
+    font-family: 'Microsoft Yahei';
+    font-size: 0.8rem;
+    margin-top: 10px;
+  }
+}
+
+
+
+
+

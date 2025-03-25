@@ -1,0 +1,16 @@
+.uploadWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.promptContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 13px;
+
+  svg {
+    color: hsl(10, 75%, 50%);
+    margin-right: 0.25rem;
+  }
+}

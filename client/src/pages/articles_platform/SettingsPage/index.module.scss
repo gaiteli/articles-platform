@@ -1,0 +1,37 @@
+
+.settingsLayout {
+  min-height: 100vh;
+}
+
+.settingsContent {
+  padding: 24px;
+  background-color: #fff;
+}
+
+.bgSettings {
+  width: 90%;
+  height: 50%;
+  margin: 0 auto;
+
+  h2 {
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .bgUploaderContainer {
+    width: 50%;
+  }
+
+  :global(.ant-upload-wrapper) {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+
+    div:first-of-type {
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 2 / 1;
+    }
+  }
+  
+}

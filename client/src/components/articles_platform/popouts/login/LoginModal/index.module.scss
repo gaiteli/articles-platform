@@ -1,0 +1,22 @@
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(3px); // 背景虚化
+  z-index: 1000; // 确保在弹窗之上
+}
+
+// .modalContent {
+//   position: fixed;
+//   top: 50%;
+//   left: 50%;
+//   transform: translate(-50%, -50%);
+//   z-index: 1001; // 确保在背景之上
+//   background-color: white;
+//   padding: 20px;
+//   border-radius: 8px;
+//   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+// }

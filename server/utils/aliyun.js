@@ -14,32 +14,24 @@ const config = {
 const client = new OSS(config)
 
 // multer配置信息
-const upload = multer({
-    storage: MAO({
-        config: config,
-        destination: 'uploads'      // 自定义上传目录
-    }),
-    limits: {
-        fileSize: 2 * 1024 * 1024,      // 限制上传图片大小为2M
-    },
-    fileFilter: function(req, file, cb) {
-        // 只允许上传图片
-        const fileType = file.mimetype.split('/')[0]
-        const isImage = fileType === 'image'
-
-        if (!isImage) {
-            return cb(new BadRequest('只允许上传图片'))
+const getUploadMiddleware = (folder = 'uploads', maxSize = 2) => {
+    return multer({
+        storage: MAO({
+            config: config,
+            destination: `${folder}`.replace(/\/$/, '') // 自动处理路径斜杠
+        }),
+        limits: {
+            fileSize: maxSize * 1024 * 1024
+        },
+        fileFilter: function(req, file, cb) {
+            const isImage = file.mimetype.split('/')[0] === 'image';
+            isImage ? cb(null, true) : cb(new BadRequest('只允许上传图片'));
         }
-
-        cb(null, true)
-    }
-})
-
-// 只单文件上传，指定表单字段名为file。注意和前端发送的字段保持一致
-const singleFileUpload = upload.single('image')
+    }).single('image'); // 保持字段名一致
+};
 
 module.exports = {
     config,
     client,
-    singleFileUpload
-}
+    getUploadMiddleware
+};

@@ -111,5 +111,16 @@
       color: var(--first-color);
       margin: 0 5px 0 5px;
     }
+
+    .iconUser {
+      .userInfo {
+        span:first-of-type {
+          margin-right: 0.5rem;
+          color: var(--first-color);
+          font-size: 1rem;
+          font-weight: bold;
+        }
+      }
+    }
   }
 }

@@ -1,24 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Link, useNavigate } from "react-router-dom"
-
+import { Modal, Button, Popconfirm, message } from 'antd';
 import {
   SearchOutlined,
   UserOutlined,
+  UserAddOutlined,
   SunOutlined,
   MoonOutlined,
   SettingOutlined,
   LayoutOutlined,
 } from '@ant-design/icons';
+
 import styles from './index.module.scss';
+import { AuthContext } from '/src/store/AuthContext';
+import LoginModal from '../popouts/login/LoginModal';
+import { removeToken } from '/src/utils';
 
 
 export function Header({ position }) {
+  const { user, removeAuth } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const logoutConfirm = () => {
+    removeToken()
+    removeAuth()
+  }
 
   return (
     <div className={`${styles.header} ${position === 'sticky' ? 'sticky top-0' : 'static'}`} >
       <div className={styles.logo}>
         <img className={styles.logoSVG} src='/src/assets/articles_platform/article_logo.svg' alt=""></img>
-        <span className={styles.logoCharacter}>Jay's Articles</span>
+        <span className={styles.logoCharacter}>JetArticles</span>
       </div>
       <div className={styles.menu}>
         <ul className={styles.menuList}>
@@ -51,19 +64,43 @@ export function Header({ position }) {
       <div className={styles.icons}>
         <ul className={styles.iconsList}>
           <li className={styles.iconUser}>
-            <a href="#"><UserOutlined className={styles.icon} /></a>
+            {user.username ? (
+              <div className={styles.userInfo}>
+                <Popconfirm
+                  title="确定登出吗？"
+                  onConfirm={logoutConfirm}
+                  okText="确定"
+                  cancelText="取消"
+                >
+                  <span>{user.username}</span>
+                  <UserOutlined className={styles.icon} />
+                </Popconfirm>
+              </div>
+            ) : (
+              <a onClick={() => setIsLoginModalOpen(true)}>
+                <UserAddOutlined className={styles.icon} />
+              </a>
+            )}
           </li>
           <li className={styles.iconColorMode}>
             <a href="#"><MoonOutlined className={styles.icon} /></a>
           </li>
           <li className={styles.iconSettings}>
-            <a href="#"><SettingOutlined className={styles.icon} /></a>
+            <a onClick={() => navigate('/articles/settings')}>
+              <SettingOutlined className={styles.icon} />
+            </a>
           </li>
           <li className={styles.iconLayout}>
-            <a href="#"><LayoutOutlined className={styles.icon} /></a>
+            <a onClick={() => message.warning('尚在开发中，敬请期待...')}><LayoutOutlined className={styles.icon} /></a>
           </li>
         </ul>
       </div>
+
+      {/* 登录注册弹窗 */}
+      <LoginModal
+        visible={isLoginModalOpen}
+        onCancel={() => setIsLoginModalOpen(false)}
+      />
     </div>
   )
 }

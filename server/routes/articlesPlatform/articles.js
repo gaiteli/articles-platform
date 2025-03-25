@@ -108,8 +108,6 @@ router.get('/list', authorize(), async function (req, res, next) {
         // 构建查询条件
         const condition = {
             order: [[sortBy, sortOrder]],
-            limit: limit,
-            offset: offset,
             where: {},
         };
 
@@ -132,13 +130,30 @@ router.get('/list', authorize(), async function (req, res, next) {
             };
         }
 
+        const totalCount = await Article.count(condition)
+
+        // 分页
+        condition.limit = limit;
+        condition.offset = offset;
+
         // 获取文章数据
         const { count, rows } = await Article.findAndCountAll(condition);
 
+        // 加上分类名
+        const results = await Promise.all(
+          rows.map(async (article) => {
+              const channel = await Channel.findByPk(article.channelId);
+              return {
+                  ...article.dataValues,
+                  channelName: channel.name
+              };
+          })
+        );
+
         success(res, '获取文章列表成功', {
-            articles: rows,
+            articles: results,
             pagination: {
-                total: count,
+                total: totalCount,
                 currentPage,
                 pageSize,
             },

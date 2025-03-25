@@ -119,6 +119,15 @@ aside.fixedArea {
     width: 100% !important;
     height: auto !important;
     aspect-ratio: 1 / 1;
+
+    img {
+      cursor: pointer;
+      transition: opacity 0.3s;
+      
+      &:hover {
+        opacity: 0.8;
+      }
+    }
   }
 
   .categoryContainer {

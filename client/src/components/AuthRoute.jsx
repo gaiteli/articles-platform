@@ -11,11 +11,10 @@ import { AuthContext } from '/src/store/AuthContext';
  * @param {string[]} props.requiredPermissions - 访问子组件所需的权限列表。
  * @returns {React.ReactNode} - 返回经过权限验证后的子组件。
  */
-const AuthRoute = ({ children, renderItem, whitelistRoles, requiredPermissions }) => {
+const AuthRoute = ({ children, whitelistRoles, requiredPermissions }) => {
 
   const { user, permissions, isLoading} = useContext(AuthContext);
   const location = useLocation();
-  let isAuthorized = false
 
 
   // message属于副作用
@@ -46,7 +45,11 @@ const AuthRoute = ({ children, renderItem, whitelistRoles, requiredPermissions }
     );
     
     if (!hasPermission) {
-      return <Navigate to="/403" replace />;
+      return <Navigate to="/error" replace state={{
+        code: 403,
+        type: '您没有访问权限',
+        message: ''
+      }} />;
     }
   }
 

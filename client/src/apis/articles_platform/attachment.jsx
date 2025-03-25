@@ -3,7 +3,25 @@ import {request} from '/src/utils';
 // 上传附件
 export function uploadAttachmentAPI(data) {
   return request({
-    url: '/uploads/aliyun',
+    url: '/uploads/aliyun/uploads',
+    method: 'POST',
+    data,
+  });
+}
+
+// 上传文章封面
+export function uploadCoverAPI(data) {
+  return request({
+    url: '/uploads/aliyun/cover',
+    method: 'POST',
+    data,
+  });
+}
+
+// 上传首页背景
+export function uploadBgImageAPI(data) {
+  return request({
+    url: '/uploads/aliyun/background',
     method: 'POST',
     data,
   });

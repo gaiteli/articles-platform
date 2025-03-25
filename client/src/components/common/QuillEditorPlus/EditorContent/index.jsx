@@ -82,10 +82,10 @@ const EditorContent = forwardRef(({
                 if (file) {
                   try {
                     // 检查
-                    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
-                    if (!isJpgOrPng) throw new Error('图片格式不正确，请提交jpeg/png格式')
-                    const isLt2M = file.size / 1024 / 1024 < 2;
-                    if (!isLt2M) throw new Error('图片大小不能超过 2MB！')
+                    const isJpgOrPng = ['image/jpeg','image/png','image/jpg'].includes(file.type)
+                    if (!isJpgOrPng) throw new Error('图片格式不正确，请提交jpg/jpeg/png格式')
+                    const isLt2M = file.size / 1024 / 1024 < 1;
+                    if (!isLt2M) throw new Error('图片大小不能超过 1MB！')
 
                     // 上传图片到OSS，获取图片URL
                     const formData = new FormData();

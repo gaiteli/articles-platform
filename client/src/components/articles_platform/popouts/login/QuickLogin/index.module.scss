@@ -1,0 +1,15 @@
+.quickLogin {
+  text-align: center;
+
+  .welcomeText {
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .socialLogin {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
