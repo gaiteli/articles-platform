@@ -22,12 +22,13 @@ $topBarHeight: 6vh;
     position: absolute;
     right: 0;
     top: 0;
+    display: flex;
     height: $topBarHeight;
     padding-right: 20px;
     color: #fff;
 
     .user-name {
-      margin-right: 20px;
+      margin: 0 20px;
 
       .ant-dropdown-trigger .ant-space-item {
         font-weight: 500;

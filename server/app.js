@@ -25,6 +25,7 @@ const adminUsersRouter = require('./routes/admin/users')
 const adminAuthRouter = require('./routes/admin/auth')
 const adminAttachmentsRouter = require('./routes/admin/attachments')
 const adminChannelsRouter = require('./routes/admin/channels')
+const adminDashboardRouter = require('./routes/admin/dashboard')
 
 // cors跨域
 const corsOptions = {
@@ -45,6 +46,7 @@ app.use('/users', authenticate, usersRouter)        // /me /permissions
 app.use('/uploads', authenticate, uploadsRouter)
 
 // app.use('/admin/login', adminAuthRouter)
+app.use('/admin/dashboard', authenticate, adminAuthenticate, adminDashboardRouter)
 app.use('/admin/articles', authenticate, adminAuthenticate, adminArticlesRouter)
 app.use('/admin/users', authenticate, adminAuthenticate, adminUsersRouter)
 app.use('/admin/attachments', authenticate, adminAuthenticate, adminAttachmentsRouter)

@@ -4,6 +4,10 @@
   padding: 20px;
   margin-top: 20px;
 
+  [data-theme='dark'] & {
+    color: #f3f4f6;
+  }
+
   .links {
     display: flex;
     justify-content: center;

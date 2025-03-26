@@ -22,6 +22,10 @@
     font-size: var(--h1-font-size);
     font-weight: var(--logo-font-weight);
     font-style: italic;
+
+    [data-theme='dark'] & {
+      color: #f3f4f6;
+    }
   }
 }
 
@@ -39,6 +43,14 @@
     .menuLink {
       font-size: var(--h2-font-size);
       color: var(--first-color);
+
+      [data-theme='dark'] & {
+        color: #9ca3af;
+        
+        &:hover {
+          color: #f3f4f6;
+        }
+      }
     }
   }
 
@@ -90,6 +102,18 @@
         transform: translateX(0.1vw);
         border-radius: var(--border-radius-normal) 0 0 var(--border-radius-normal);
       }
+
+      .searchBox, .searchBtn {
+        [data-theme='dark'] & {
+          background-color: #374151;
+          color: #f3f4f6;
+      
+          &::placeholder {
+            color: #9ca3af;
+          }
+        }
+      }
+      
     }
   }
 }
@@ -110,6 +134,14 @@
       font-size: var(--h2-font-size);
       color: var(--first-color);
       margin: 0 5px 0 5px;
+
+      [data-theme='dark'] & {
+        color: #9ca3af;
+        
+        &:hover {
+          color: #f3f4f6;
+        }
+      }
     }
 
     .iconUser {
@@ -119,6 +151,10 @@
           color: var(--first-color);
           font-size: 1rem;
           font-weight: bold;
+
+          [data-theme='dark'] & {
+            color: #e1e4ea;
+          }
         }
       }
     }

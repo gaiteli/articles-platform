@@ -20,7 +20,7 @@ const ArticlesPlatformFrontPage = () => {
   const [popularArticles, setPopularArticles] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  
+
   // 获取最近文章
   const fetchRecentArticles = async () => {
     setLoading(true)
@@ -38,7 +38,7 @@ const ArticlesPlatformFrontPage = () => {
   const fetchPopularArticles = async () => {
     setLoading(true);
     try {
-      const res = await getPopularArticlesAPI({ limit: 6})  // 获取最热5篇文章
+      const res = await getPopularArticlesAPI({ limit: 6 })  // 获取最热5篇文章
       setPopularArticles(res.data.articles);
     } catch (error) {
       console.error('获取最热门文章失败:', error);
@@ -103,31 +103,33 @@ const ArticlesPlatformFrontPage = () => {
           {showScrollBottom ? <CaretDownOutlined /> : null}
         </div>
       </div>
-      <Spin spinning={loading}>
-        <section className={styles.recentAndPopularSec}>
-          {/* 最近文章 */}
-          <section className={styles.section}>
-            <Title level={2}>最近文章</Title>
-            <SmallArticleList articles={recentArticles}/>
+      <main className={styles.mainContainer}>
+        <Spin spinning={loading}>
+          <section className={styles.recentAndPopularSec}>
+            {/* 最近文章 */}
+            <section className={styles.section}>
+              <Title level={2}>最近文章</Title>
+              <SmallArticleList articles={recentArticles} />
+            </section>
+
+            {/* 最热文章 */}
+            <section className={styles.section}>
+              <Title level={2}>最热门文章</Title>
+              <SmallArticleList articles={popularArticles} />
+            </section>
           </section>
 
-          {/* 最热文章 */}
-          <section className={styles.section}>
-            <Title level={2}>最热门文章</Title>
-            <SmallArticleList articles={popularArticles}/>
+          {/* 推荐 */}
+          <section className={styles.recommendationSection}>
+            <section className={styles.section}>
+              <Title level={2}>推荐</Title>
+              <Card>
+                <Text type="secondary">正在开发中...</Text>
+              </Card>
+            </section>
           </section>
-        </section>
-
-        {/* 推荐 */}
-        <section className={styles.recommendationSection}>
-        <section className={styles.section}>
-          <Title level={2}>推荐</Title>
-          <Card>
-            <Text type="secondary">正在开发中...</Text>
-          </Card>
-        </section>
-        </section>
-      </Spin>
+        </Spin>
+      </main>
       <Footer />
     </>
   )

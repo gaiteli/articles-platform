@@ -13,12 +13,14 @@ import {
 
 import styles from './index.module.scss';
 import { AuthContext } from '/src/store/AuthContext';
+import { useTheme } from '/src/store/ThemeContext';
 import LoginModal from '../popouts/login/LoginModal';
 import { removeToken } from '/src/utils';
 
 
 export function Header({ position }) {
   const { user, removeAuth } = useContext(AuthContext);
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -83,7 +85,11 @@ export function Header({ position }) {
             )}
           </li>
           <li className={styles.iconColorMode}>
-            <a href="#"><MoonOutlined className={styles.icon} /></a>
+            <a onClick={toggleTheme}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <MoonOutlined className={styles.icon} />
+            </a>
           </li>
           <li className={styles.iconSettings}>
             <a onClick={() => navigate('/articles/settings')}>

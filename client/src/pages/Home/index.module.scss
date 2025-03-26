@@ -1,0 +1,42 @@
+.dashboard {
+  padding: 24px;
+
+  :global {
+    .ant-card {
+      height: 100%;
+      transition: all 0.3s;
+      
+      &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    .ant-statistic {
+      .ant-statistic-title {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+      
+      .ant-statistic-content {
+        font-size: 24px;
+        
+        .anticon {
+          margin-right: 8px;
+          font-size: 20px;
+        }
+      }
+    }
+  }
+}
+
+// 深色模式支持
+[data-theme='dark'] .dashboard {
+  :global(.ant-card) {
+    background-color: #1f1f1f;
+    border-color: #434343;
+    
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+  }
+}

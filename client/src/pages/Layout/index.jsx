@@ -8,12 +8,14 @@ import {
   UserOutlined,
   LogoutOutlined,
   DownOutlined,
+  MoonOutlined,
 } from '@ant-design/icons'
 import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { getUserInfoAPI } from '../../apis/user'
 import { removeToken } from '../../utils/token'
 import { AuthContext } from '/src/store/authContext'
+import { useTheme } from '/src/store/ThemeContext'
 
 const { Header, Sider } = Layout
 const items = [
@@ -76,7 +78,8 @@ const userItems = [
 ];
 
 export function GeekLayout() {
-  const { user, removeAuth }  = useContext(AuthContext)
+  const { user, removeAuth } = useContext(AuthContext)
+  const { theme, toggleTheme } = useTheme()
   const location = useLocation()
   const [currentMenuKey, setCurrentMenuKey] = useState('')
 
@@ -84,7 +87,7 @@ export function GeekLayout() {
   const onMenuClick = (route) => {
     const path = route.key
     setCurrentMenuKey(path)
-    navigate('.'+path)  // 相对路径
+    navigate('.' + path)  // 相对路径
   }
 
   // 根据url路径修改菜单高亮项
@@ -114,8 +117,15 @@ export function GeekLayout() {
       <Header className="header">
         <div className="logo" />
         <div className="user-info">
+          <li>
+            <a onClick={toggleTheme}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
+              <MoonOutlined />
+            </a>
+          </li>
           <span className="user-name">
-            <Dropdown menu={{ items:userItems }}>{/* 需要写全，不能省略items： */}
+            <Dropdown menu={{ items: userItems }}>{/* 需要写全，不能省略items： */}
               <a onClick={(e) => e.preventDefault()}>
                 <Space>
                   {user.username}
