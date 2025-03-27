@@ -34,6 +34,33 @@ const authenticate = async (req, res, next) => {
   }
 };
 
+// 弱认证中间件（不需要token，用于guest可以访问的接口）
+const weakAuthenticate = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return next();
+
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const user = await User.findByPk(decoded.id);
+    if (!user) return next();
+
+    // if (user.status !== 'inactive') {
+    //   throw new Forbidden('用户未激活');
+    // }
+
+    req.user = {
+      id: user.id,
+      role: user.role,
+      permissions: ROLE_PERMISSIONS[user.role] || []
+    };
+
+    next();
+  } catch (error) {
+    failure(res, error, '认证失败');
+  }
+};
+
+
 // 管理员认证中间件
 const adminAuthenticate = async (req, res, next) => {
   try {
@@ -46,6 +73,7 @@ const adminAuthenticate = async (req, res, next) => {
     failure(res, error, '管理员认证失败');
   }
 }
+
 
 // 权限检查中间件
 const authorize = (requiredPermissions = null, message = '') => {
@@ -85,4 +113,4 @@ const authorize = (requiredPermissions = null, message = '') => {
 // };
 
 
-module.exports = {authenticate, adminAuthenticate, authorize};
+module.exports = {authenticate, weakAuthenticate, adminAuthenticate, authorize};

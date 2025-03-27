@@ -15,6 +15,7 @@ import {
   EditButtonWithPermission,
   LikeButtonWithPermission,
 } from '../../../components/permission/buttons';
+import { InfoCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 
 
 const ArticlesPlatformArticlePage = () => {
@@ -138,6 +139,10 @@ const ArticlesPlatformArticlePage = () => {
             <span>
               阅读时间：{articleLength < 250 ? `小于 1 分钟` : `约 ${Math.ceil(articleLength / 1000)} 分钟`}
             </span>
+            {article.status === 0 && 
+              <span style={{ color: 'orange'}}><InfoCircleOutlined />文章正在审核中...</span>}
+            {article.status === 2 && 
+              <span style={{ color: 'red'}}><CloseCircleOutlined />文章已锁定，请修改后重新提交审核！</span>}
           </div>
           <hr className={styles.titleDivider} />
         </div>

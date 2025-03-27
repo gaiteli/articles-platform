@@ -14,6 +14,7 @@ import {
   Space,
   Skeleton,
   Divider,
+  Tag,
 } from 'antd';
 import { RightOutlined, LeftOutlined, ClockCircleFilled, ClockCircleOutlined, HistoryOutlined, FolderOpenFilled, EyeOutlined, LikeOutlined } from '@ant-design/icons';
 
@@ -130,7 +131,7 @@ const ArticlesPlatformListPage = () => {
                       <Typography.Title level={4}>
                         {item.title}
                       </Typography.Title>
-                      <Typography.Text type="secondary">
+                      <Typography.Text type="secondary" className={styles.articleMeta}>
                         <HistoryOutlined />
                         <span style={{ marginLeft: '0.25rem', marginRight: '2rem'}}>
                           {' ' + moment(item.createdAt).format('ll')}
@@ -147,6 +148,8 @@ const ArticlesPlatformListPage = () => {
                         <span style={{ marginLeft: '0.25rem', marginRight: '2rem' }}>
                           {' ' + item.likeCount}
                         </span>
+                        {item.status === 0 && <Tag color="orange">审核中</Tag>}
+                        {item.status === 2 && <Tag color="red">已锁定</Tag>}
                       </Typography.Text>
                       <div className={styles.articleContent}>
                         {item.content.replace(/<[^>]+>/g, '')}

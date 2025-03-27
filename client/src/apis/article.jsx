@@ -26,3 +26,12 @@ export function delArticleAPI (id) {
     method: 'DELETE'
   })
 }
+
+// 审核文章
+export function reviewArticleAPI (id, data) {
+  return request({
+    url: `/admin/articles/${id}/review`,
+    method: 'PUT',
+    data
+  })
+}

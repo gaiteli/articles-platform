@@ -72,6 +72,12 @@
     margin-left: 50px;
     cursor: pointer;
 
+    .articleMeta {
+      height: 2rem !important;
+      display: flex;
+      align-items: center;
+    }
+
     &:hover {
       background-color: var(--card-background-color);
     }
@@ -100,18 +106,14 @@
     }
 
     .articleContent {
+      color: rgb(61, 60, 60);
       margin-top: 0.5rem;
       margin-right: 1rem;
       max-height: 70px;
-      /* 设置最大高度 */
       overflow: hidden;
-      /* 隐藏超出部分 */
       display: -webkit-box;
-      /* 使用 WebKit 的 box 模型 */
       -webkit-line-clamp: 2;
-      /* 限制显示的行数 */
       -webkit-box-orient: vertical;
-      /* 垂直排列 */
     }
   }
 }

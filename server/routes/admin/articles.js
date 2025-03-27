@@ -157,6 +157,21 @@ router.put('/:id', async function (req, res, next) {
   }
 })
 
+
+/* 审核文章 */
+router.put('/:id/review', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const article = await getArticle(req)
+
+    await article.update({ status: status });
+    success(res, 'article reviewed successfully', article)
+  } catch (error) {
+    failure(res, error)
+  }
+});
+
+
 /*
  * 公共方法：查询当前文章
  */

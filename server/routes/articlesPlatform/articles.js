@@ -22,7 +22,7 @@ router.post('/write', authenticate, authorize(['article:create'], '创建文章'
             content: content,
             deltaContent: deltaContent,
             channelId: channelId ? channelId : 1,
-            status: 1,
+            status: 0,
             readCount: 0,
             commentCount: 0,
             likeCount: 0
@@ -111,6 +111,17 @@ router.get('/list', authorize(), async function (req, res, next) {
             where: {},
         };
 
+        // 1. 基础状态过滤（管理员不过滤文章审核状态，可以看到所有文章）
+        if (!req.user) condition.where.status = 1
+        if (req.user?.role === 'user') {
+            condition.where = {
+                [Op.or]: [
+                    { status: 1 },          // 条件1：status=1
+                    { userId: req.user.id } // 条件2：userId=当前用户
+                ]
+            };
+        }
+
         // 模糊搜索标题
         if (query.title) {
             condition.where.title = {
@@ -159,6 +170,7 @@ router.get('/list', authorize(), async function (req, res, next) {
             },
         });
     } catch (error) {
+        console.log(error);
         failure(res, error);
     }
 });

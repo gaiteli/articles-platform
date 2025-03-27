@@ -9,7 +9,7 @@ require('module-alias/register');
 require('dotenv').config()
 
 // 中间件
-const { authenticate, adminAuthenticate, authorize } = require('./middlewares/auth');
+const { authenticate, weakAuthenticate, adminAuthenticate, authorize } = require('./middlewares/auth');
 
 const authRouter = require('./routes/auth')
 
@@ -40,7 +40,7 @@ app.use(express.json({limit: '100mb'}));
 app.use(express.urlencoded({limit: '100mb', extended: true}));
 
 app.use('/', authRouter)    // /login /signup
-app.use('/articles-platform', articlePlatformArticlesRouter)    // 在子路由中决定是否给予认证和鉴权
+app.use('/articles-platform', weakAuthenticate, articlePlatformArticlesRouter)    // 在子路由中决定是否给予认证和鉴权
 app.use('/articles-platform/channels', authenticate, articlePlatformChannelRouter)
 app.use('/users', authenticate, usersRouter)        // /me /permissions
 app.use('/uploads', authenticate, uploadsRouter)

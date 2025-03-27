@@ -10,26 +10,29 @@ import moment from 'moment';
 
 // 导入资源
 import { Table, Tag, Space } from 'antd'
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { EditOutlined, DeleteOutlined, LockOutlined } from '@ant-design/icons'
 import img404 from '/src/assets/error.png'
 import { useChannels } from '../../utils/hooks/useChannels'
 import { delArticleAPI, getArticleListAPI } from '/src/apis/article'
 import './index.scss'
+import { reviewArticleAPI } from '/src/apis/article';
 
-const { Option } = Select
 const { RangePicker } = DatePicker
 
 const Article = () => {
   const navigate = useNavigate()
   const { channelList } = useChannels()
-
-  const [fetchCoverError, setFetchCoverError] = useState(false)
+  const [list, setArticlesList] = useState([])
+  const [count, setCount] = useState(0)
+  const [open, setOpen] = useState(false);    // antd popconfirm
+  const [confirmLoading, setConfirmLoading] = useState(false); // antd popconfirm loading
 
   // 准备列数据
   // 定义状态枚举
   const status = {
-    1: <Tag color='warning'>待审核</Tag>,
-    2: <Tag color='success'>审核通过</Tag>,
+    0: <Tag color='warning'>待审核</Tag>,
+    1: <Tag color='success'>审核通过</Tag>,
+    2: <Tag color='error'>拒绝/禁用</Tag>
   }
   const columns = [
     {
@@ -37,7 +40,7 @@ const Article = () => {
       dataIndex: 'cover',
       key: 'cover',
       width: 100,
-      render: cover => {    
+      render: cover => {
         return (
           <img
             src={cover || img404}   // 如果获取不到封面图片，显示默认图片
@@ -66,7 +69,7 @@ const Article = () => {
       dataIndex: 'status',
       key: 'status',
       width: 90,
-      // data - 后端返回的状态status。data === 1 => 待审核；data === 2 => 审核通过
+      // data - 后端返回的状态status。data：0 待审核；data：1 审核通过；data：2 审核不通过
       render: data => status[data]
     },
     {
@@ -76,24 +79,19 @@ const Article = () => {
       width: 75,
     },
     {
-      title: '内容',
-      dataIndex: 'content',
-      key: 'content',
-      width: 150,
-      ellipsis: true,
-      render: (text) => {
-        return <Tooltip title={text} placement='top'>
-          <span style={{ display: 'inline-block', width: '100%' }}>{text}</span>
-        </Tooltip>
-      }
-    },
-    {
       title: '发布时间',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      width: 175,
+      width: 150,
       // 格式化时间显示
-      render: (text) => moment(text).format('YYYY-MM-DD HH:mm:ss')
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm')
+    },
+    {
+      title: '修改时间',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
+      width: 150,
+      render: (text) => moment(text).format('YYYY-MM-DD HH:mm')
     },
     {
       title: '阅读',
@@ -135,6 +133,23 @@ const Article = () => {
                 icon={<DeleteOutlined />}
               />
             </Popconfirm>
+            <Popconfirm
+              title="是否通过该文章？"
+              description={
+                <a onClick={() => navigate(`/articles/${data.id}`)}>
+                  <p>点击此链接浏览文章详情👇</p>
+                  <p>标题：<u>{data.title}</u></p>
+                </a>
+              }
+              okText="通过"
+              cancelText="拒绝/禁用"
+              onConfirm={() => handleAudit(data.id, 1)}
+              onCancel={() => handleAudit(data.id, 2)}
+              overlayStyle={{ width: 250 }}
+            >
+              <Button type="primary" shape='circle' icon={<LockOutlined />}
+                onClick={() => setOpen(true)} />
+            </Popconfirm>
           </Space>
         )
       }
@@ -170,8 +185,6 @@ const Article = () => {
   }
 
   // 获取文章列表
-  const [list, setArticlesList] = useState([])
-  const [count, setCount] = useState(0)
   useEffect(() => {
     (async () => {
       const res = await getArticleListAPI(reqData)
@@ -193,13 +206,32 @@ const Article = () => {
   }
 
   // 删除
-  const onConfirm = async (data) => {
+  async function onConfirm(data) {
     console.log('删除点击了', data)
     await delArticleAPI(data.id)
     setReqData({
       ...reqData
     })
   }
+
+
+  // 审核
+  const handleAudit = async (id, status) => {
+    try {
+      setConfirmLoading(true);
+      const res = await reviewArticleAPI(id, { status: status })
+      setArticlesList(prevList => prevList.map(article =>
+        article.id === id ? res.data : article
+      ))
+      message.success(`${status === 1 ? '审核通过' : '拒绝/禁用文章成功'}`);
+    } catch (error) {
+      message.error('操作失败: ' + error.message);
+    } finally {
+      setOpen(false);
+      setConfirmLoading(false);
+    }
+  };
+
 
   return (
     <div>
