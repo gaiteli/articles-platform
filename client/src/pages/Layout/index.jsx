@@ -113,7 +113,7 @@ export function GeekLayout() {
   }
 
   return (
-    <Layout>
+    <Layout style={{ height: '100vh' }}>
       <Header className="header">
         <div className="logo" />
         <div className="user-info">

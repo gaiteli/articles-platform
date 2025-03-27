@@ -25,7 +25,7 @@ router.get('/', async function(req, res, next) {
 
     // 筛选
     if (status) {
-      if (status !== '0') {
+      if (status !== '9') {
         condition.where.status = status; // Filter by status
       }
     }

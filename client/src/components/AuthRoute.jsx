@@ -34,7 +34,7 @@ const AuthRoute = ({ children, whitelistRoles, requiredPermissions }) => {
   if (whitelistRoles) {
     const hasRole = whitelistRoles.includes(user?.role)
     if (hasRole) {
-      React.cloneElement(children, { isAuthorized: true })
+      return React.cloneElement(children, { isAuthorized: true })
     }
   }
 

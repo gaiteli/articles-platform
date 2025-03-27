@@ -142,7 +142,7 @@ const Article = () => {
                 </a>
               }
               okText="通过"
-              cancelText="拒绝/禁用"
+              cancelText="拒绝/锁定"
               onConfirm={() => handleAudit(data.id, 1)}
               onCancel={() => handleAudit(data.id, 2)}
               overlayStyle={{ width: 250 }}
@@ -251,9 +251,10 @@ const Article = () => {
         >
           <Form.Item label="状态" name="status" className="status">
             <Radio.Group>
-              <Radio value={0}>全部</Radio>
-              <Radio value={1}>待审核</Radio>
-              <Radio value={2}>审核通过</Radio>
+              <Radio value={9}>全部</Radio>
+              <Radio value={0}>待审核</Radio>
+              <Radio value={1}>审核通过</Radio>
+              <Radio value={2}>拒绝/锁定</Radio>
             </Radio.Group>
           </Form.Item>
 

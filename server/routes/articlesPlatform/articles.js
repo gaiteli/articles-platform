@@ -44,7 +44,7 @@ router.delete('/:id', authenticate, authorize(), async function (req, res, next)
         const article = await getArticle(req);
 
         // 权限判定
-        const canEdit = ROLE_PERMISSIONS[req.user.role].includes(['admin:access'])
+        const canEdit = ROLE_PERMISSIONS[req.user.role].includes('admin:access')
           || req.user.id === article.userId
         if ( !canEdit ) {
             throw new Forbidden('没有删除文章的权限！');
@@ -65,7 +65,7 @@ router.put('/p/:id/edit', authenticate, authorize(), async function (req, res, n
         // 查询当前文章
         const article = await getArticle(req);
         // 权限判定
-        const canEdit = ROLE_PERMISSIONS[req.user.role].includes(['admin:access'])
+        const canEdit = ROLE_PERMISSIONS[req.user.role].includes('admin:access')
           || req.user.id === article.userId
         if (!canEdit) {
             throw new Forbidden('没有更改文章的权限！');
@@ -80,6 +80,7 @@ router.put('/p/:id/edit', authenticate, authorize(), async function (req, res, n
             content,
             deltaContent,
             channelId: channelId ? channelId : 1,
+            status: 0,
         };
 
         await article.update(body);
