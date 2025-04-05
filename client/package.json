@@ -20,6 +20,10 @@
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
     "@tailwindcss/vite": "^4.0.8",
+    "@tiptap/extension-placeholder": "^2.11.7",
+    "@tiptap/pm": "^2.11.7",
+    "@tiptap/react": "^2.11.7",
+    "@tiptap/starter-kit": "^2.11.7",
     "antd": "^5.22.2",
     "axios": "^1.7.7",
     "echarts": "^5.5.1",
@@ -30,6 +34,7 @@
     "nodemon": "^3.1.7",
     "normalize.css": "^8.0.1",
     "pinyin-pro": "^3.26.0",
+    "prismjs": "^1.30.0",
     "quill": "2.0.3",
     "quilljs-markdown": "^1.2.0",
     "react": "^18.3.1",

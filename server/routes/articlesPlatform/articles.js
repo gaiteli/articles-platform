@@ -12,7 +12,7 @@ const { authenticate, authorize} = require("@middlewares/auth")
 router.post('/write', authenticate, authorize(['article:create'], '创建文章'), async function (req, res, next) {
     try {
 
-        const { title, cover, content, deltaContent, channelId } = req.body;
+        const { title, cover, content, jsonContent, channelId } = req.body;
 
         // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
         const body = {
@@ -20,7 +20,7 @@ router.post('/write', authenticate, authorize(['article:create'], '创建文章'
             title: title,
             cover: cover,
             content: content,
-            deltaContent: deltaContent,
+            jsonContent: jsonContent,
             channelId: channelId ? channelId : 1,
             status: 0,
             readCount: 0,
@@ -71,14 +71,14 @@ router.put('/p/:id/edit', authenticate, authorize(), async function (req, res, n
             throw new Forbidden('没有更改文章的权限！');
         }
 
-        const { title, cover, content, deltaContent, channelId } = req.body;
+        const { title, cover, content, jsonContent, channelId } = req.body;
 
         // 更新文章内容
         const body = {
             title,
             cover,
             content,
-            deltaContent,
+            jsonContent,
             channelId: channelId ? channelId : 1,
             status: 0,
         };

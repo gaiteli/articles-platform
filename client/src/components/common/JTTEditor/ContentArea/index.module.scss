@@ -1,0 +1,8 @@
+.contentAreaWrapper {
+  // 可以为内容区域的直接容器添加样式，例如边框、内边距等
+  // 但注意，真正的编辑区域样式由 useEditor -> editorProps -> attributes -> class 应用
+  // 以及 TiptapEditor.scss 中定义的 .tiptap-editor-content 控制
+  // 这个 wrapper 主要用于布局或添加额外的视觉元素（如果需要）
+  position: relative; // 例如，为了定位内部元素或伪元素
+  padding: 1rem 1.5rem;
+}

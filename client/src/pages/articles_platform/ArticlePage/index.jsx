@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { message } from 'antd';
-import Quill from 'quill';
+import { InfoCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import { Placeholder } from '@tiptap/extension-placeholder';
 
 import { Header } from '/src/components/articles_platform/Header';
 import { getArticleByIdAPI, hasLikedArticleAPI, likeArticleAPI } from '/src/apis/articles_platform/article';
-import { generateUniqueId } from '/src/utils/quill';
+import { generateUniqueId, extractTitles, getArticleLength } from '/src/utils/tiptap';
 
 import styles from './index.module.scss';
 import TOC from '../../../components/common/QuillEditorPlus/TOC';
@@ -15,19 +18,18 @@ import {
   EditButtonWithPermission,
   LikeButtonWithPermission,
 } from '../../../components/permission/buttons';
-import { InfoCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import ContentArea from '../../../components/common/JTTEditor/ContentArea';
+
 
 
 const ArticlesPlatformArticlePage = () => {
 
   const { id } = useParams();
-  const editorRef = useRef(null)
-  const quillRef = useRef(null)
   const [fetchArticleError, setFetchArticleError] = useState(null);
   const [article, setArticle] = useState({
     title: '',
     channel: '',
-    deltaContent: null,
+    jsonContent: null,
     createdAt: '1970-01-01 00:00',
     readCount: 0,
     likeCount: 0,
@@ -35,6 +37,20 @@ const ArticlesPlatformArticlePage = () => {
   const [headings, setHeadings] = useState([]); // 存储标题信息
   const [articleLength, setArticleLength] = useState(0);  // 文章长度
   const [hasLiked, setHasLiked] = useState(false)
+
+
+  // 初始化编辑器并设置内容、标题
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({/* ... */ }),
+      Placeholder.configure({
+        placeholder: '请输入文章内容...',
+        showOnlyWhenEditable: true,      // 仅在可编辑时显示（可选）
+      }),
+    ],
+    content: article.jsonContent,
+    editable: false,
+  });
 
 
   // 获取文章详情
@@ -45,6 +61,20 @@ const ArticlesPlatformArticlePage = () => {
         const hasLikeData = await hasLikedArticleAPI(id)
         setHasLiked(hasLikeData.data.hasLiked)
         setArticle(res.data)
+
+        // 确保编辑器生成后再设置内容
+        if (editor) {
+          editor.commands.setContent(res.data.jsonContent || '');
+
+          // 计算长度
+          setArticleLength(getArticleLength(editor.getHTML(), 'char-no-tag'));
+
+          // 提取标题
+          setTimeout(() => {
+            const hData = extractTitles(document.querySelector('.tiptap'))
+            setHeadings(hData);
+          }, 0);
+        }
       } catch (error) {
         console.log(error.response);
         setFetchArticleError({
@@ -55,52 +85,7 @@ const ArticlesPlatformArticlePage = () => {
       }
     };
     loadArticle()
-  }, [id])
-
-
-  // 初始化 Quill 编辑器并设置内容、标题
-  useEffect(() => {
-    if (!article.deltaContent) return;
-
-    const quill = new Quill(editorRef.current, {
-      theme: 'snow',
-      readOnly: true,
-      modules: {
-        toolbar: false // 禁用自带工具栏
-      }
-    });
-    quillRef.current = quill
-
-    // 设置内容
-    quill.setContents(article.deltaContent)
-    setArticleLength(quill.getText().replace(/\n/g, '').length || 0)
-
-    // 提取标题生成目录
-    // 使用 setTimeout 确保内容渲染完成后再提取标题
-    setTimeout(() => {
-      const headingsNode = document.querySelectorAll('.ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4');
-      const headingsData = Array.from(headingsNode).map((heading, index) => {
-        const title = heading.textContent;
-        const level = heading.tagName.toLowerCase()
-        const id = generateUniqueId(title, index); // 生成唯一 ID
-        heading.setAttribute('id', id);
-
-        return {
-          id,
-          title,
-          level,
-        };
-      });
-
-      setHeadings(headingsData);
-    }, 0);
-
-    // 清理函数
-    return () => {
-      quillRef.current = null
-    };
-  }, [article.deltaContent])
-
+  }, [id, editor])
 
   // 处理点赞/取消点赞
   const handleLike = async () => {
@@ -139,17 +124,17 @@ const ArticlesPlatformArticlePage = () => {
             <span>
               阅读时间：{articleLength < 250 ? `小于 1 分钟` : `约 ${Math.ceil(articleLength / 1000)} 分钟`}
             </span>
-            {article.status === 0 && 
-              <span style={{ color: 'orange'}}><InfoCircleOutlined />文章正在审核中...</span>}
-            {article.status === 2 && 
-              <span style={{ color: 'red'}}><CloseCircleOutlined />文章已锁定，请修改后重新提交审核！</span>}
+            {article.status === 0 &&
+              <span style={{ color: 'orange' }}><InfoCircleOutlined />文章正在审核中...</span>}
+            {article.status === 2 &&
+              <span style={{ color: 'red' }}><CloseCircleOutlined />文章已锁定，请修改后重新提交审核！</span>}
           </div>
           <hr className={styles.titleDivider} />
         </div>
 
         {/* 文章内容 */}
         <div className={styles.contentContainer}>
-          <div ref={editorRef} className={styles.quillContent} />
+          <ContentArea editor={editor} />
         </div>
 
         {/* 额外信息栏 */}

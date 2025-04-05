@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: 'html_text内容不能为空。' },
       }
     },
-    deltaContent: { // 新增：存储 Quill 的 Delta 格式
+    jsonContent: { // 新增：存储JSON格式
       type: DataTypes.JSON,
       allowNull: false,
       validate: {

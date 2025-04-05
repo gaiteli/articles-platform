@@ -1,0 +1,22 @@
+// src/components/common/ThemeToggle/index.module.scss
+.themeToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s;
+  
+  &:hover {
+    background-color: var(--background-color-light);
+  }
+  
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}

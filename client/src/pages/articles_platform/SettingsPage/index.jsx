@@ -5,12 +5,13 @@ import {
   UserOutlined,
   SettingOutlined,
   PictureOutlined,
+  FormatPainterOutlined,
 } from '@ant-design/icons';
-
-import { BgImageUploader } from '../../../components/common/Upload';
-import styles from './index.module.scss';
-
 const { Sider, Content } = Layout;
+
+import styles from './index.module.scss';
+import { BgImageUploader } from '../../../components/common/Upload';
+import ThemeSettings from './ThemeSettings';
 
 const ArticlesPlatformSettingsPage = () => {
   const [selectedMenu, setSelectedMenu] = useState('account'); // 默认选中账号信息
@@ -29,6 +30,11 @@ const ArticlesPlatformSettingsPage = () => {
       label: '个性化',
       children: [
         {
+          key: 'theme',
+          icon: <FormatPainterOutlined />,
+          label: '定制主题',
+        },
+        {
           key: 'bg',
           icon: <PictureOutlined />,
           label: '更换首页背景',
@@ -42,6 +48,8 @@ const ArticlesPlatformSettingsPage = () => {
     switch (selectedMenu) {
       case 'account':
         return <div>账号信息设置</div>;
+      case 'theme':
+        return <ThemeSettings />
       case 'bg':
         return (
           <div className={styles.bgSettings}>

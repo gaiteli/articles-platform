@@ -1,0 +1,69 @@
+// 深色主题
+:root.dark {
+  // 主色
+  --first-color: hsl(230, 60%, 46%);
+  --primary-color: hsl(230, 60%, 56%);
+  --secondary-color: hsl(230, 70%, 84%);
+  --accent-color: hsl(230, 16%, 75%);
+  
+  // 状态颜色
+  --success-color: hsl(120, 60%, 40%);
+  --warning-color: hsl(45, 100%, 46%);
+  --error-color: hsl(0, 85%, 55%);
+  --info-color: hsl(200, 85%, 55%);
+  
+  // 文本颜色
+  --title-color: hsl(230, 36%, 90%);
+  --subtitle-color: rgba(255, 255, 255, 0.75);
+  --text-color: hsl(230, 16%, 85%);
+  --muted-text-color: hsl(230, 16%, 65%);
+  --link-color: hsl(230, 70%, 70%);
+  --link-hover-color: hsl(230, 80%, 80%);
+  
+  // 背景色
+  --background-color: #121212;
+  // --background-color: #0B0B0C; // 备选
+  // --background-color: #0E0E10; // 备选
+  --background-color-light: hsl(230, 15%, 20%);
+  --background-color-deep: hsl(230, 50%, 90%);
+  --container-color: hsl(230, 15%, 18%);
+  --card-background-color: hsl(230, 15%, 22%);
+  --hover-background-color: hsl(230, 15%, 25%);
+  --active-background-color: hsl(230, 15%, 28%);
+  
+  // 边框颜色
+  --border-color: hsl(230, 16%, 25%);
+  --border-color-two: hsl(230, 60%, 40%);
+  --divider-color: hsl(230, 15%, 25%);
+  
+  // 按钮颜色
+  --button-background-color: hsl(230, 60%, 46%);
+  --button-text-color: hsl(230, 100%, 97%);
+  --button-background-color-hover: hsl(230, 60%, 36%);
+  --button-text-color-hover: hsl(230, 100%, 97%);
+  --button-disabled-background: hsl(230, 15%, 30%);
+  --button-disabled-text: hsl(230, 15%, 50%);
+  
+  // 输入框颜色
+  --input-background: hsl(230, 15%, 18%);
+  --input-border: hsl(230, 15%, 30%);
+  --input-text: hsl(230, 15%, 90%);
+  --input-placeholder: hsl(230, 15%, 50%);
+  --input-focus-border: hsl(230, 60%, 50%);
+  
+  // 表格颜色
+  --table-header-background: hsl(230, 15%, 25%);
+  --table-row-odd: hsl(230, 15%, 20%);
+  --table-row-even: hsl(230, 15%, 18%);
+  --table-border: hsl(230, 15%, 25%);
+  
+  // 代码颜色
+  --code-background: hsl(230, 15%, 15%);
+  --code-text: hsl(230, 60%, 70%);
+  --code-border: hsl(230, 15%, 25%);
+  
+  // 滚动条
+  --scrollbar-track: hsl(230, 15%, 15%);
+  --scrollbar-thumb: hsl(230, 15%, 35%);
+  --scrollbar-thumb-hover: hsl(230, 15%, 45%);
+}

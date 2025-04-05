@@ -1,0 +1,162 @@
+// ThemeSettings.module.scss
+.themeSettings {
+  padding: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+  
+  h2, h3 {
+    margin-bottom: 1rem;
+    color: var(--title-color);
+  }
+}
+
+.themeSelector {
+  margin-bottom: 2rem;
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+}
+
+.themeOptions {
+  display: flex;
+  gap: 1rem;
+}
+
+.themeOption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  
+  input {
+    margin: 0;
+  }
+}
+
+.presetSection {
+  margin: 2rem 0;
+}
+
+.presetGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.presetButton {
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: hsl(var(--preset-bg-color));
+  color: hsl(var(--preset-primary-color));
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.colorSettings {
+  margin: 2rem 0;
+}
+
+.colorSetting {
+  margin-bottom: 1.5rem;
+  
+  .colorLabel {
+    margin-bottom: 0.5rem;
+    
+    label {
+      font-weight: 500;
+      margin-right: 0.5rem;
+    }
+    
+    .description {
+      font-size: 0.875rem;
+      color: var(--muted-text-color);
+    }
+  }
+  
+  .colorInputs {
+    display: flex;
+    gap: 1rem;
+    
+    input[type="color"] {
+      width: 50px;
+      height: 40px;
+      padding: 2px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    input[type="text"] {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--input-background);
+      color: var(--input-text);
+    }
+  }
+}
+
+.previewSection {
+  margin: 2rem 0;
+}
+
+.previewContainer {
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+}
+
+.previewCard {
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid;
+  max-width: 400px;
+  transition: all 0.3s ease;
+  
+  h4 {
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.previewActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  
+  button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+}
+
+.saveButton {
+  background: var(--success-color);
+  color: white;
+}
+
+.resetButton {
+  background: var(--error-color);
+  color: white;
+}

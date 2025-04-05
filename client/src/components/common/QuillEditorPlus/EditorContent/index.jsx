@@ -82,7 +82,7 @@ const EditorContent = forwardRef(({
                 if (file) {
                   try {
                     // 检查
-                    const isJpgOrPng = ['image/jpeg','image/png','image/jpg'].includes(file.type)
+                    const isJpgOrPng = ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)
                     if (!isJpgOrPng) throw new Error('图片格式不正确，请提交jpg/jpeg/png格式')
                     const isLt2M = file.size / 1024 / 1024 < 1;
                     if (!isLt2M) throw new Error('图片大小不能超过 1MB！')
@@ -111,13 +111,7 @@ const EditorContent = forwardRef(({
         //   highlight: text => hljs.highlightAuto(text).value
         // },
         syntax: {
-          hljs: {
-            highlight: (language, text) => {
-              let res = hljs.highlightAuto(text);
-              console.log('language:', language, 'res:', res);
-              return res
-            }
-          }
+          hljs,
         },
         markdown: {},   // 启用markdown模块
         table: true,    // 启用表格功能
@@ -131,45 +125,6 @@ const EditorContent = forwardRef(({
     // placeholder清除/添加 补丁函数 （若官方修复则删除）
     const qlEditorEle = document.querySelector(`.${styles.quillContent} .ql-editor`)
     clearPlaceholderPatch(quill, qlEditorEle)
-
-
-    
-
-    // quill.on('text-change', () => {
-    //   document.querySelectorAll('pre code').forEach((block) => {
-    //     hljs.highlightBlock(block);
-    //   });
-    // });
-    // // document.querySelector('.ql-ui').addEventListener('change', (event) => {
-    // //   const language = event.target.value;
-    // //   hljs.configure({ languages: [language] }); // 更新配置
-    // //   document.querySelectorAll('pre code').forEach((block) => {
-    // //     hljs.highlightBlock(block); // 重新渲染代码块
-    // //   });
-    // // });
-
-    // quill.on('text-change', () => {
-    //   document.querySelectorAll('pre').forEach((pre) => {
-    //     if (!pre.querySelector('code')) {
-    //       pre.innerHTML = `<code>${pre.innerHTML}</code>`;
-    //     }
-    //     hljs.highlightBlock(pre.querySelector('code'));
-    //   });
-    // });
-
-    // 输入光标距离视口下缘一段距离即开始滚动
-    // 盒子长高多少，窗口就往下滑动多少
-    // const scrollThreshold = 50; // 距离视口下边缘的阈值（像素）
-    // const handleScroll = () => {
-    //   const { scrollTop, clientHeight, scrollHeight } = editorContainer;
-    //   const cursorPosition = quill.getSelection()?.index || 0;
-    //   const distanceToBottom = scrollHeight - (scrollTop + clientHeight);
-
-    //   if (cursorPosition > distanceToBottom - scrollThreshold) {
-    //     editorContainer.scrollTop += 20; // 滚动 20 像素
-    //   }
-    // };
-    // editorContainer.addEventListener('scroll', handleScroll);
 
 
     if (defaultValueRef.current) {

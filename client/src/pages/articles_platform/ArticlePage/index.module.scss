@@ -11,7 +11,8 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
-  &::before {   /*做一个书签效果*/
+  &::before {
+    /*做一个书签效果*/
     position: absolute;
     top: 20px;
     right: -7px;
@@ -23,12 +24,14 @@
     line-height: 0;
     color: #000;
     border: 15px solid #ee7600;
-    border-left-color: transparent;   /*右边框透明，变成空缺的角*/
+    border-left-color: transparent;
+    /*右边框透明，变成空缺的角*/
     content: attr(data-channel);
     box-shadow: 0 5px 5px -5px #000;
   }
 
-  &::after {    /*书签的夹角*/
+  &::after {
+    /*书签的夹角*/
     content: '';
     position: absolute;
     top: 49px;
@@ -68,49 +71,25 @@
 .contentContainer {
   margin-top: 10px;
 
-  .quillContent {
+  :global(.tiptap-editor-content) {
     font-size: 16px;
-    line-height: 1.8; // 增加行高，提高可读性
+    line-height: 1.5; // 增加行高，提高可读性
     color: #333;
 
     p {
-      margin-bottom: 20px; // 段落间距
+      margin-bottom: 10px; // 段落间距
     }
 
     h1,
     h2,
     h3 {
-      margin-top: 30px;
-      margin-bottom: 15px;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
       color: #222;
-    }
-
-    // 移除 Quill 编辑器默认边框
-    .ql-container {
-      border: none !important;
     }
   }
 }
 
-/* 标题样式 */
-  // .ql-editor h1,
-  // .ql-editor h2,
-  // .ql-editor h3 {
-  //   margin-top: 20px;
-  //   margin-bottom: 10px;
-  // }
-
-  // .ql-editor h1 {
-  //   font-size: 24px;
-  // }
-
-  // .ql-editor h2 {
-  //   font-size: 20px;
-  // }
-
-  // .ql-editor h3 {
-  //   font-size: 16px;
-  // }
 
 .extraInfo {
   margin: 30px 25px 0 25px;

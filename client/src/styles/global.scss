@@ -1,0 +1,143 @@
+// 全局样式文件
+
+// 导入主题
+@import './themes/index'; 
+
+// 全局基础样式
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-padding-top: 50px;
+}
+
+html,
+body {
+  font-size: 16px;
+  margin: 0;
+  height: 100%;
+  font-family: var(--body-font);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4 {
+  color: var(--title-color);
+  font-family: var(--second-font);
+  font-weight: var(--font-medium);
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: var(--link-color);
+  
+  &:hover {
+    color: var(--link-hover-color);
+  }
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--body-font);
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius-md);
+  
+  &:hover {
+    background-color: var(--button-background-color-hover);
+  }
+  
+  &:disabled {
+    background-color: var(--button-disabled-background);
+    color: var(--button-disabled-text);
+    cursor: not-allowed;
+  }
+}
+
+input, textarea, select {
+  font-family: var(--body-font);
+  background-color: var(--input-background);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
+  padding: var(--space-sm);
+  border-radius: var(--border-radius-md);
+  
+  &::placeholder {
+    color: var(--input-placeholder);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: var(--input-focus-border);
+  }
+}
+
+// 自定义滚动条
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 4px;
+  
+  &:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+}
+
+// 代码样式
+code {
+  background-color: var(--code-background);
+  color: var(--code-text);
+  padding: 0.2em 0.4em;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.9em;
+  border: 1px solid var(--code-border);
+}
+
+// JTT Editor
+.ProseMirror p.is-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--input-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+// 辅助类
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

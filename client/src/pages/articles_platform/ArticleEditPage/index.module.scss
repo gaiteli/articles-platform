@@ -40,6 +40,39 @@ body {
   margin: 0 auto;
   background-color: white;
 
+  :global {
+    .tiptap-editor-content {
+      // 移除默认的outline
+      outline: none !important;
+      border: none;
+      min-height: calc(100vh - 320px);
+      margin: 0px 0 20px;
+      height: auto;
+      background-color: white;
+      overflow-y: auto;
+      overflow: visible !important;
+
+      // 编辑区域样式
+      p {
+        margin-bottom: 0.5rem;
+        line-height: 1.25;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        color: #222;
+      }
+
+      // 自定义focus样式（可选）
+      // &:focus {
+      //   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+      // }
+    }
+  }
+
 }
 
 // 优化加载状态的样式
@@ -64,7 +97,7 @@ body {
   font-weight: bold;
   border: none;
   outline: none;
-  padding: 16px 25px;
+  padding: 1rem 1.5rem;
 }
 
 .titleDivider {
@@ -123,7 +156,7 @@ aside.fixedArea {
     img {
       cursor: pointer;
       transition: opacity 0.3s;
-      
+
       &:hover {
         opacity: 0.8;
       }
@@ -146,12 +179,12 @@ aside.fixedArea {
       border-radius: 4px;
       transition: background-color 0.3s, color 0.3s;
       z-index: 1;
-    
+
       &:hover {
         background-color: var(--button-background-color-hover);
       }
     }
-    
+
   }
 }
 

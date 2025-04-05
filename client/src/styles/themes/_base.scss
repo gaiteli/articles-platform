@@ -1,0 +1,171 @@
+// 基础变量定义 - 这些变量在所有主题中都需要定义
+
+// 核心布局
+$header-height: 3.5rem;
+$sidebar-width: 240px;
+$content-max-width: 1200px;
+$footer-height: 60px;
+$container-padding: 1rem;
+
+// 字体配置
+$font-family-base: "Noto Sans SC", sans-serif;
+$font-family-heading: "Noto Sans SC", serif;
+$font-family-secondary: "Noto Sans SC", serif;
+
+// 字体大小
+$font-sizes: (
+  logo: 2rem,
+  h1: 1.5rem,
+  h2: 1.25rem,
+  h3: 1.1rem,
+  body: 1rem,
+  small: .75rem,
+  tiny: .5rem
+);
+
+// 字体粗细
+$font-weights: (
+  logo: 800,
+  regular: 400,
+  medium: 500,
+  bold: 700
+);
+
+// z-index层级管理
+$z-layers: (
+  base: 1,
+  dropdown: 5,
+  sticky: 8,
+  tooltip: 10,
+  fixed: 100,
+  modal: 1000
+);
+
+// 边框圆角
+$border-radius: (
+  sm: 4px,
+  md: 8px,
+  lg: 12px,
+  xl: 16px,
+  rounded: 50%
+);
+
+// 过渡时间
+$transitions: (
+  fast: 150ms,
+  normal: 300ms,
+  slow: 500ms
+);
+
+// 间距
+$spacings: (
+  xs: 0.25rem,
+  sm: 0.5rem,
+  md: 1rem,
+  lg: 1.5rem,
+  xl: 2rem,
+  xxl: 3rem
+);
+
+// 阴影
+$shadows: (
+  sm: "0 1px 2px rgba(0, 0, 0, 0.05)",
+  md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+  lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+  xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+);
+
+// 卡片尺寸
+$card-heights: (
+  sm: 130px,
+  md: 175px,
+  lg: 220px
+);
+
+// 断点
+$breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+// 过渡配置
+$theme-transition: all 0.3s ease;
+
+// 扩展的CSS变量 - 在各主题中赋值
+:root {
+  // 布局变量
+  --header-height: #{$header-height};
+  --sidebar-width: #{$sidebar-width};
+  --content-max-width: #{$content-max-width};
+  --footer-height: #{$footer-height};
+  --container-padding: #{$container-padding};
+  
+  // 字体设置
+  --head-font: #{$font-family-heading};
+  --body-font: #{$font-family-base};
+  --second-font: #{$font-family-secondary};
+
+  // 字体大小
+  --logo-size: #{map-get($font-sizes, logo)};
+  --h1-font-size: #{map-get($font-sizes, h1)};
+  --h2-font-size: #{map-get($font-sizes, h2)};
+  --h3-font-size: #{map-get($font-sizes, h3)};
+  --p-font-size: #{map-get($font-sizes, body)};
+  --small-font-size: #{map-get($font-sizes, small)};
+  --tiny-font-size: #{map-get($font-sizes, tiny)};
+
+  // 字体粗细
+  --logo-font-weight: #{map-get($font-weights, logo)};
+  --font-regular: #{map-get($font-weights, regular)};
+  --font-medium: #{map-get($font-weights, medium)};
+  --font-bold: #{map-get($font-weights, bold)};
+
+  // z-index
+  --z-base: #{map-get($z-layers, base)};
+  --z-dropdown: #{map-get($z-layers, dropdown)};
+  --z-sticky: #{map-get($z-layers, sticky)};
+  --z-tooltip: #{map-get($z-layers, tooltip)};
+  --z-fixed: #{map-get($z-layers, fixed)};
+  --z-modal: #{map-get($z-layers, modal)};
+
+  // 边框圆角
+  --border-radius-sm: #{map-get($border-radius, sm)};
+  --border-radius-md: #{map-get($border-radius, md)};
+  --border-radius-normal: #{map-get($border-radius, lg)};
+  --border-radius-lg: #{map-get($border-radius, lg)};
+  --border-radius-xl: #{map-get($border-radius, xl)};
+  --border-radius-rounded: #{map-get($border-radius, rounded)};
+
+  // 间距
+  --space-xs: #{map-get($spacings, xs)};
+  --space-sm: #{map-get($spacings, sm)};
+  --space-md: #{map-get($spacings, md)};
+  --space-lg: #{map-get($spacings, lg)};
+  --space-xl: #{map-get($spacings, xl)};
+  --space-xxl: #{map-get($spacings, xxl)};
+
+  // 阴影
+  --shadow-sm: #{map-get($shadows, sm)};
+  --shadow-md: #{map-get($shadows, md)};
+  --shadow-lg: #{map-get($shadows, lg)};
+  --shadow-xl: #{map-get($shadows, xl)};
+
+  // 卡片尺寸
+  --card-height-sm: #{map-get($card-heights, sm)};
+  --card-height: #{map-get($card-heights, md)};
+  --card-height-lg: #{map-get($card-heights, lg)};
+  
+  // 过渡
+  --transition-fast: #{map-get($transitions, fast)};
+  --transition-normal: #{map-get($transitions, normal)};
+  --transition-slow: #{map-get($transitions, slow)};
+  
+  // 主题过渡
+  --theme-transition: #{$theme-transition};
+  
+  // *** 主题相关的颜色变量会在各个主题文件中定义 ***
+}

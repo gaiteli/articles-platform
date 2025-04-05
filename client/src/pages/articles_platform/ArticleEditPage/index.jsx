@@ -1,24 +1,25 @@
 import { useEffect, useRef, useState, useContext } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Spin, message } from 'antd';
-import Quill from 'quill';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import { Placeholder } from '@tiptap/extension-placeholder'
 
 import { AuthContext } from '/src/store/AuthContext';
 import { Header } from '/src/components/articles_platform/Header'
-import EditorContent from '../../../components/common/QuillEditorPlus/EditorContent';
-import EditorToolbar from '../../../components/common/QuillEditorPlus/EditorToolbar';
+import MenuBar from '../../../components/common/JTTEditor/MenuBar'
+import ContentArea from '../../../components/common/JTTEditor/ContentArea'
 import PopoutChannelPage from '/src/components/articles_platform/popouts/PopoutChannelPage';
 
 import { getArticleByIdWhenEditAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
 import { createArticleAPI } from '/src/apis/articles_platform/article'
 import styles from './index.module.scss'
 import { CategoryCard } from '../../../components/articles_platform/widgets/CategoryCard';
-import {CoverUploader} from '/src/components/common/Upload';
+import { CoverUploader } from '/src/components/common/Upload';
+import { getArticleLength } from '/src/utils/tiptap';
 
 
-const Delta = Quill.import('delta');
-
-const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
+const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   const { id } = useParams();  // 从路由中获取articleId，若undefined则为首次编辑
   const articleId = id      // 因为名称要和路由中的参数名一致，所以这里重新赋值
   const navigate = useNavigate()
@@ -30,16 +31,35 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
   const [coverImageUrl, setCoverImageUrl] = useState(null)
   const [isShowChannelPage, setIsShowChannelPage] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
+  const [editorContent, setEditorContent] = useState('');
+  const [readOnly, setReadOnly] = useState(false);
+  const [charCount, setCharCount] = useState(0);
 
-  // debug
-  const [isShowDebug, setIsShowDebug] = useState(false)
-  const [range, setRange] = useState()
-  const [lastChange, setLastChange] = useState()
-  const [readOnly, setReadOnly] = useState(false)
-
-  // Use a ref to access the quill instance directly
-  const quillRef = useRef(null)
-
+  // 引入TiptapEditor
+  const editor = useEditor({
+    extensions: [
+      StarterKit.configure({/* ... */ }),
+      Placeholder.configure({
+        placeholder: '请输入文章内容...',
+        showOnlyWhenEditable: true,      // 仅在可编辑时显示（可选）
+      }),
+    ],
+    content: editorContent,
+    editable: !readOnly,
+    onUpdate: ({ editor }) => {
+      const html = editor.getHTML();
+      if (html !== editorContent) {
+        const text = html === '<p></p>' ? '' : html
+        // setEditorContent(text);
+        setCharCount(getArticleLength(text, 'char-no-tag'))
+      }
+    },
+    editorProps: {
+      attributes: {
+        class: 'tiptap-editor-content', 
+      },
+    },
+  });
 
   // 编辑模式下加载文章数据
   useEffect(() => {
@@ -53,10 +73,10 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
           // 鉴权，不能编辑他人的文章
           if (!isAuthorized) {
             if (res.data.userId !== user.id) {    // 不是自己的文章，不能编辑
-              return <Navigate to="/error" replace state={{ 
+              return <Navigate to="/error" replace state={{
                 code: 403,
                 type: '没有权限',
-                message: '无权编辑他人文章' 
+                message: '无权编辑他人文章'
               }} />;
             }
           }
@@ -65,11 +85,12 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
           setCoverImageUrl(res.data.cover)
           setTitle(res.data.title)
           setSelectedCategory({ id: res.data.channelId, name: res.data.channelName })
-          if (quillRef.current) {
-            quillRef.current?.setContents(res.data.deltaContent)
-            console.log('quill editor load success');
+          if (editor) {
+            editor.commands.setContent(res.data.jsonContent || '')
+            setCharCount(getArticleLength(editor.getHTML(), 'char-no-tag'))
+            // 若HTML格式：editor.commands.setContent(res.data.content || '')
+            console.log('TipTap editor load success');
           }
-          
         } catch (err) {
           message.error('加载文章失败:' + err.response.errors[0]);
         } finally {
@@ -85,7 +106,7 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
     document.querySelector('.ant-upload button div').innerHTML = '上传封面'
   }, [])
 
-  
+
   // popout传回选中的分类
   const handleSelectCategory = (category) => {
     setSelectedCategory(category);
@@ -108,12 +129,11 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
 
     try {
       // 获取纯文本内容并去除首尾空格
-      const plainText = quillRef.current?.getText()?.trim() || ''
+      const plainText = editor?.getText()?.trim() || ''
       // 获取HTML内容
-      const htmlContent = quillRef.current?.getSemanticHTML() || ''
-      // 获取Delta内容
-      const deltaContent = quillRef.current?.getContents()
-      // const { updatedHtmlContent } = addHeaderIdToHTML( htmlContent);
+      const htmlContent = editor?.getHTML() || ''
+      // 获取JSON内容
+      const jsonContent = editor?.getJSON() || null
 
       // 检查标题是否为空
       if (!title.trim()) {
@@ -140,7 +160,7 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
         title,
         cover: coverImageUrl || null,
         content: htmlContent,
-        deltaContent: plainText ? deltaContent : null,
+        jsonContent: plainText ? jsonContent : null,
         channelId: selectedCategory?.id || 1
       }
       console.log(reqData);
@@ -168,7 +188,7 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
       <Header position='static' />
       {/* Toolbar部分 */}
       <header className={styles.editorToolbarContainer} >
-        <EditorToolbar />
+        <MenuBar editor={editor} />
       </header>
       <Spin spinning={loading} tip="正在提交...">
         <div className={styles.editorContainer}>
@@ -187,19 +207,12 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
 
           {/* 内容编辑器 */}
           <div className={styles.contentContainer}>
-            <EditorContent
-              toolbarContainerId="custom-toolbar-container"   // 工具栏挂载点
-              ref={quillRef}
-              readOnly={false}
-              defaultValue={null}
-              onTextChange={setLastChange}
-              onSelectionChange={setRange}
-            />
+            <ContentArea editor={editor} />
           </div>
 
           {/* 额外信息栏 */}
           <div className={styles.extraInfo}>
-            <button onClick={() => setIsShowDebug(!isShowDebug)} style={{ color: 'lightgrey' }}>显示调试</button>
+            <button style={{ color: 'transparent', cursor: 'default' }}>显示调试</button>
             <button
               onClick={handleArticleSubmit}
               disabled={loading}
@@ -208,7 +221,7 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
               {loading ? '提交中...' : isEditMode ? '提交更改' : '发布文章'}
             </button>
             <span style={{ color: 'grey' }}>
-              字数：{quillRef.current?.getText().replace(/\n/g, '').length || 0}
+              字数：{charCount}
             </span>
           </div>
 
@@ -221,57 +234,6 @@ const ArticlesPlatformArticleEditPage = ({isAuthorized}) => {
             />
           )}
 
-          {/* debug area */}
-          {isShowDebug && (
-            <>
-              <div className={styles.debugArea}>
-                <label>
-                  Read Only:{' '}
-                  <input
-                    type="checkbox"
-                    value={readOnly}
-                    onChange={(e) => setReadOnly(e.target.checked)}
-                  />
-                </label>
-                <button
-                  className={styles.controlsRight}
-                  type="button"
-                  onClick={() => {
-                    alert(quillRef.current?.getLength())
-                  }}
-                >
-                  Get Content Length
-                </button>
-                <button
-                  className={styles.controlsRight}
-                  type="button"
-                  onClick={() => {
-                    console.dir(quillRef.current?.getContents())
-                  }}
-                >
-                  Get Content Delta
-                </button>
-                <button
-                  className={styles.controlsRight}
-                  type="button"
-                  onClick={() => {
-                    console.dir(quillRef.current?.getText())
-                    console.dir(quillRef.current?.getSemanticHTML())
-                  }}
-                >
-                  Get Text content
-                </button>
-              </div>
-              <div className={styles.state}>
-                <div className={styles.stateTitle}>Current Range:</div>
-                {range ? JSON.stringify(range) : 'Empty'}
-              </div>
-              <div className={styles.state}>
-                <div className={styles.stateTitle}>Last Change:</div>
-                {lastChange ? JSON.stringify(lastChange.ops) : 'Empty'}
-              </div>
-            </>
-          )}
         </div>
 
         {/* 侧边信息&上传区 */}
