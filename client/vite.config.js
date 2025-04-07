@@ -6,6 +6,7 @@ import { resolve } from "path";
 export default defineConfig({
   // 配置别名
   resolve: {
+    extesions: [".js", ".ts", ".jsx", ".tsx", ".css"],
     alias: {
       "@": resolve(__dirname, "/src"),
     },

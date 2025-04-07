@@ -5,6 +5,10 @@
   width: 1200px;
   margin: 0 auto;
   overflow: hidden;
+  background-color: var(--gray-2);
+  [data-theme='dark'] & {
+    background-color: var(--gray-11);
+  }
 }
 
 .mainColumnContainer {
@@ -20,8 +24,6 @@
   }
 
 }
-
-
 
 #toggleButton {
   position: fixed;

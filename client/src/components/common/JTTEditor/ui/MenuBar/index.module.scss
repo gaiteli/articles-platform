@@ -1,0 +1,50 @@
+// src/components/common/JTTEditor/ui/MenuBar/index.module.scss
+.menuBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px; // Spacing between buttons
+  padding: 8px;
+  border: 1px solid #ccc; // Example border
+  border-bottom: none; // Often attached above the editor
+  background-color: #f8f8f8; // Light background
+  border-radius: 4px 4px 0 0; // Rounded top corners
+
+  &[aria-disabled="true"] {
+      opacity: 0.6;
+      pointer-events: none;
+  }
+}
+
+.menuButton {
+  background: none;
+  border: 1px solid transparent; // Use border for spacing consistency
+  padding: 4px 6px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #eee;
+    border-color: #ddd;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &.isActive {
+    background-color: #e0e0e0;
+    border-color: #ccc;
+  }
+
+  // Style icons if needed
+  svg {
+     display: block; // Prevents extra space below icon
+     width: 1em;
+     height: 1em;
+  }
+  span { // For text-based icons like strikethrough link
+    font-size: 0.9em;
+  }
+}

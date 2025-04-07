@@ -95,7 +95,7 @@ $breakpoints: (
 // 过渡配置
 $theme-transition: all 0.3s ease;
 
-// 扩展的CSS变量 - 在各主题中赋值
+
 :root {
   // 布局变量
   --header-height: #{$header-height};
@@ -166,6 +166,4 @@ $theme-transition: all 0.3s ease;
   
   // 主题过渡
   --theme-transition: #{$theme-transition};
-  
-  // *** 主题相关的颜色变量会在各个主题文件中定义 ***
 }

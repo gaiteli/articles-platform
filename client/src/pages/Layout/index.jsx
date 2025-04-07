@@ -30,11 +30,6 @@ const items = [
     icon: <DiffOutlined />,
   },
   {
-    label: '创建文章',
-    key: '/publish',
-    icon: <EditOutlined />,
-  },
-  {
     label: '附件管理',
     key: '/attachment',
     icon: <LinkOutlined />

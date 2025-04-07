@@ -1,26 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { message } from 'antd';
 import { InfoCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { Placeholder } from '@tiptap/extension-placeholder';
 
 import { Header } from '/src/components/articles_platform/Header';
 import { getArticleByIdAPI, hasLikedArticleAPI, likeArticleAPI } from '/src/apis/articles_platform/article';
-import { generateUniqueId, extractTitles, getArticleLength } from '/src/utils/tiptap';
+import { extractTitles, getArticleLength } from '/src/utils/tiptap';
 
 import styles from './index.module.scss';
-import TOC from '../../../components/common/QuillEditorPlus/TOC';
+import TOC from '../../../components/common/JTTEditor/TOC';
 import {
   DeleteButtonWithPermission,
   EditButtonWithPermission,
   LikeButtonWithPermission,
 } from '../../../components/permission/buttons';
-import ContentArea from '../../../components/common/JTTEditor/ContentArea';
 
-
+import {
+  ArticleEditorProvider,
+  ArticleContent
+} from '/src/components/common/JTTEditor/editors/ArticleEditor';
 
 const ArticlesPlatformArticlePage = () => {
 
@@ -37,44 +36,44 @@ const ArticlesPlatformArticlePage = () => {
   const [headings, setHeadings] = useState([]); // 存储标题信息
   const [articleLength, setArticleLength] = useState(0);  // 文章长度
   const [hasLiked, setHasLiked] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
 
-  // 初始化编辑器并设置内容、标题
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({/* ... */ }),
-      Placeholder.configure({
-        placeholder: '请输入文章内容...',
-        showOnlyWhenEditable: true,      // 仅在可编辑时显示（可选）
-      }),
-    ],
-    content: article.jsonContent,
-    editable: false,
-  });
+  // 编辑器加载完成后的回调
+  const handleEditorCreate = useCallback(({editorInstance}) => {
+    editorInstance.commands.setContent(article.jsonContent || '');
+
+    // 计算长度
+    const htmlContent = editorInstance.getHTML();
+    setArticleLength(getArticleLength(htmlContent, 'char-no-tag'));
+
+    // 提取标题
+    setTimeout(() => {
+      try {
+        const hData = extractTitles(document.querySelector('.tiptap'));
+        setHeadings(hData);
+        console.log("Headings extracted:", hData);
+      } catch {
+        console.warn("Could not find editor content element for TOC extraction.");
+      }
+    }, 100);
+  }, []);
 
 
   // 获取文章详情
   useEffect(() => {
     const loadArticle = async () => {
+      setIsLoading(true);
+      setFetchArticleError(null);
       try {
-        const res = await getArticleByIdAPI(id)
-        const hasLikeData = await hasLikedArticleAPI(id)
-        setHasLiked(hasLikeData.data.hasLiked)
-        setArticle(res.data)
+        // 并行获取
+        const [articleRes, hasLikeRes] = await Promise.all([
+          getArticleByIdAPI(id),
+          hasLikedArticleAPI(id)
+        ]);
+        setArticle(articleRes.data);
+        setHasLiked(hasLikeRes.data.hasLiked);
 
-        // 确保编辑器生成后再设置内容
-        if (editor) {
-          editor.commands.setContent(res.data.jsonContent || '');
-
-          // 计算长度
-          setArticleLength(getArticleLength(editor.getHTML(), 'char-no-tag'));
-
-          // 提取标题
-          setTimeout(() => {
-            const hData = extractTitles(document.querySelector('.tiptap'))
-            setHeadings(hData);
-          }, 0);
-        }
       } catch (error) {
         console.log(error.response);
         setFetchArticleError({
@@ -82,10 +81,13 @@ const ArticlesPlatformArticlePage = () => {
           type: error.response.data.message,
           message: error.response.data.errors || '文章不存在'
         })
+      } finally {
+        setIsLoading(false);
       }
     };
     loadArticle()
-  }, [id, editor])
+  }, [id])
+
 
   // 处理点赞/取消点赞
   const handleLike = async () => {
@@ -108,6 +110,9 @@ const ArticlesPlatformArticlePage = () => {
       message: fetchArticleError.message
     }} />;
   }
+
+  // 准备文章内容提供给Provider
+  const editorInitialContent = article.jsonContent || article.content || '';
 
   return (
     <div className={styles.pageWrapper}>
@@ -133,9 +138,15 @@ const ArticlesPlatformArticlePage = () => {
         </div>
 
         {/* 文章内容 */}
-        <div className={styles.contentContainer}>
-          <ContentArea editor={editor} />
-        </div>
+        <ArticleEditorProvider
+          initialContent={editorInitialContent} // Pass fetched content
+          editable={false}                     // Set to read-only
+          onCreate={handleEditorCreate}        // Pass callback for initial calculations
+        >
+          <div className={styles.contentContainer}>
+            <ArticleContent />
+          </div>
+        </ArticleEditorProvider>
 
         {/* 额外信息栏 */}
         <div className={`${styles.extraInfo} flex flex-row justify-between`}>
@@ -165,9 +176,11 @@ const ArticlesPlatformArticlePage = () => {
         </div>
 
         {/* 右侧目录 */}
-        <div className={styles.sidebar}>
-          <TOC headings={headings} />
-        </div>
+        {headings.length > 0 && (
+          <div className={styles.sidebar}>
+            <TOC headings={headings} />
+          </div>
+        )}
 
       </div>
     </div>

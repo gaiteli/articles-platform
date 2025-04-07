@@ -1,8 +1,7 @@
-
 .welcomeContainer {
   position: relative;
   width: 100%;
-  
+
   margin: 0 auto;
   background-color: var(--background-color);
   overflow: hidden;
@@ -11,7 +10,7 @@
     width: 100vw;
     height: 50vw;
     overflow: hidden;
-    z-index: -99; 
+    z-index: -99;
   }
 
   &::before {
@@ -36,7 +35,7 @@
     transform: translate(-50%, -50%);
     max-width: 25rem;
     z-index: 9;
-  
+
     h1 {
       height: 2.5rem;
       font-family: var(--head-font);
@@ -46,7 +45,7 @@
       text-align: center;
       margin-bottom: 2.5rem;
     }
-  
+
     h4 {
       font-size: 1.2rem;
       font-weight: normal;
@@ -64,54 +63,50 @@
   }
 }
 
-.recentAndPopularSec {
-  width: 90%;
-  box-sizing: border-box;
-  height: 700px;
-  z-index: 1;
-  padding: 4rem 2rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  background-color: hsl(51, 37%, 89%);
-
+.mainContainer {
+  background-color: var(--gray-3);
   [data-theme='dark'] & {
-    background-color: hsl(230, 15%, 15%);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    background-color: var(--gray-11);
   }
 
-  .section {
-    width: 45%;
-    margin-bottom: 2rem;
+  .recentAndPopularSec {
+    width: 90%;
+    box-sizing: border-box;
+    height: 700px;
+    z-index: 1;
+    padding: 4rem 2rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: var(--background-color-light);
 
-    h2 {
-      color: var(--title-color) !important;
-    }
+    .section {
+      width: 45%;
+      margin-bottom: 2rem;
 
-    :global(.ant-empty-description) {
-      color: var(--subtitle-color)
+      h2 {
+        color: var(--title-color) !important;
+      }
+
+      :global(.ant-empty-description) {
+        color: var(--subtitle-color)
+      }
+
     }
-    
   }
-}
 
-.recommendationSection {
-  width: 90%;
-  height: 600px;
-  z-index: 1;
-  padding: 4rem 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-
-  [data-theme='dark'] & {
-    background-color: hsl(230, 15%, 15%);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  .recommendationSection {
+    width: 90%;
+    height: 600px;
+    z-index: 1;
+    padding: 4rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: var(--background-color-light);
   }
 }

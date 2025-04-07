@@ -1,12 +1,7 @@
 // 主题整合文件
 
-// 导入基础变量
 @import './base';
-
-// 导入各主题定义
-@import './light';  // 亮色主题 (默认)
-@import './dark';   // 深色主题
-@import './custom'; // 用户自定义主题
+@import './baseColors';
 
 // 全局主题过渡效果
 body,

@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState, useContext } from 'react';
+import { useEffect, useCallback, useState, useContext, useMemo } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { Spin, message } from 'antd';
-import { useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { Placeholder } from '@tiptap/extension-placeholder'
 
 import { AuthContext } from '/src/store/AuthContext';
 import { Header } from '/src/components/articles_platform/Header'
-import MenuBar from '../../../components/common/JTTEditor/MenuBar'
-import ContentArea from '../../../components/common/JTTEditor/ContentArea'
 import PopoutChannelPage from '/src/components/articles_platform/popouts/PopoutChannelPage';
+import {
+  ArticleEditorProvider,
+  ArticleToolbar,
+  ArticleContent
+} from '/src/components/common/JTTEditor/editors/ArticleEditor';
 
 import { getArticleByIdWhenEditAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
 import { createArticleAPI } from '/src/apis/articles_platform/article'
@@ -27,45 +27,51 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
 
   const [title, setTitle] = useState('')
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(!!articleId); // Specific state for initial data load
   const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
   const [coverImageUrl, setCoverImageUrl] = useState(null)
   const [isShowChannelPage, setIsShowChannelPage] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
-  const [editorContent, setEditorContent] = useState('');
+  // const [editorContent, setEditorContent] = useState('');
   const [readOnly, setReadOnly] = useState(false);
   const [charCount, setCharCount] = useState(0);
 
-  // 引入TiptapEditor
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({/* ... */ }),
-      Placeholder.configure({
-        placeholder: '请输入文章内容...',
-        showOnlyWhenEditable: true,      // 仅在可编辑时显示（可选）
-      }),
-    ],
-    content: editorContent,
-    editable: !readOnly,
-    onUpdate: ({ editor }) => {
-      const html = editor.getHTML();
-      if (html !== editorContent) {
-        const text = html === '<p></p>' ? '' : html
-        // setEditorContent(text);
-        setCharCount(getArticleLength(text, 'char-no-tag'))
-      }
+  const [initialEditorContent, setInitialEditorContent] = useState('');
+  const [currentHtmlContent, setCurrentHtmlContent] = useState('');
+  const [currentJsonContent, setCurrentJsonContent] = useState(null);
+  const [currentPlainText, setCurrentPlainText] = useState('');
+
+
+  // onUpdate handler
+  const handleEditorUpdate = useCallback(({editorInstance}) => {
+    const html = editorInstance.getHTML();
+    const json = editorInstance.getJSON();
+    const text = editorInstance.getText();
+
+    setCurrentHtmlContent(html);
+    setCurrentJsonContent(json);
+    setCurrentPlainText(text);
+    const htmlContent = editorInstance.getHTML();
+    if (htmlContent !== editorContent) {
+      const text = htmlContent === '<p></p>' ? '' : htmlContent
+      // setEditorContent(text);
+      setCharCount(getArticleLength(text, 'char-no-tag'))
+    }
+
+  }, []);
+
+  const editorProps = useMemo(() => ({
+    attributes: {
+      class: 'tiptap-editor-content',
     },
-    editorProps: {
-      attributes: {
-        class: 'tiptap-editor-content', 
-      },
-    },
-  });
+  }), []);
+
 
   // 编辑模式下加载文章数据
   useEffect(() => {
     if (articleId) {
       const loadArticle = async () => {
-        setLoading(true);
+        setInitialLoading(true);
         try {
           // 获取文章内容、标题、封面图url
           const res = await getArticleByIdWhenEditAPI(articleId)
@@ -85,12 +91,10 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
           setCoverImageUrl(res.data.cover)
           setTitle(res.data.title)
           setSelectedCategory({ id: res.data.channelId, name: res.data.channelName })
-          if (editor) {
-            editor.commands.setContent(res.data.jsonContent || '')
-            setCharCount(getArticleLength(editor.getHTML(), 'char-no-tag'))
-            // 若HTML格式：editor.commands.setContent(res.data.content || '')
-            console.log('TipTap editor load success');
-          }
+
+          const fetchedContent = res.data.jsonContent || res.data.content || '';
+          setInitialEditorContent(fetchedContent);
+          console.log('Article data loaded');
         } catch (err) {
           message.error('加载文章失败:' + err.response.errors[0]);
         } finally {
@@ -107,20 +111,14 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   }, [])
 
 
+  // 分类handlers
   // popout传回选中的分类
   const handleSelectCategory = (category) => {
     setSelectedCategory(category);
     console.log('选中的分类:', category);
   };
-
-  const handleClosePopout = () => {
-    setIsShowChannelPage(false);
-  }
-
-  // 处理分类删除
-  const handleRemoveCategory = () => {
-    setSelectedCategory(null); // 清空选中的分类
-  };
+  const handleClosePopout = () => setIsShowChannelPage(false);
+  const handleRemoveCategory = () => setSelectedCategory(null); // 清空选中的分类
 
 
   // 提交文章
@@ -128,33 +126,25 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
     setLoading(true)
 
     try {
-      // 获取纯文本内容并去除首尾空格
-      const plainText = editor?.getText()?.trim() || ''
-      // 获取HTML内容
-      const htmlContent = editor?.getHTML() || ''
-      // 获取JSON内容
-      const jsonContent = editor?.getJSON() || null
+      const plainText = currentPlainText.trim() || ''  // 获取纯文本内容并去除首尾空格
+      const htmlContent = currentHtmlContent   // 获取HTML内容
+      const jsonContent = currentJsonContent   // 获取JSON内容
 
-      // 检查标题是否为空
+      // 校验
       if (!title.trim()) {
         message.error('请输入文章标题')
         return
       }
-
-      // 提示用户确定不上传封面图
       if (!coverImageUrl) {
         // message.warning('确定不上传封面图？')  // 写一个组件让message有确定和取消按钮功能
         if (!window.confirm('确定不上传封面图？')) {
           return
         }
       }
-
-      // 检查纯文本是否只包含空白字符
-      if (!plainText) {
+      if (!plainText) {     // 检查纯文本是否只包含空白字符
         message.error('请输入文章内容')
         return
       }
-
 
       const reqData = {
         title,
@@ -163,7 +153,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
         jsonContent: plainText ? jsonContent : null,
         channelId: selectedCategory?.id || 1
       }
-      console.log(reqData);
+      console.log('Submitting Data:', reqData);
 
       if (isEditMode) {
         await updateArticleAPI({ id: articleId, ...reqData });
@@ -183,86 +173,107 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   }
 
 
+  if (initialLoading && isEditMode) {
+    // 编辑模式加载文章数据时显示骨架屏
+    return (
+      <div className={styles.pageWrapper}>
+        <Header position='static' />
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <Spin size="large" tip="正在加载文章内容..." />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.pageWrapper}>
       <Header position='static' />
-      {/* Toolbar部分 */}
-      <header className={styles.editorToolbarContainer} >
-        <MenuBar editor={editor} />
-      </header>
-      <Spin spinning={loading} tip="正在提交...">
-        <div className={styles.editorContainer}>
 
-          {/* 标题输入框 */}
-          <div className={styles.titleContainer}>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="请输入标题"
-              className={styles.titleInput}
-            />
-            <hr className={styles.titleDivider} />
-          </div>
+      <ArticleEditorProvider
+        initialContent={initialEditorContent} // Pass fetched content here
+        onUpdate={handleEditorUpdate}         // Pass the update handler
+        editable={!readOnly}                  // Control editability
+        editorProps={editorProps}
+      >
+        {/* Toolbar部分 */}
+        <header className={styles.editorToolbarContainer} >
+          <ArticleToolbar />
+        </header>
+        {/* Content Area部分 */}
+        <Spin spinning={loading} tip="正在提交...">
+          <div className={styles.editorContainer}>
 
-          {/* 内容编辑器 */}
-          <div className={styles.contentContainer}>
-            <ContentArea editor={editor} />
-          </div>
+            {/* 标题输入框 */}
+            <div className={styles.titleContainer}>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="请输入标题"
+                className={styles.titleInput}
+              />
+              <hr className={styles.titleDivider} />
+            </div>
 
-          {/* 额外信息栏 */}
-          <div className={styles.extraInfo}>
-            <button style={{ color: 'transparent', cursor: 'default' }}>显示调试</button>
-            <button
-              onClick={handleArticleSubmit}
-              disabled={loading}
-              className={styles.submitButton}
-            >
-              {loading ? '提交中...' : isEditMode ? '提交更改' : '发布文章'}
-            </button>
-            <span style={{ color: 'grey' }}>
-              字数：{charCount}
-            </span>
-          </div>
+            {/* 内容编辑器 */}
+            <div className={styles.contentContainer}>
+              <ArticleContent />
+            </div>
 
-          {/* 分类选择弹出页 */}
-          {isShowChannelPage && (
-            <PopoutChannelPage
-              chosenCategory={selectedCategory}
-              onClose={handleClosePopout}
-              onSubmit={handleSelectCategory}
-            />
-          )}
+            {/* 额外信息栏 */}
+            <div className={styles.extraInfo}>
+              <button style={{ backgroundColor: 'transparent', cursor: 'default' }}></button>
+              <button
+                onClick={handleArticleSubmit}
+                disabled={loading}
+                className={styles.submitButton}
+              >
+                {loading ? '提交中...' : isEditMode ? '提交更改' : '发布文章'}
+              </button>
+              <span style={{ color: 'grey' }}>
+                字数：{charCount}
+              </span>
+            </div>
 
-        </div>
-
-        {/* 侧边信息&上传区 */}
-        <aside className={styles.fixedArea}>
-
-          {/* 封面上传区 */}
-          <CoverUploader
-            coverUrl={coverImageUrl}
-            onCoverChange={setCoverImageUrl}
-          />
-
-          {/* 分类选择按钮和显示区域 */}
-          <div className={styles.categoryContainer}>
-            <button
-              className={styles.chooseChannelButton}
-              onClick={() => setIsShowChannelPage(true)}
-            >
-              选择分类
-            </button>
-            {/* 显示已选分类的卡片 */}
-            {selectedCategory && (
-              <CategoryCard
-                category={selectedCategory}
-                onRemove={handleRemoveCategory}
+            {/* 分类选择弹出页 */}
+            {isShowChannelPage && (
+              <PopoutChannelPage
+                chosenCategory={selectedCategory}
+                onClose={handleClosePopout}
+                onSubmit={handleSelectCategory}
               />
             )}
+
           </div>
-        </aside>
-      </Spin>
+        </Spin>
+      </ArticleEditorProvider>
+
+      {/* 侧边信息&上传区 */}
+      <aside className={styles.fixedArea}>
+
+        {/* 封面上传区 */}
+        <CoverUploader
+          coverUrl={coverImageUrl}
+          onCoverChange={setCoverImageUrl}
+        />
+
+        {/* 分类选择按钮和显示区域 */}
+        <div className={styles.categoryContainer}>
+          <button
+            className={styles.chooseChannelButton}
+            onClick={() => setIsShowChannelPage(true)}
+          >
+            选择分类
+          </button>
+          {/* 显示已选分类的卡片 */}
+          {selectedCategory && (
+            <CategoryCard
+              category={selectedCategory}
+              onRemove={handleRemoveCategory}
+            />
+          )}
+        </div>
+      </aside>
     </div>
   )
 }

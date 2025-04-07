@@ -6,3 +6,23 @@
   position: relative; // 例如，为了定位内部元素或伪元素
   padding: 1rem 1.5rem;
 }
+
+
+.contentArea {
+  border: 1px solid #ccc;
+  padding: 10px 15px; // Adjust padding as needed
+  min-height: 300px; // Set a minimum height
+  background-color: #fff;
+  border-radius: 0 0 4px 4px; // Rounded bottom corners if menu is attached
+
+  &.loading {
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    &::after {
+       content: "Loading editor...";
+    }
+  }
+}

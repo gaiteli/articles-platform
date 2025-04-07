@@ -1,26 +1,29 @@
-// src/components/common/ThemeToggle/index.jsx
 import React from 'react';
 import { useTheme } from '/src/store/ThemeContext';
 import styles from './index.module.scss';
 import { MoonOutlined, SunOutlined } from '@ant-design/icons';
 
 const ThemeToggle = ({classNameIcon}) => {
-  const { theme, setTheme } = useTheme();
+  const { theme, previousTheme, setTheme } = useTheme();
   
   const handleToggle = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
+    if (theme === 'dark') {   // 从深色模式切换回上一个非深色主题
+      setTheme(previousTheme === 'dark' ? 'light' : previousTheme);  // 以防previous也是dark无法更改
+    } else {              // 切换到深色模式
+      setTheme('dark');
+    }
   };
   
   return (
     <button 
       className={styles.themeToggle} 
       onClick={handleToggle}
-      aria-label={`切换到${theme === 'light' ? '深色' : '浅色'}模式`}
+      aria-label={`切换到${theme === 'dark' ? '浅色' : '深色'}模式`}
     >
-      {theme === 'light' ? (
-        <MoonOutlined className={classNameIcon} />
-      ) : (
+      {theme === 'dark' ? (
         <SunOutlined className={classNameIcon} />
+      ) : (
+        <MoonOutlined className={classNameIcon} />
       )}
     </button>
   );

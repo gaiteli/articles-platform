@@ -117,7 +117,7 @@ const Article = () => {
         return (
           <Space size="middle">
             <Button type="primary" shape="circle" icon={<EditOutlined />}
-              onClick={() => navigate(`../publish?id=${data.id}`)}
+              onClick={() => navigate(`/articles/${data.id}/edit`)}
             />
             <Popconfirm
               title="删除文章"
