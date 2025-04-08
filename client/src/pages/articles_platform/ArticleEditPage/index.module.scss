@@ -14,11 +14,14 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgb(250, 250, 250);
   z-index: 100;
   padding: 10px 0;
   margin: 2px auto 10px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--border-color-two);
+  background-color: var(--gray-1);
+  [data-theme='dark'] & {
+    background-color: var(--gray-12);
+  }
 
   // 添加滑动阴影效果
   &::after {
@@ -40,8 +43,12 @@ body {
   margin: 0 auto;
   background-color: white;
 
+  .contentContainer {
+    padding: 1rem 1.5rem;
+  }
+
   :global {
-    .tiptap-editor-content {
+    .tiptap {
       // 移除默认的outline
       outline: none !important;
       border: none;

@@ -5,11 +5,10 @@ import { Spin, message } from 'antd';
 import { AuthContext } from '/src/store/AuthContext';
 import { Header } from '/src/components/articles_platform/Header'
 import PopoutChannelPage from '/src/components/articles_platform/popouts/PopoutChannelPage';
-import {
-  ArticleEditorProvider,
-  ArticleToolbar,
-  ArticleContent
-} from '/src/components/common/JTTEditor/editors/ArticleEditor';
+
+import { useJttEditor } from '../../../components/common/JTTEditor/core/useJttEditor';
+import MenuBar from '../../../components/common/JTTEditor/ui/MenuBar';
+import ContentArea from '../../../components/common/JTTEditor/ui/ContentArea';
 
 import { getArticleByIdWhenEditAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
 import { createArticleAPI } from '/src/apis/articles_platform/article'
@@ -20,58 +19,49 @@ import { getArticleLength } from '/src/utils/tiptap';
 
 
 const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
+  console.log('1');
   const { id } = useParams();  // 从路由中获取articleId，若undefined则为首次编辑
   const articleId = id      // 因为名称要和路由中的参数名一致，所以这里重新赋值
   const navigate = useNavigate()
   const { user } = useContext(AuthContext)
-
+  
   const [title, setTitle] = useState('')
-  const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(!!articleId); // Specific state for initial data load
+  const [loading, setLoading] = useState(!!articleId);
   const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
   const [coverImageUrl, setCoverImageUrl] = useState(null)
   const [isShowChannelPage, setIsShowChannelPage] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
-  // const [editorContent, setEditorContent] = useState('');
-  const [readOnly, setReadOnly] = useState(false);
+  const [editorContent, setEditorContent] = useState('');
   const [charCount, setCharCount] = useState(0);
 
-  const [initialEditorContent, setInitialEditorContent] = useState('');
-  const [currentHtmlContent, setCurrentHtmlContent] = useState('');
-  const [currentJsonContent, setCurrentJsonContent] = useState(null);
-  const [currentPlainText, setCurrentPlainText] = useState('');
 
-
-  // onUpdate handler
-  const handleEditorUpdate = useCallback(({editorInstance}) => {
-    const html = editorInstance.getHTML();
-    const json = editorInstance.getJSON();
-    const text = editorInstance.getText();
-
-    setCurrentHtmlContent(html);
-    setCurrentJsonContent(json);
-    setCurrentPlainText(text);
-    const htmlContent = editorInstance.getHTML();
+  // 编辑器初始化
+  const handleEditorUpdate = ({editor}) => {
+    console.log('2 handleEditorUpdate');
+    const htmlContent = editor.getHTML();
     if (htmlContent !== editorContent) {
       const text = htmlContent === '<p></p>' ? '' : htmlContent
       // setEditorContent(text);
       setCharCount(getArticleLength(text, 'char-no-tag'))
     }
+  }
 
-  }, []);
-
-  const editorProps = useMemo(() => ({
-    attributes: {
-      class: 'tiptap-editor-content',
-    },
-  }), []);
+  const EditorConfig = {
+    preset: 'article',
+    initialContent: editorContent,
+    editable: true,
+    onUpdate: handleEditorUpdate,
+    editorProps: {},
+  }
+  const editor = useJttEditor(EditorConfig);
 
 
   // 编辑模式下加载文章数据
   useEffect(() => {
+    console.log('3 useEffect loadArticle');
     if (articleId) {
       const loadArticle = async () => {
-        setInitialLoading(true);
+        setLoading(true);
         try {
           // 获取文章内容、标题、封面图url
           const res = await getArticleByIdWhenEditAPI(articleId)
@@ -91,10 +81,15 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
           setCoverImageUrl(res.data.cover)
           setTitle(res.data.title)
           setSelectedCategory({ id: res.data.channelId, name: res.data.channelName })
+          console.log('4 useEffect loadArticle setArticle');
 
-          const fetchedContent = res.data.jsonContent || res.data.content || '';
-          setInitialEditorContent(fetchedContent);
-          console.log('Article data loaded');
+          if (editor) {
+            editor.commands.setContent(res.data.jsonContent || '')
+            setCharCount(getArticleLength(editor.getHTML(), 'char-no-tag'))
+            // 若HTML格式：editor.commands.setContent(res.data.content || '')
+            console.log('5 TipTap editor load success');
+          }
+          document.querySelector('.ant-upload .anticon+div').innerHTML = '上传封面'
         } catch (err) {
           message.error('加载文章失败:' + err.response.errors[0]);
         } finally {
@@ -104,11 +99,6 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
       loadArticle();
     }
   }, [articleId]);
-
-  // 修改antd Upload组件内部提示文字
-  useEffect(() => {
-    document.querySelector('.ant-upload button div').innerHTML = '上传封面'
-  }, [])
 
 
   // 分类handlers
@@ -126,9 +116,9 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
     setLoading(true)
 
     try {
-      const plainText = currentPlainText.trim() || ''  // 获取纯文本内容并去除首尾空格
-      const htmlContent = currentHtmlContent   // 获取HTML内容
-      const jsonContent = currentJsonContent   // 获取JSON内容
+      const plainText = editor?.getText()?.trim() || ''  // 获取纯文本内容并去除首尾空格
+      const htmlContent = editor?.getHTML() || ''     // 获取HTML内容
+      const jsonContent = editor?.getJSON() || null  // 获取JSON内容
 
       // 校验
       if (!title.trim()) {
@@ -173,7 +163,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   }
 
 
-  if (initialLoading && isEditMode) {
+  if (loading && isEditMode) {
     // 编辑模式加载文章数据时显示骨架屏
     return (
       <div className={styles.pageWrapper}>
@@ -188,16 +178,10 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   return (
     <div className={styles.pageWrapper}>
       <Header position='static' />
-
-      <ArticleEditorProvider
-        initialContent={initialEditorContent} // Pass fetched content here
-        onUpdate={handleEditorUpdate}         // Pass the update handler
-        editable={!readOnly}                  // Control editability
-        editorProps={editorProps}
-      >
+        {console.log('7 return()')}
         {/* Toolbar部分 */}
         <header className={styles.editorToolbarContainer} >
-          <ArticleToolbar />
+          <MenuBar editor={editor} preset='article' />
         </header>
         {/* Content Area部分 */}
         <Spin spinning={loading} tip="正在提交...">
@@ -217,7 +201,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
 
             {/* 内容编辑器 */}
             <div className={styles.contentContainer}>
-              <ArticleContent />
+              <ContentArea editor={editor} />
             </div>
 
             {/* 额外信息栏 */}
@@ -246,7 +230,6 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
 
           </div>
         </Spin>
-      </ArticleEditorProvider>
 
       {/* 侧边信息&上传区 */}
       <aside className={styles.fixedArea}>

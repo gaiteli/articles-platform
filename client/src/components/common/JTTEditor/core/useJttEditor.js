@@ -21,7 +21,6 @@ export function useJttEditor({
       ...editorProps,
     },
     onUpdate: onUpdate,
-    onCreate: onCreate,
     ...rest,
   });
 

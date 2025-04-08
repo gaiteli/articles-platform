@@ -7,6 +7,8 @@ import moment from 'moment';
 import { Header } from '/src/components/articles_platform/Header';
 import { getArticleByIdAPI, hasLikedArticleAPI, likeArticleAPI } from '/src/apis/articles_platform/article';
 import { extractTitles, getArticleLength } from '/src/utils/tiptap';
+import { useJttEditor } from '../../../components/common/JTTEditor/core/useJttEditor';
+import ContentArea from '../../../components/common/JTTEditor/ui/ContentArea';
 
 import styles from './index.module.scss';
 import TOC from '../../../components/common/JTTEditor/TOC';
@@ -15,11 +17,6 @@ import {
   EditButtonWithPermission,
   LikeButtonWithPermission,
 } from '../../../components/permission/buttons';
-
-import {
-  ArticleEditorProvider,
-  ArticleContent
-} from '/src/components/common/JTTEditor/editors/ArticleEditor';
 
 const ArticlesPlatformArticlePage = () => {
 
@@ -38,26 +35,13 @@ const ArticlesPlatformArticlePage = () => {
   const [hasLiked, setHasLiked] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
-
-  // 编辑器加载完成后的回调
-  const handleEditorCreate = useCallback(({editorInstance}) => {
-    editorInstance.commands.setContent(article.jsonContent || '');
-
-    // 计算长度
-    const htmlContent = editorInstance.getHTML();
-    setArticleLength(getArticleLength(htmlContent, 'char-no-tag'));
-
-    // 提取标题
-    setTimeout(() => {
-      try {
-        const hData = extractTitles(document.querySelector('.tiptap'));
-        setHeadings(hData);
-        console.log("Headings extracted:", hData);
-      } catch {
-        console.warn("Could not find editor content element for TOC extraction.");
-      }
-    }, 100);
-  }, []);
+  const editorConfig = {
+    preset: 'article',
+    initialContent: '',
+    editable: false,
+    editorProps: {},
+  }
+  const editor = useJttEditor(editorConfig)
 
 
   // 获取文章详情
@@ -73,6 +57,20 @@ const ArticlesPlatformArticlePage = () => {
         ]);
         setArticle(articleRes.data);
         setHasLiked(hasLikeRes.data.hasLiked);
+
+        // 确保编辑器生成后再设置内容
+        if (editor) {
+          editor.commands.setContent(articleRes.data.jsonContent || '');
+
+          // 计算长度
+          setArticleLength(getArticleLength(articleRes.data.content, 'char-no-tag'));
+
+          // 提取标题
+          setTimeout(() => {
+            const hData = extractTitles(document.querySelector('.tiptap'))
+            setHeadings(hData);
+          }, 0);
+        }
 
       } catch (error) {
         console.log(error.response);
@@ -101,7 +99,6 @@ const ArticlesPlatformArticlePage = () => {
     }
   };
 
-
   // 文章加载出错（404），返回错误页面
   if (fetchArticleError) {
     return <Navigate to="/error" replace state={{
@@ -110,9 +107,6 @@ const ArticlesPlatformArticlePage = () => {
       message: fetchArticleError.message
     }} />;
   }
-
-  // 准备文章内容提供给Provider
-  const editorInitialContent = article.jsonContent || article.content || '';
 
   return (
     <div className={styles.pageWrapper}>
@@ -138,15 +132,9 @@ const ArticlesPlatformArticlePage = () => {
         </div>
 
         {/* 文章内容 */}
-        <ArticleEditorProvider
-          initialContent={editorInitialContent} // Pass fetched content
-          editable={false}                     // Set to read-only
-          onCreate={handleEditorCreate}        // Pass callback for initial calculations
-        >
-          <div className={styles.contentContainer}>
-            <ArticleContent />
-          </div>
-        </ArticleEditorProvider>
+        <div className={styles.contentContainer}>
+          <ContentArea editor={editor} />
+        </div>
 
         {/* 额外信息栏 */}
         <div className={`${styles.extraInfo} flex flex-row justify-between`}>

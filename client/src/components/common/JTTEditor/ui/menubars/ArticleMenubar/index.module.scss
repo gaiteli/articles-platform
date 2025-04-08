@@ -2,29 +2,29 @@
 .menuBar {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px; // Spacing between buttons
+  gap: 4px; // 按钮间距
   padding: 8px;
-  border: 1px solid #ccc; // Example border
-  border-bottom: none; // Often attached above the editor
-  background-color: #f8f8f8; // Light background
-  border-radius: 4px 4px 0 0; // Rounded top corners
-
-  &[aria-disabled="true"] {
-      opacity: 0.6;
-      pointer-events: none;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  border-radius: 4px;
+  
+  .separator {
+    border-left: 1px solid #d9d9d9;
+    height: 20px;
+    margin: auto 8px;
   }
 }
 
-.menuButton {
+.menuItem {
   background: none;
-  border: 1px solid transparent; // Use border for spacing consistency
+  border: 1px solid transparent;
   padding: 4px 6px;
   cursor: pointer;
   border-radius: 3px;
   transition: background-color 0.2s ease, border-color 0.2s ease;
 
   &:hover:not(:disabled) {
-    background-color: #eee;
+    background-color: var(--button-background-color-hover);
     border-color: #ddd;
   }
 
@@ -34,11 +34,10 @@
   }
 
   &.isActive {
-    background-color: #e0e0e0;
+    background-color: var(--);
     border-color: #ccc;
   }
 
-  // Style icons if needed
   svg {
      display: block; // Prevents extra space below icon
      width: 1em;

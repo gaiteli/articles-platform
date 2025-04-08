@@ -1,18 +1,15 @@
 import React from 'react';
 import { EditorContent } from '@tiptap/react';
-import { useEditorContext } from '../../core/EditorContext';
-import styles from './index.module.scss';
 import PropTypes from 'prop-types';
 
-const ContentArea = ({ className = '' }) => {
-  const editor = useEditorContext();
+const ContentArea = ({ editor, className = '' }) => {
 
   if (!editor) {
-    return <div className={`${styles.contentArea} ${styles.loading} ${className}`}></div>;
+    return <div></div>;
   }
 
   return (
-    <EditorContent editor={editor} className={`${styles.contentArea} ${className}`} />
+    <EditorContent editor={editor} className={`${className}`} />
   );
 };
 
