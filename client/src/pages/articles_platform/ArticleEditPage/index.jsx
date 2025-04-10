@@ -9,6 +9,7 @@ import PopoutChannelPage from '/src/components/articles_platform/popouts/PopoutC
 import { useJttEditor } from '../../../components/common/JTTEditor/core/useJttEditor';
 import MenuBar from '../../../components/common/JTTEditor/ui/MenuBar';
 import ContentArea from '../../../components/common/JTTEditor/ui/ContentArea';
+import LinkBubble from '../../../components/common/JTTEditor/ui/LinkBubble';
 
 import { getArticleByIdWhenEditAPI, updateArticleAPI } from '/src/apis/articles_platform/article'
 import { createArticleAPI } from '/src/apis/articles_platform/article'
@@ -24,7 +25,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   const articleId = id      // 因为名称要和路由中的参数名一致，所以这里重新赋值
   const navigate = useNavigate()
   const { user } = useContext(AuthContext)
-  
+
   const [title, setTitle] = useState('')
   const [loading, setLoading] = useState(!!articleId);
   const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
@@ -36,7 +37,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
 
 
   // 编辑器初始化
-  const handleEditorUpdate = ({editor}) => {
+  const handleEditorUpdate = ({ editor }) => {
     console.log('2 handleEditorUpdate');
     const htmlContent = editor.getHTML();
     if (htmlContent !== editorContent) {
@@ -178,58 +179,59 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   return (
     <div className={styles.pageWrapper}>
       <Header position='static' />
-        {console.log('7 return()')}
-        {/* Toolbar部分 */}
-        <header className={styles.editorToolbarContainer} >
-          <MenuBar editor={editor} preset='article' />
-        </header>
-        {/* Content Area部分 */}
-        <Spin spinning={loading} tip="正在提交...">
-          <div className={styles.editorContainer}>
+      {console.log('7 return()')}
+      {/* Toolbar部分 */}
+      <header className={styles.editorToolbarContainer} >
+        <MenuBar editor={editor} preset='article' />
+      </header>
+      {/* Content Area部分 */}
+      <Spin spinning={loading} tip="正在提交...">
+        <div className={styles.editorContainer}>
 
-            {/* 标题输入框 */}
-            <div className={styles.titleContainer}>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="请输入标题"
-                className={styles.titleInput}
-              />
-              <hr className={styles.titleDivider} />
-            </div>
-
-            {/* 内容编辑器 */}
-            <div className={styles.contentContainer}>
-              <ContentArea editor={editor} />
-            </div>
-
-            {/* 额外信息栏 */}
-            <div className={styles.extraInfo}>
-              <button style={{ backgroundColor: 'transparent', cursor: 'default' }}></button>
-              <button
-                onClick={handleArticleSubmit}
-                disabled={loading}
-                className={styles.submitButton}
-              >
-                {loading ? '提交中...' : isEditMode ? '提交更改' : '发布文章'}
-              </button>
-              <span style={{ color: 'grey' }}>
-                字数：{charCount}
-              </span>
-            </div>
-
-            {/* 分类选择弹出页 */}
-            {isShowChannelPage && (
-              <PopoutChannelPage
-                chosenCategory={selectedCategory}
-                onClose={handleClosePopout}
-                onSubmit={handleSelectCategory}
-              />
-            )}
-
+          {/* 标题输入框 */}
+          <div className={styles.titleContainer}>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="请输入标题"
+              className={styles.titleInput}
+            />
+            <hr className={styles.titleDivider} />
           </div>
-        </Spin>
+
+          {/* 内容编辑器 */}
+          <div className={styles.contentContainer}>
+            <LinkBubble editor={editor} />
+            <ContentArea editor={editor} />
+          </div>
+
+          {/* 额外信息栏 */}
+          <div className={styles.extraInfo}>
+            <button style={{ backgroundColor: 'transparent', cursor: 'default' }}></button>
+            <button
+              onClick={handleArticleSubmit}
+              disabled={loading}
+              className={styles.submitButton}
+            >
+              {loading ? '提交中...' : isEditMode ? '提交更改' : '发布文章'}
+            </button>
+            <span style={{ color: 'grey' }}>
+              字数：{charCount}
+            </span>
+          </div>
+
+          {/* 分类选择弹出页 */}
+          {isShowChannelPage && (
+            <PopoutChannelPage
+              chosenCategory={selectedCategory}
+              onClose={handleClosePopout}
+              onSubmit={handleSelectCategory}
+            />
+          )}
+
+        </div>
+      </Spin>
 
       {/* 侧边信息&上传区 */}
       <aside className={styles.fixedArea}>

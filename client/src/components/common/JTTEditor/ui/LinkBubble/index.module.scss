@@ -1,0 +1,40 @@
+.linkBubbleContainer {
+  width: 200px;
+  height: 100px;
+  background-color: black;
+  z-index: 999;
+}
+
+.linkBubble {
+display: flex;
+align-items: center;
+background: var(--background-color-light);
+padding: 5px 10px;
+border: 1px solid #ccc;
+border-radius: 4px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+gap: 5px; // Spacing between elements
+white-space: nowrap; // Prevent wrapping
+}
+
+.linkInput {
+padding: 4px 6px;
+border: 1px solid #ccc;
+border-radius: 3px;
+font-size: 0.9em;
+min-width: 150px; // Adjust as needed
+}
+
+.linkButton {
+padding: 4px 8px;
+cursor: pointer;
+border: 1px solid #ccc;
+border-radius: 3px;
+background: #f0f0f0;
+font-size: 0.9em;
+transition: background-color 0.2s ease;
+
+&:hover {
+  background-color: #e0e0e0;
+}
+}

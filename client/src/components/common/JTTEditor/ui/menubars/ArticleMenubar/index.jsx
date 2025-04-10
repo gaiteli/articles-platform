@@ -4,10 +4,12 @@ import {
   CheckSquareOutlined,
   CodeFilled,
   CodeOutlined,
+  DisconnectOutlined,
   HighlightOutlined,
   ItalicOutlined,
   LinkOutlined,
   OrderedListOutlined,
+  PictureFilled,
   PictureOutlined,
   RedoOutlined,
   StrikethroughOutlined,
@@ -18,35 +20,8 @@ import {
 } from '@ant-design/icons';
 import styles from './index.module.scss'
 
-const ArticleMenubar = ({editor}) => {
+const ArticleMenubar = ({ editor }) => {
 
-  const addImage = () => {
-    const url = window.prompt('Enter Image URL:');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
-  };
-  
-  // Example: Link
-  const setLink = () => {
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('Enter URL:', previousUrl);
-  
-    // cancelled
-    if (url === null) {
-      return;
-    }
-  
-    // empty
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
-    }
-  
-    // update link
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-  };
-  
   const items = [
     // mark
     {
@@ -111,6 +86,7 @@ const ArticleMenubar = ({editor}) => {
     {
       type: 'separator',
     },
+    // list & block
     {
       title: 'Blockquote',
       icon: <VerticalLeftOutlined />,
@@ -149,25 +125,26 @@ const ArticleMenubar = ({editor}) => {
     {
       type: 'separator',
     },
+    // function
     {
-      title: 'Insert Image',
+      title: 'Upload Image',
       icon: <PictureOutlined />,
-      action: addImage,
-      disabled: (editor) => !editor.can().setImage,
+      action: (editor) => editor.commands.uploadImage(editor),
+      isActive: () => false, // 图片上传按钮不需要active状态
+      disabled: (editor) => !editor.isEditable,
     },
     {
-      title: 'Set Link',
+      title: 'Set/Edit Link',
       icon: <LinkOutlined />,
-      action: setLink,
-      isActive: (editor) => editor.isActive('link'),
-      disabled: (editor) => !editor.can().setLink,
+      action: (editor) => editor.chain().focus().openLinkEditor().run(),
+      isActive: (editor) => editor.isActive('JttLink'),
+      disabled: (editor) => !editor.isEditable,
     },
     {
-      title: 'Remove Link',
-      icon: <LinkOutlined />,
+      title: 'Unset Link',
+      icon: <DisconnectOutlined style={{ filter: 'grayscale(1)' }} />,
       action: (editor) => editor.chain().focus().unsetLink().run(),
-      isActive: (editor) => editor.isActive('link'),
-      disabled: (editor) => !editor.can().unsetLink,
+      disabled: (editor) => !editor.isActive('JttLink'),
     },
     {
       type: 'separator',
@@ -194,10 +171,10 @@ const ArticleMenubar = ({editor}) => {
         if (item.type === 'separator') {
           return <span key={`separator-${index}`} className={styles.separator} />
         }
-  
+
         // Check if action requires editor focus; chain it if needed.
         const action = () => item.action(editor); // Assuming item.action handles focus chaining if needed
-  
+
         return (
           <button
             key={item.title}
@@ -205,7 +182,6 @@ const ArticleMenubar = ({editor}) => {
             type="button"
             onClick={action}
             className={`${styles.menuItem} ${item.isActive && item.isActive(editor) ? styles.isActive : ''}`}
-            // Disable button if editor cannot perform action OR if item.disabled check fails
             disabled={!editor.isEditable || (item.disabled && item.disabled(editor))}
           >
             {item.icon}

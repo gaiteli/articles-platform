@@ -22,6 +22,9 @@ import TaskItem from '@tiptap/extension-task-item';
 import Superscript from '@tiptap/extension-superscript';
 import Subscript from '@tiptap/extension-subscript';
 
+import { ImageUpload } from '../extensions/ImageUpload';
+import JttLink from '../extensions/Link';
+
 export {
   StarterKit,
   Document,
@@ -45,4 +48,6 @@ export {
   TaskItem,
   Superscript,
   Subscript,
+  ImageUpload,
+  JttLink,
 };

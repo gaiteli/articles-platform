@@ -34,6 +34,8 @@ const articleStrategy = [
   }),
   AllExtensions.Superscript,
   AllExtensions.Subscript,
+  AllExtensions.ImageUpload,
+  AllExtensions.JttLink,
 ];
 
 const commentStrategy = [
