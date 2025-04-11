@@ -21,7 +21,7 @@ export const lightTheme = {
     '--text-color-secondary': 'hsl(230, 16%, 55%)',
     '--text-color-disabled': 'hsl(230, 16%, 75%)',
     '--muted-text-color': 'hsl(230, 16%, 65%)',
-    '--heading-color': 'hsl(230, 70%, 16%)',
+    '--heading-color': '#222',
     '--link-color': 'hsl(230, 60%, 50%)',
     '--link-hover-color': 'hsl(230, 70%, 40%)',
     '--placeholder-color': 'hsl(230, 16%, 65%)',
@@ -35,6 +35,7 @@ export const lightTheme = {
     '--hover-background-color': 'hsl(230, 60%, 92%)',
     '--active-background-color': 'hsl(230, 60%, 90%)',
     '--mask-background-color': 'rgba(0, 0, 0, 0.45)',
+    '--mask-background-color-light': 'rgba(0, 0, 0, 0.2)',
     '--header-background-color': 'hsl(230, 60%, 98%)',
     '--tooltip-background-color': 'hsl(230, 70%, 16%)',
 
@@ -50,8 +51,9 @@ export const lightTheme = {
 
     // 按钮颜色
     '--button-background-color': 'hsl(230, 60%, 56%)',
+    '--button-background-color-active': 'hsl(230, 50%, 80%)',
+    '--button-background-color-hover': 'hsl(230, 60%, 66%)',
     '--button-text-color': 'hsl(270, 5%, 16%)',
-    '--button-background-color-hover': 'hsl(230, 60%, 46%)',
     '--button-text-color-hover': 'hsl(270, 5%, 16%)',
     '--button-disabled-background': 'hsl(230, 10%, 85%)',
     '--button-disabled-text': 'hsl(230, 10%, 55%)',

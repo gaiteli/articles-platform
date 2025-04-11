@@ -11,6 +11,11 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
+  [data-theme='dark'] & {
+    background-color: var(--gray-9);
+    color: var(--gray-6)
+  }
+
   &::before {
     /*做一个书签效果*/
     position: absolute;
@@ -50,11 +55,19 @@
     font-weight: bold;
     color: #333;
     margin-bottom: 10px;
+
+    [data-theme='dark'] & {
+      color: var(--gray-4)
+    }
   }
 
   .metaInfo {
     font-size: 14px;
     color: #666;
+
+    [data-theme='dark'] & {
+      color: var(--gray-7)
+    }
 
     span {
       margin-right: 10px;
@@ -75,7 +88,6 @@
   :global(.tiptap) {
     font-size: 16px;
     line-height: 1.5; // 增加行高，提高可读性
-    color: #333;
 
     p {
       margin-bottom: 10px; // 段落间距
@@ -86,7 +98,7 @@
     h3 {
       margin-top: 1.5rem;
       margin-bottom: 1rem;
-      color: #222;
+      color: var(--heading-color);
     }
   }
 }

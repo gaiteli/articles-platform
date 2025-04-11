@@ -33,6 +33,7 @@ export const themeVariableKeys = [
   'container-color',
   'header-background-color',
   'mask-background-color',
+  'mask-background-color-light',
   'tooltip-background-color',
   'card-background-color',
   'sidebar-background-color',
@@ -71,6 +72,7 @@ export const themeVariableKeys = [
   // button
   'button-background-color',
   'button-text-color',
+  'button-background-color-active',
   'button-background-color-hover',
   'button-text-color-hover',    
   'button-disabled-background',

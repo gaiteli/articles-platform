@@ -43,6 +43,10 @@ body {
   margin: 0 auto;
   background-color: white;
 
+  [data-theme='dark'] & {
+    background-color: var(--gray-9);
+  }
+
   .contentContainer {
     padding: 1rem 1.5rem;
   }
@@ -55,9 +59,13 @@ body {
       min-height: calc(100vh - 320px);
       margin: 0px 0 20px;
       height: auto;
-      background-color: white;
       overflow-y: auto;
       overflow: visible !important;
+
+      [data-theme='dark'] & {
+        background-color: var(--gray-9);
+        color: var(--gray-6)
+      }
 
       // 编辑区域样式
       p {
@@ -70,7 +78,7 @@ body {
       h3 {
         margin-top: 1.5rem;
         margin-bottom: 1rem;
-        color: #222;
+        color: var(--heading-color);
       }
 
       // 自定义focus样式（可选）
@@ -96,22 +104,29 @@ body {
 // 标题输入框
 .titleContainer {
   margin-top: 10px;
+
+  .titleInput {
+    width: 100%;
+    font-size: 25px;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    padding: 1rem 1.5rem;
+    background-color: white;
+
+    [data-theme='dark'] & {
+      background-color: var(--gray-9);
+      color: var(--gray-4)
+    }
+  }
+  
+  .titleDivider {
+    border: 0;
+    border-top: 1px solid var(--border-color-two);
+    margin: 3px 0;
+  }
 }
 
-.titleInput {
-  width: 100%;
-  font-size: 25px;
-  font-weight: bold;
-  border: none;
-  outline: none;
-  padding: 1rem 1.5rem;
-}
-
-.titleDivider {
-  border: 0;
-  border-top: 1px solid #e8e8e8;
-  margin: 3px 0;
-}
 
 // 额外信息区
 .extraInfo {
@@ -121,7 +136,7 @@ body {
   width: 100%;
   box-sizing: border-box;
   padding: 10px 20px;
-  border-top: 1px solid #e8e8e8;
+  border-top: 1px solid var(--border-color-two);
 }
 
 .submitButton {

@@ -83,7 +83,7 @@ export const JttLink = TiptapLink.extend({
           rel: 'noopener noreferrer nofollow',
         };
 
-        let transactionChain = chain().focus();
+        let transactionChain = editor.chain().focus();
 
         if (isNew && text && empty) {
           transactionChain = transactionChain.insertContent(
@@ -133,7 +133,7 @@ export const JttLink = TiptapLink.extend({
   // },
 }).configure({
   // Keep your configurations like openOnClick, autolink, etc.
-  openOnClick: false, // Recommended false when using a custom bubble
+  openOnClick: true, // Recommended false when using a custom bubble
   autolink: true,
   defaultProtocol: 'https',
   // HTMLAttributes are handled in renderHTML now for consistency

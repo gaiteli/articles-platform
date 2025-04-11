@@ -78,10 +78,24 @@ const ArticleMenubar = ({ editor }) => {
       disabled: (editor) => !editor.can().chain().focus().toggleHeading({ level: 2 }).run(),
     },
     {
-      icon: 'p',
+      icon: 'P',
       title: 'Paragraph',
       action: (editor) => editor.chain().focus().setParagraph().run(),
       isActive: (editor) => editor.isActive('paragraph'),
+    },
+    {
+      title: 'subscript',
+      icon: 'x-',
+      action: (editor) => editor.chain().focus().toggleSubscript().run(),
+      isActive: (editor) => editor.isActive('subscript'),
+      disabled: (editor) => !editor.can().chain().focus().toggleSubscript().run(),
+    },
+    {
+      title: 'superscript',
+      icon: 'X+',
+      action: (editor) => editor.chain().focus().toggleSuperscript().run(),
+      isActive: (editor) => editor.isActive('superscript'),
+      disabled: (editor) => !editor.can().chain().focus().toggleSuperscript().run(),
     },
     {
       type: 'separator',
