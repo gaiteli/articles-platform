@@ -50,9 +50,10 @@ export const lavenderTheme = {
 
     // 按钮颜色
     '--button-background-color': 'hsl(270, 50%, 50%)',
+    '--button-background-color-active': 'hsl(270, 55%, 85%)',
+    '--button-background-color-hover': 'hsl(270, 60%, 66%)',
     '--button-text-color': 'hsl(270, 5%, 16%)',
-    '--button-background-color-hover': 'hsl(270, 50%, 40%)',
-    '--button-text-color-hover': 'hsl(270, 5%, 16%)',
+    '--button-text-color-hover': 'hsl(270, 5%, 33%)',
     '--button-disabled-background': 'hsl(270, 10%, 85%)',
     '--button-disabled-text': 'hsl(270, 10%, 55%)',
 

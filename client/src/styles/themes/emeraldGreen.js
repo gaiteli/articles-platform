@@ -51,10 +51,11 @@ export const emeraldGreenTheme = {
     '--box-shadow-hover': '0 4px 16px rgba(0, 168, 84, 0.2)',
 
     // 组件颜色
-    '--button-background-color': 'hsl(145, 63%, 42%)',
-    '--button-text-color': 'hsl(270, 5%, 16%)',
-    '--button-background-color-hover': 'hsl(145, 63%, 32%)',
-    '--button-text-color-hover': 'hsl(270, 5%, 16%)',
+    '--button-background-color': 'hsl(145, 53%, 42%)',
+    '--button-background-color-active': 'hsl(145, 55%, 80%)',
+    '--button-background-color-hover': 'hsl(145, 45%, 66%)',
+    '--button-text-color': 'hsl(145, 40%, 45%)',
+    '--button-text-color-hover': 'hsl(145, 5%, 16%)',
     '--button-disabled-background': 'hsl(145, 10%, 90%)',
     '--button-disabled-text': 'hsl(145, 10%, 55%)',
 

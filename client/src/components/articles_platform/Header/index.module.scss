@@ -9,12 +9,14 @@
 .logo {
   display: inline-flex;
   align-items: center;
+  margin-left: 2.5rem;
   margin-right: 1rem;
+  cursor: pointer;
 
   .logoSVG {
     width: var(--logo-size);
     height: var(--logo-size);
-    margin: 0 5px 0 20px;
+    margin: 0 5px 0 0;
   }
 
   .logoCharacter {
@@ -30,6 +32,8 @@
 }
 
 .menu {
+  position: relative;
+  left: 40px;
   display: flex;
   align-items: center;
 
@@ -85,6 +89,7 @@
         left: 0;
         top: 0;
         background-color: white;
+        padding: 0;
         border: none;
         border-radius: var(--border-radius-normal);
         z-index: 10;
@@ -125,6 +130,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 100%;
   
     li {
       margin: 10px 5px;
@@ -147,7 +153,6 @@
     .iconUser {
       .userInfo {
         span:first-of-type {
-          margin-right: 0.5rem;
           color: var(--first-color);
           font-size: 1rem;
           font-weight: bold;

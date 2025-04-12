@@ -4,7 +4,7 @@
   border: none;
   cursor: pointer;
   color: var(--text-color);
-  padding: 8px;
+  padding: 0 5px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -13,6 +13,10 @@
   
   &:hover {
     background-color: var(--background-color-light);
+  }
+
+  > span {
+    margin: 0 !important;
   }
   
   svg {

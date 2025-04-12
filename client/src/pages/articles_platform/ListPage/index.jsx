@@ -133,7 +133,7 @@ const ArticlesPlatformListPage = () => {
                       </Typography.Title>
                       <Typography.Text type="secondary" className={styles.articleMeta}>
                         <HistoryOutlined />
-                        <span style={{ marginLeft: '0.25rem', marginRight: '2rem'}}>
+                        <span style={{ marginLeft: '0.25rem', marginRight: '2rem' }}>
                           {' ' + moment(item.createdAt).format('ll')}
                         </span>
                         <FolderOpenFilled />
@@ -173,6 +173,7 @@ const ArticlesPlatformListPage = () => {
           onClick={toggleLayout}
           id={styles.toggleButton}
           className="-translate-y-1/2 translate-x-1/2 bg-transparent border-none focus:outline-none "
+          style={{ backgroundColor: 'transparent' }}
         >
           <div
             style={{
@@ -183,25 +184,28 @@ const ArticlesPlatformListPage = () => {
             <RightOutlined />
           </div>
         </button>
-        <CSSTransition
-          in={isSidebarVisible} // {/* 直接赋值为true貌似不影响 */}
-          timeout={300}
-          classNames={{
-            enter: styles.sidebarEnter,
-            enterActive: styles.sidebarEnterActive,
-            enterDone: styles.sidebarEnterDone,
-            exit: styles.sidebarExit,
-            exitActive: styles.sidebarExitActive,
-            exitDone: styles.sidebarExitDone,
-          }}
-          unmountOnExit
-        >
-          <div className={styles.sidebar}>
-            <Card title="其他信息" bordered>
-              <p>这里是副栏内容...</p>
-            </Card>
-          </div>
-        </CSSTransition>
+        <aside id={styles.asideContainer}>
+          <CSSTransition
+            in={isSidebarVisible} // {/* 直接赋值为true貌似不影响 */}
+            timeout={300}
+            classNames={{
+              enter: styles.sidebarEnter,
+              enterActive: styles.sidebarEnterActive,
+              enterDone: styles.sidebarEnterDone,
+              exit: styles.sidebarExit,
+              exitActive: styles.sidebarExitActive,
+              exitDone: styles.sidebarExitDone,
+            }}
+            unmountOnExit
+          >
+            <div className={styles.sidebar}>
+              <Card title="其他信息" bordered>
+                <p>这里是副栏内容...</p>
+              </Card>
+            </div>
+          </CSSTransition>
+        </aside>
+
       </div>
 
     </>

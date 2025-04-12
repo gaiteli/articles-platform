@@ -50,8 +50,9 @@ export const warmOrangeTheme = {
 
     // 按钮颜色
     '--button-background-color': 'hsl(32, 95%, 50%)',
+    '--button-background-color-active': 'hsl(32, 95%, 82%)',
+    '--button-background-color-hover': 'hsl(32, 90%, 60%)',
     '--button-text-color': 'hsl(32, 5%, 16%)',
-    '--button-background-color-hover': 'hsl(32, 95%, 40%)',
     '--button-text-color-hover': 'hsl(32, 5%, 16%)',
     '--button-disabled-background': 'hsl(32, 10%, 85%)',
     '--button-disabled-text': 'hsl(32, 10%, 55%)',

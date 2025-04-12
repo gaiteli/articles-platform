@@ -52,9 +52,10 @@ export const darkTheme = {
     '--box-shadow-hover': '0 4px 16px rgba(0, 0, 0, 0.4)',
 
     // 按钮颜色
-    '--button-background-color': 'hsl(230, 60%, 46%)',
+    '--button-background-color': 'hsl(230, 0%, 46%)',
+    '--button-background-color-active': 'hsl(230, 5%, 60%)',
+    '--button-background-color-hover': 'hsl(230, 5%, 75%)',
     '--button-text-color': 'hsl(230, 100%, 97%)',
-    '--button-background-color-hover': 'hsl(230, 60%, 36%)',
     '--button-text-color-hover': 'hsl(230, 100%, 97%)',
     '--button-disabled-background': 'hsl(230, 15%, 30%)',
     '--button-disabled-text': 'hsl(230, 15%, 50%)',
@@ -63,7 +64,7 @@ export const darkTheme = {
     '--input-background': 'hsl(230, 15%, 18%)',
     '--input-border': 'hsl(230, 15%, 30%)',
     '--input-text': 'hsl(230, 15%, 90%)',
-    '--input-placeholder': 'hsl(230, 15%, 50%)',
+    '--input-placeholder': 'var(--gray-6)',
     '--input-focus-border': 'hsl(230, 60%, 50%)',
 
     // 表格颜色

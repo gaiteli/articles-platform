@@ -30,7 +30,7 @@ export function Header({ position }) {
 
   return (
     <div className={`${styles.header} ${position === 'sticky' ? 'sticky top-0' : 'static'}`} >
-      <div className={styles.logo}>
+      <div className={styles.logo} onClick={() => navigate('/articles')}>
         <img className={styles.logoSVG} src='/src/assets/articles_platform/article_logo.svg' alt=""></img>
         <span className={styles.logoCharacter}>JetArticles</span>
       </div>
@@ -72,6 +72,8 @@ export function Header({ position }) {
                   onConfirm={logoutConfirm}
                   okText="确定"
                   cancelText="取消"
+                  placement='bottom'
+                  getPopupContainer={() => document.body}
                 >
                   <span>{user.username}</span>
                   <UserOutlined className={styles.icon} />

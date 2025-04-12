@@ -51,10 +51,11 @@ export const lakeBlueTheme = {
     '--box-shadow-hover': '0 4px 16px rgba(24, 144, 255, 0.2)',
 
     // 组件颜色
-    '--button-background-color': 'hsl(209, 100%, 55%)',
-    '--button-text-color': 'hsl(270, 5%, 16%)',
-    '--button-background-color-hover': 'hsl(209, 100%, 45%)',
-    '--button-text-color-hover': 'hsl(270, 5%, 16%)',
+    '--button-background-color': 'hsl(209, 90%, 50%)',
+    '--button-background-color-active': 'hsl(209, 90%, 85%)',
+    '--button-background-color-hover': 'hsl(209, 90%, 70%)',
+    '--button-text-color': 'hsl(209, 50%, 40%)',
+    '--button-text-color-hover': 'hsl(209, 5%, 16%)',
     '--button-disabled-background': 'hsl(209, 10%, 90%)',
     '--button-disabled-text': 'hsl(209, 10%, 55%)',
 

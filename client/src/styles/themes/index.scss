@@ -4,7 +4,20 @@
 @import './baseColors';
 
 // 全局主题过渡效果
+// body,
+// body *:not(script) {
+//   transition: var(--theme-transition);
+// }
+// 全局使用会和antd popconfirm等依赖于布局位置的元素冲突造成定位错误
+// 还会使列表页侧栏弹出效果受影响
+// 因此限制过渡效果只作用于颜色或背景
+// body,
+// body *:not(script) {
+//   transition: 
+//     background-color var(--theme-transition),
+//     color var(--theme-transition);
+// }
 body,
-body *:not(script) {
+body *:not(script):not(.ant-popover):not(.ant-popconfirm):not(.ant-dropdown) {
   transition: var(--theme-transition);
 }

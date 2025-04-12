@@ -49,9 +49,10 @@ export const crimsonRedTheme = {
     '--box-shadow-hover': '0 4px 16px rgba(0, 0, 0, 0.2)',
 
     // 按钮颜色
-    '--button-background-color': 'hsl(350, 75%, 50%)',
-    '--button-text-color': 'hsl(350, 100%, 97%)',
-    '--button-background-color-hover': 'hsl(350, 75%, 40%)',
+    '--button-background-color': 'hsl(350, 70%, 50%)',
+    '--button-background-color-active': 'hsl(350, 56%, 80%)',
+    '--button-background-color-hover': 'hsl(350, 70%, 60%)',
+    '--button-text-color': 'hsl(350, 90%, 70%)',
     '--button-text-color-hover': 'hsl(350, 100%, 97%)',
     '--button-disabled-background': 'hsl(350, 10%, 85%)',
     '--button-disabled-text': 'hsl(350, 10%, 55%)',

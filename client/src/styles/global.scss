@@ -165,16 +165,38 @@ select {
     }
   }
 
-  ul {
-    list-style-type: disc;
-    /* 设置列表项标记为圆点 */
-    color: red;
-    /* 设置列表项标记的颜色 */
+  ol li {
+    list-style-type:decimal;
   }
 
-  li {
-    color: black;
-    /* 设置列表项文本的颜色 */
+  /* Task list specific styles */
+  ul[data-type="taskList"] {
+    list-style: none;
+    margin-left: 0;
+    padding: 0;
+
+    li {
+      align-items: flex-start;
+      display: flex;
+
+      > label {
+        flex: 0 0 auto;
+        margin-right: 0.5rem;
+        user-select: none;
+      }
+
+      > div {
+        flex: 1 1 auto;
+      }
+    }
+
+    input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    ul[data-type="taskList"] {
+      margin: 0;
+    }
   }
 
   code {
@@ -216,7 +238,7 @@ select {
 
 /* --------------------------------------------------- */
 /* **************** ant design ************************/
-.ant-card-body {
+.ant-card {
   background-color: var(--gray-1);
 
   [data-theme='dark'] & {
