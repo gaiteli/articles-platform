@@ -18,10 +18,15 @@ import {
   UndoOutlined,
   UnorderedListOutlined,
   VerticalLeftOutlined,
+  YoutubeOutlined,
 } from '@ant-design/icons';
 import styles from './index.module.scss'
+import VideoBubble from '../../VideoBubble';
 
 const ArticleMenubar = ({ editor }) => {
+  if (!editor) {
+    return null;
+  }
 
   const items = [
     // mark
@@ -159,6 +164,13 @@ const ArticleMenubar = ({ editor }) => {
       disabled: (editor) => !editor.isEditable,
     },
     {
+      title: 'Insert Video',
+      icon: <YoutubeOutlined />,
+      type: 'video',
+      isActive: () => false,
+      disabled: (editor) => !editor.isEditable,
+    },
+    {
       title: 'Set/Edit Link',
       icon: <LinkOutlined />,
       action: (editor) => editor.chain().focus().openLinkEditor().run(),
@@ -196,9 +208,25 @@ const ArticleMenubar = ({ editor }) => {
         if (item.type === 'separator') {
           return <span key={`separator-${index}`} className={styles.separator} />
         }
-
+        
         // Check if action requires editor focus; chain it if needed.
         const action = () => item.action(editor); // Assuming item.action handles focus chaining if needed
+
+        // Video
+        if (item.type === 'video') {
+          const isDisabled = !editor.isEditable || (item.disabled && item.disabled(editor));
+          return (
+            <VideoBubble
+              key={item.title || `video-${index}`}
+              editor={editor}
+              icon={item.icon}
+              tooltip={item.title}
+              buttonClassName={styles.menuItem}
+              action={action}
+              disabled={isDisabled}
+            />
+          );
+        }
 
         return (
           <button

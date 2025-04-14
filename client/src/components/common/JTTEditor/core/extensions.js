@@ -24,6 +24,7 @@ import Subscript from '@tiptap/extension-subscript';
 
 import { ImageUpload } from '../extensions/ImageUpload';
 import JttLink from '../extensions/Link';
+import { JttVideo } from '../extensions/JttVideo';
 
 export {
   StarterKit,
@@ -50,4 +51,5 @@ export {
   Subscript,
   ImageUpload,
   JttLink,
+  JttVideo,
 };

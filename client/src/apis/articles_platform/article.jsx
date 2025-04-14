@@ -91,3 +91,38 @@ export function hasLikedArticleAPI(id) {
     method: 'GET'
   })
 }
+
+
+// 保存草稿到后端 (新建或更新)
+export function saveDraftAPI(draftData) {
+  // 在后端选择：如果文章id存在则更新草稿；若不存在则新建
+  return request({
+    url: '/articles-platform/drafts',
+    method: 'POST',
+    data: draftData
+  });
+}
+
+// 获取用户最新的 "新建文章" 草稿
+export function getNewArticleDraftAPI() {
+  return request({
+    url: '/articles-platform/drafts/latest-new',
+    method: 'GET'
+  });
+}
+
+// 删除指定文章ID关联的草稿 (如果存在)
+export function deleteArticleDraftAPI(articleId) {
+  return request({
+    url: `/articles-platform/articles/${articleId}/draft`,
+    method: 'DELETE'
+  });
+}
+
+// 删除用户的 "新建文章" 草稿
+export function deleteNewArticleDraftAPI() {
+  return request({
+    url: `/articles-platform/drafts/latest-new`,
+    method: 'DELETE'
+  });
+}

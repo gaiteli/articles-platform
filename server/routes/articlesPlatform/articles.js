@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {Article, Channel, Like, User} = require('@models');
+const {Article, Channel, Like, User, Draft } = require('@models');
 const { Sequelize, Op } = require('sequelize');
 const { NotFound, Forbidden, BadRequest } = require('http-errors')
 const { success, failure } = require('@utils/responses')
@@ -271,6 +271,146 @@ router.get('/p/:id/like', authenticate, authorize(), async function (req, res, n
     }
 })
 
+
+/* 保存或更新草稿 */
+router.post('/drafts', authenticate, authorize(), async function (req, res, next) {
+    try {
+        const { articleId, title, cover, content, jsonContent, channelId } = req.body;
+        const userId = req.user.id;
+
+        // 查找是否已存在草稿（如果是编辑现有文章）
+        let draft;
+
+        if (articleId) {
+            // 编辑现有文章的草稿
+            // 先检查文章是否存在以及是否有权限编辑
+            const article = await Article.findByPk(articleId);
+            if (!article) {
+                throw new NotFound(`没有找到ID为${articleId}的文章`);
+            }
+
+            // 检查权限
+            const canEdit = ROLE_PERMISSIONS[req.user.role].includes('admin:access') || userId === article.userId;
+            if (!canEdit) {
+                throw new Forbidden('没有编辑此文章的权限！');
+            }
+
+            // 查找或创建草稿
+            draft = await Draft.findOne({
+                where: { userId, articleId }
+            });
+        } else {
+            // 新建文章的草稿
+            draft = await Draft.findOne({
+                where: { userId, articleId: null }
+            });
+        }
+
+        // 准备草稿数据
+        const draftData = {
+            userId,
+            articleId,
+            title: title || '无标题',
+            cover,
+            content,
+            jsonContent,
+            channelId: channelId || 1
+        };
+
+        // 如果草稿已存在则更新，否则创建新草稿
+        if (draft) {
+            await draft.update(draftData);
+        } else {
+            draft = await Draft.create(draftData);
+        }
+
+        success(res, '草稿保存成功', draft);
+    } catch (error) {
+        failure(res, error);
+    }
+});
+
+/* 获取用户最新的新建文章草稿 */
+router.get('/drafts/latest-new', authenticate, authorize(), async function (req, res, next) {
+    try {
+        const userId = req.user.id;
+
+        // 查找用户最新的新建文章草稿（articleId为null的草稿）
+        const draft = await Draft.findOne({
+            where: {
+                userId,
+                articleId: null
+            },
+            order: [['updatedAt', 'DESC']]
+        });
+
+        if (!draft) {
+            return success(res, '没有找到草稿', null);
+        }
+
+        // 如果草稿有分类ID，获取分类名称
+        let channelName = null;
+        if (draft.channelId) {
+            const channel = await Channel.findByPk(draft.channelId);
+            channelName = channel ? channel.name : null;
+        }
+
+        success(res, '获取草稿成功', {
+            ...draft.dataValues,
+            channelName
+        });
+    } catch (error) {
+        failure(res, error);
+    }
+});
+
+/* 删除特定文章ID的草稿 */
+router.delete('/articles/:articleId/draft', authenticate, authorize(), async function (req, res, next) {
+    try {
+        const { articleId } = req.params;
+        const userId = req.user.id;
+
+        // 检查文章是否存在及权限
+        const article = await Article.findByPk(articleId);
+        if (!article) {
+            throw new NotFound(`没有找到ID为${articleId}的文章`);
+        }
+
+        // 检查权限
+        const canDelete = ROLE_PERMISSIONS[req.user.role].includes('admin:access') || userId === article.userId;
+        if (!canDelete) {
+            throw new Forbidden('没有删除此草稿的权限！');
+        }
+
+        // 删除草稿
+        await Draft.destroy({
+            where: { userId, articleId }
+        });
+
+        success(res, '草稿删除成功');
+    } catch (error) {
+        failure(res, error);
+    }
+});
+
+/* 删除用户的新建文章草稿 */
+router.delete('/drafts/latest-new', authenticate, authorize(), async function (req, res, next) {
+    try {
+        const userId = req.user.id;
+
+        // 删除用户所有的新建文章草稿（articleId为null的草稿）
+        await Draft.destroy({
+            where: {
+                userId,
+                articleId: null
+            }
+        });
+
+        success(res, '新建文章草稿删除成功');
+    } catch (error) {
+        failure(res, error);
+    }
+});
 
 /*
  * 公共方法：查询当前文章

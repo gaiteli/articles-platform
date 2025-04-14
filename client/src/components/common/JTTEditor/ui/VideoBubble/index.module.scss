@@ -1,0 +1,17 @@
+.videoForm {
+  width: 300px;
+
+  :global(.ant-form-item-label) {
+    padding-bottom: 4px;
+     line-height: 1.2;
+  }
+
+   :global(.ant-form-item) {
+     margin-bottom: 12px;
+   }
+}
+
+.formActions {
+  margin-bottom: 0 !important;
+  text-align: right;
+}

@@ -132,13 +132,10 @@ export const JttLink = TiptapLink.extend({
   //   ];
   // },
 }).configure({
-  // Keep your configurations like openOnClick, autolink, etc.
-  openOnClick: true, // Recommended false when using a custom bubble
+  openOnClick: true,
   autolink: true,
   defaultProtocol: 'https',
-  // HTMLAttributes are handled in renderHTML now for consistency
-  // HTMLAttributes: { target: '_blank', rel: 'noopener noreferrer nofollow' },
-  validate: href => /^https?:\/\//.test(href), // Keep or restore your validation
+  validate: href => /^https?:\/\//.test(href),
 });
 
 export default JttLink

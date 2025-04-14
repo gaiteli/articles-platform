@@ -1,6 +1,6 @@
-
 import * as AllExtensions from './extensions';
 import StarterKit from '@tiptap/starter-kit';
+import { jttVideoConfig } from '../extensions/JttVideo';
 
 const baseExtensions = [
   StarterKit.configure({
@@ -36,6 +36,7 @@ const articleStrategy = [
   AllExtensions.Subscript,
   AllExtensions.ImageUpload,
   AllExtensions.JttLink,
+  AllExtensions.JttVideo.configure(jttVideoConfig),
 ];
 
 const commentStrategy = [

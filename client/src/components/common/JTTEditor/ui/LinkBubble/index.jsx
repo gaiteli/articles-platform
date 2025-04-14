@@ -19,8 +19,6 @@ const LinkBubble = ({ editor }) => {
 
   const closeMenu = useCallback(() => {
     setIsVisible(false);
-    // setUrl('');    // 为了再次打开能恢复也可不知空
-    // setText('');
   }, []);
 
   useEffect(() => {
