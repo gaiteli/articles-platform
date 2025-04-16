@@ -202,9 +202,27 @@ body {
       color: var(--gray-6)
     }
 
-    span:nth-of-child(2) {
+    span:first-of-child {
       margin-left: 5px;
       font-size: 12px;
+    }
+
+    .characterCount {
+      align-items: center;
+      color: var(--gray-6);
+      display: flex;
+      font-size: 0.75rem;
+      gap: .5rem;
+      margin: 0.5rem;
+    
+      svg {
+        color: purple;
+      }
+    }
+
+    .characterCountWarning,
+    .characterCountWarning svg {
+      color: red;
     }
   }
 

@@ -15,7 +15,8 @@ const getArticleLength = (text, mode='all') => {
     case 'char-no-blank':
       return text.replace(/\s/g, '').length
     case 'word':
-      return text.trim().split(/\s+/).length
+      // 使用filter是因为split分割包含连续的空白字符的串会产生空字符串
+      return text.trim().split(/\s+/).filter((word) => word !== '').length
     case 'blank':
       return text.length - text.replace(/\s/g, '').length
     default:

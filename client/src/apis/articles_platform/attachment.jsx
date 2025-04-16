@@ -6,6 +6,7 @@ export function uploadAttachmentAPI(data) {
     url: '/uploads/aliyun/uploads',
     method: 'POST',
     data,
+    params: { type: 'pic' }
   });
 }
 
@@ -15,6 +16,7 @@ export function uploadCoverAPI(data) {
     url: '/uploads/aliyun/cover',
     method: 'POST',
     data,
+    params: { type: 'cover' }
   });
 }
 
@@ -24,6 +26,7 @@ export function uploadBgImageAPI(data) {
     url: '/uploads/aliyun/background',
     method: 'POST',
     data,
+    params: { type: 'bg' }
   });
 }
 
@@ -33,6 +36,24 @@ export function getAttachmentsAPI(params) {
     url: '/admin/attachments',
     method: 'GET',
     params,
+  });
+}
+
+// 获取用户上传过的封面图/背景图...
+// params: { type: 'pic'/'cover'/'bg'/'avatar' }
+export function getMyAttachmentsAPI(params) {
+  return request({
+    url: '/article-platform/attachments',
+    method: 'GET',
+    params,
+  })
+}
+
+// 删除用户自己上传过的附件...
+export function deleteMyAttachmentAPI(id) {
+  return request({
+    url: `/article-platform/attachments/${id}`,
+    method: 'DELETE',
   });
 }
 

@@ -92,7 +92,6 @@ export const JttVideo = Node.create({
       addPasteHandler: true,
       allowFullscreen: true,
       autoplay: false,
-      controls: true,
       HTMLAttributes: {},
       inline: false,
       width: 640,
@@ -101,74 +100,22 @@ export const JttVideo = Node.create({
     };
   },
 
-  inline() {
-    return this.options.inline;
-  },
-
-  group() {
-    return this.options.inline ? 'inline' : 'block';
-  },
-
+  inline() { return this.options.inline; },
+  group() { return this.options.inline ? 'inline' : 'block'; },
   draggable: true,
 
   addAttributes() {
     return {
       src: {
         default: null,
-        parseHTML: (element) => element.querySelector('iframe')?.getAttribute('src'),
-        // renderHTML: (attributes) => {
-        //   if (!attributes.src) {
-        //     return {};
-        //   }
-        //   return { src: attributes.src };
-        // },
       },
       width: {
-        default: this.options.width,
-        parseHTML: (element) => element.getAttribute('width') || element.querySelector('iframe')?.getAttribute('width'),
-        // renderHTML: (attributes) => ({
-        //   width: attributes.width || this.options.width
-        // }),
+        default: null, // 默认, 可稍后在选项中设置
+        parseHTML: (element) => element.querySelector('iframe')?.getAttribute('width') || element.getAttribute('width'),
       },
       height: {
-        default: this.options.height,
-        parseHTML: (element) => element.getAttribute('height') || element.querySelector('iframe')?.getAttribute('height'),
-        // renderHTML: (attributes) => ({
-        //   height: attributes.height || this.options.height
-        // }),
-      },
-      allowfullscreen: {
-        default: this.options.allowFullscreen,
-        parseHTML: (element) => {
-          const frame = element.querySelector('iframe');
-          const allowed = frame?.getAttribute('allowfullscreen') ?? element.getAttribute('allowfullscreen');
-          return allowed === '' || allowed === 'true';
-        },
-        // renderHTML: (attributes) => ({
-        //   allowfullscreen: attributes.allowfullscreen ? '' : undefined,
-        // }),
-      },
-      autoplay: {
-        default: this.options.autoplay,
-        parseHTML: (element) => {
-          const frame = element.querySelector('iframe');
-          const auto = frame?.getAttribute('autoplay') ?? element.getAttribute('autoplay');
-          return auto !== null;
-        },
-      },
-      controls: {
-        default: this.options.controls,
-        parseHTML: (element) => {
-          const frame = element.querySelector('iframe');
-          const ctrl = frame?.getAttribute('controls') ?? element.getAttribute('controls');
-          // HTML standard is boolean attribute presence, but some players use 0/1
-          if (ctrl === 'false' || ctrl === '0') return false;
-          return ctrl !== null; // Presence or true/1 means true
-        },
-      },
-      allow: {  // fullscreen和autoplay需要
-        default: null, // Calculate dynamically in renderHTML
-        parseHTML: (element) => element.querySelector('iframe')?.getAttribute('allow'),
+        default: null, // 默认, 可稍后在选项中设置
+        parseHTML: (element) => element.querySelector('iframe')?.getAttribute('height') || element.getAttribute('height'),
       },
     };
   },
@@ -180,41 +127,44 @@ export const JttVideo = Node.create({
         // 若直接解析 iframe，而不需要特定的包装器：
         // tag: 'iframe[src]',
         // getAttrs: (element) => ({ src: element.getAttribute('src') }),
+        getAttrs: (element) => {
+          const iframe = element.querySelector('iframe');
+          if (!iframe) return false;
+
+          return {
+            src: iframe.getAttribute('src'),
+            width: iframe.getAttribute('width'),
+            height: iframe.getAttribute('height'),
+          };
+        },
       },
     ];
   },
 
   renderHTML({ node, HTMLAttributes }) {
-    const { width, height, ...wrapperAttributes } = this.options.HTMLAttributes;
-
-    const finalAttrs = {
-      src: HTMLAttributes.src,
-      width: HTMLAttributes.width,
-      height: HTMLAttributes.height,
-      allowfullscreen: HTMLAttributes.allowfullscreen,
-      autoplay: HTMLAttributes.autoplay,
-      controls: HTMLAttributes.controls,
-    };
+    const finalWidth = HTMLAttributes.width ?? this.options.width;
+    const finalHeight = HTMLAttributes.height ?? this.options.height;
+    const finalSrc = HTMLAttributes.src;
 
     const allow = [];
-    if (finalAttrs.allowfullscreen) {
-        allow.push('fullscreen');
+    if (this.options.allowFullscreen) {
+      allow.push('fullscreen');
     }
-    if (finalAttrs.autoplay) {
-        allow.push('autoplay');
+    if (this.options.autoplay) {
+      allow.push('autoplay');
     }
     const allowString = allow.join('; ');
 
     // iframe属性, node属性优先于options属性
     const iframeAttrs = {
-      src: finalAttrs.src,
-      width: finalAttrs.width,
-      height: finalAttrs.height,
-      allowfullscreen: finalAttrs.allowfullscreen ? '' : undefined,
-      autoplay: finalAttrs.autoplay ? '' : undefined,
-      controls: finalAttrs.controls ? '' : undefined, // Standard HTML boolean
-      allow: allowString || undefined, // Don't add empty 'allow' attribute
-      frameborder: '0',       // 惯用做法
+      src: finalSrc,
+      width: finalWidth,
+      height: finalHeight,
+      allow: allowString || undefined,  // Add the 'allow' attribute string if features are enabled in options
+      frameborder: '0',           // 惯用做法
+      // The 'allowfullscreen' attribute is somewhat legacy, 'allow="fullscreen"' is preferred
+      // We can include it for broader compatibility if desired, based on the option
+      allowfullscreen: this.options.allowFullscreen ? '' : undefined,
     };
 
     // 去除undefined属性
@@ -224,7 +174,7 @@ export const JttVideo = Node.create({
 
     return [
       'div',
-      mergeAttributes(wrapperAttributes, { 'data-jtt-video': '' }),
+      mergeAttributes(this.options.HTMLAttributes, { 'data-jtt-video': '' }),
       ['iframe', iframeAttrs],
     ];
   },
@@ -239,11 +189,8 @@ export const JttVideo = Node.create({
 
         const attrsToSet = {
           src: options.src,
-          width: options.width ?? this.options.width,
-          height: options.height ?? this.options.height,
-          allowfullscreen: options.allowfullscreen ?? this.options.allowFullscreen,
-          autoplay: options.autoplay ?? this.options.autoplay,
-          controls: options.controls ?? this.options.controls,
+          width: options.width ?? this.options.width ?? null,
+          height: options.height ?? this.options.height ?? null,
         };
 
         return commands.insertContent({
@@ -255,9 +202,7 @@ export const JttVideo = Node.create({
   },
 
   addPasteRules() {
-    if (!this.options.addPasteHandler) {
-      return [];
-    }
+    if (!this.options.addPasteHandler) return []
 
     return [
       nodePasteRule({
@@ -268,9 +213,6 @@ export const JttVideo = Node.create({
           if (isValidVideoUrl(url, this.options.allowedSources)) {
             return {
               src: url,
-              width: this.options.width,
-              height: this.options.height,
-              allowfullscreen: this.options.allowFullscreen
             };
           }
           return false;   // 忽略粘贴
@@ -291,13 +233,12 @@ const TENCENT_VIDEO_REGEX = /^(?:https?:)?\/\/v\.qq\.com\/(?:x\/cover|page)\/[mM
 export const jttVideoConfig = {
   width: 640,
   height: 480,
-  allowFullscreen: true,
-  autoplay: false,
-  controls: true,
   addPasteHandler: true,
   HTMLAttributes: {
     class: 'jtt-embedded-video',    // 给container添加class
   },
+  allowFullscreen: true,
+  autoplay: false,
   // --- 定义允许的视频源url ---
   allowedSources: [
     YOUTUBE_REGEX,      // 油管

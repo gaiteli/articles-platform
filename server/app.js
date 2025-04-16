@@ -18,6 +18,7 @@ const articlePlatformArticlesRouter = require('./routes/articlesPlatform/article
 const uploadsRouter = require('./routes/articlesPlatform/uploads')
 const articlePlatformChannelRouter = require('./routes/articlesPlatform/channels')
 const usersRouter = require('./routes/articlesPlatform/users')
+const articlePlatformAttachmentsRouter = require('./routes/articlesPlatform/attachments')
 
 // 后台路由
 const adminArticlesRouter = require('./routes/admin/articles')
@@ -44,6 +45,7 @@ app.use('/articles-platform', weakAuthenticate, articlePlatformArticlesRouter)  
 app.use('/articles-platform/channels', authenticate, articlePlatformChannelRouter)
 app.use('/users', authenticate, usersRouter)        // /me /permissions
 app.use('/uploads', authenticate, uploadsRouter)
+app.use('/article-platform/attachments', authenticate, articlePlatformAttachmentsRouter)
 
 // app.use('/admin/login', adminAuthRouter)
 app.use('/admin/dashboard', authenticate, adminAuthenticate, adminDashboardRouter)

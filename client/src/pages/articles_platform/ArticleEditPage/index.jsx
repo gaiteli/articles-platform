@@ -29,6 +29,7 @@ import { debounce } from '/src/utils';
 
 const LOCAL_STORAGE_SAVE_INTERVAL = 2000; // 草稿本地保存cd时间
 const LOCAL_STORAGE_KEY = 'article_draft'; // localStorage存储键名
+const MAX_CHARS = 5000;
 
 const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   const { id: articleId } = useParams();  // 从路由中获取articleId，若undefined则为首次编辑
@@ -48,7 +49,11 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   const [isSavingDraft, setIsSavingDraft] = useState(false); // For Draft
   const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
   const [isShowChannelPage, setIsShowChannelPage] = useState(false)
+
+  // 内容长度统计相关
   const [charCount, setCharCount] = useState(0);
+  const [wordCount, setWordCount] = useState(0);
+  const [percentage, setPercentage] = useState(0);
 
   // Draft state
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -56,14 +61,19 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   const [draftLoaded, setDraftLoaded] = useState(false); // 标记草稿是否已加载
   const timeoutRef = useRef(null);
 
-  // 编辑器初始化
+
+  // 编辑器更新状态
   const handleEditorUpdate = ({ editor }) => {
     console.log('2 handleEditorUpdate');
     const htmlContent = editor.getHTML();
     if (htmlContent !== editorContent) {
       const text = htmlContent === '<p></p>' ? '' : htmlContent
       // setEditorContent(text);
-      setCharCount(getArticleLength(text, 'char-no-tag'))
+      const textLength = getArticleLength(text, 'char-no-tag')
+      const wordLength = getArticleLength(text, 'word')
+      setPercentage(Math.round((100 / MAX_CHARS) * charCount))
+      setCharCount(textLength)
+      setWordCount(wordLength)
       setHasUnsavedChanges(true);       // 标记有未保存的变更
     }
   }
@@ -237,6 +247,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
             if (editor) {
               editor.commands.setContent(parsedLocalDraft.jsonContent || '');
               setCharCount(getArticleLength(parsedLocalDraft.content || '', 'char-no-tag'));
+              setWordCount(getArticleLength(parsedLocalDraft.content || '', 'word'))
             }
 
             setDraftLoaded(true);
@@ -270,6 +281,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
           if (editor) {
             editor.commands.setContent(res.data.jsonContent || '');
             setCharCount(getArticleLength(editor.getHTML(), 'char-no-tag'));
+            setWordCount(getArticleLength(editor.getHTML(), 'word'))
           }
 
           document.querySelector('.ant-upload .anticon+div').innerHTML = '上传封面';
@@ -307,6 +319,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
                 if (editor) {
                   editor.commands.setContent(draftRes.data.jsonContent || '');
                   setCharCount(getArticleLength(draftRes.data.content || '', 'char-no-tag'));
+                  setWordCount(getArticleLength(draftRes.data.content || '', 'word'))
                 }
               }
             }
@@ -366,6 +379,10 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
         message.error('请输入文章内容')
         return
       }
+      if (getArticleLength(htmlContent, 'char-no-tag') > MAX_CHARS) {
+        message.error(`文章长度超出限制`);
+        return;
+      }
 
       const reqData = {
         title,
@@ -378,7 +395,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
 
       const submitSharedLogic = async (info, path) => {
         // 删除相关的草稿，因为文章已发布/更新
-        await deleteArticleDraftAPI(articleId);
+        // await deleteArticleDraftAPI(articleId); // 有bug
         localStorage.removeItem(LOCAL_STORAGE_KEY);
 
         message.success(info);
@@ -482,10 +499,44 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
             >
               {loading ? '提交中...' : isEditMode ? '提交更改' : '发布文章'}
             </button>
-            <span className={styles.miscInfo}>
-              字数：{charCount}
-              {hasUnsavedChanges && <span>• 未保存</span>}
-            </span>
+            <div className={styles.miscInfo}>
+              <div className={`${styles.characterCount} ${charCount >= MAX_CHARS ? styles.characterCountWarning : ''}`}>
+                {hasUnsavedChanges && <span>• 未保存</span>}
+                <svg
+                  height="20"
+                  width="20"
+                  viewBox="0 0 20 20"
+                >
+                  <circle
+                    r="10"
+                    cx="10"
+                    cy="10"
+                    fill="#e9ecef"
+                  />
+                  <circle
+                    r="5"
+                    cx="10"
+                    cy="10"
+                    fill="transparent"
+                    stroke="currentColor"
+                    strokeWidth="10"
+                    strokeDasharray={`calc(${percentage} * 31.4 / 100) 31.4`}
+                    transform="rotate(-90) translate(-20)"
+                  />
+                  <circle
+                    r="6"
+                    cx="10"
+                    cy="10"
+                    fill="white"
+                  />
+                </svg>
+
+                {charCount} / {MAX_CHARS} 字符
+                <br />
+                {wordCount} 字（单词）
+              </div>
+            </div>
+
           </div>
 
           {/* 分类选择弹出页 */}

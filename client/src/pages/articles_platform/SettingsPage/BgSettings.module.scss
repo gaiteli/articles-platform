@@ -1,0 +1,59 @@
+
+.bgSettings {
+  width: 90%;
+  height: 50%;
+  margin: 0 auto;
+  padding: 24px;
+
+  h2 {
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .bgUploaderContainer {
+    width: 50%;
+  }
+
+  :global(.ant-upload-wrapper) {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+
+    div:first-of-type {
+      width: 100% !important;
+      height: auto !important;
+      aspect-ratio: 2 / 1;
+    }
+  }
+
+  .currentBgPreview {
+    margin-bottom: 16px;
+    img {
+      border-radius: 8px;
+      max-height: 200px;
+      object-fit: cover;
+    }
+  }
+  
+  .actionButtons {
+    margin-bottom: 16px;
+
+    button>span {
+      font-size: 1rem;
+      color: var(--button-text-color);
+      text-decoration: underline;
+
+      &:hover {
+        color: var(--button-text-color-hover);
+      }
+    }
+  }
+  
+  .bgSelector {
+    margin-bottom: 24px;
+    h4 {
+      margin-bottom: 8px;
+    }
+  }
+  
+}

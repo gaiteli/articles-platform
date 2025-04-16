@@ -53,8 +53,8 @@ export const lightTheme = {
     '--button-background-color': 'hsl(230, 60%, 56%)',
     '--button-background-color-active': 'hsl(230, 50%, 80%)',
     '--button-background-color-hover': 'hsl(230, 60%, 66%)',
-    '--button-text-color': 'hsl(270, 5%, 16%)',
-    '--button-text-color-hover': 'hsl(270, 5%, 16%)',
+    '--button-text-color': 'hsl(230, 45%, 40%)',
+    '--button-text-color-hover': 'hsl(230, 50%, 20%)',
     '--button-disabled-background': 'hsl(230, 10%, 85%)',
     '--button-disabled-text': 'hsl(230, 10%, 55%)',
 

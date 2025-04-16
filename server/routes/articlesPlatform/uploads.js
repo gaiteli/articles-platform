@@ -30,9 +30,12 @@ async function uploadHandler(req, res) {
         return failure(res, new BadRequest('请选择要上传的文件！'));
     }
 
+    const { type } = req.query;
+
     try {
         await Attachment.create({
             ...req.file,
+            type,
             userId: req.user.id,
             fullpath: `${req.file.destination}/${req.file.filename}`
         });

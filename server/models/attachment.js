@@ -14,14 +14,19 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Attachment.init({
-    userId: DataTypes.INTEGER,
+    userId: DataTypes.INTEGER.UNSIGNED,
     originalname: DataTypes.STRING,
     filename: DataTypes.STRING,
     mimetype: DataTypes.STRING,
     size: DataTypes.STRING,
     path: DataTypes.STRING,
     fullpath: DataTypes.STRING,
-    url: DataTypes.STRING
+    url: DataTypes.STRING,
+    type: {
+      type: DataTypes.ENUM('pic', 'cover', 'bg', 'avatar'),
+      allowNull: false,
+      defaultValue: 'pic'
+    }
   }, {
     sequelize,
     modelName: 'Attachment',

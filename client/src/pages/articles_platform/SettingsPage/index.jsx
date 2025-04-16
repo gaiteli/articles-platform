@@ -10,12 +10,11 @@ import {
 const { Sider, Content } = Layout;
 
 import styles from './index.module.scss';
-import { BgImageUploader } from '../../../components/common/Upload';
 import ThemeSettings from './ThemeSettings';
+import BgSettings from './BgSettings';
 
 const ArticlesPlatformSettingsPage = () => {
   const [selectedMenu, setSelectedMenu] = useState('account'); // 默认选中账号信息
-  const [bgImageUrl, setBgImageUrl] = useState(null)
 
   // 菜单项
   const menuItems = [
@@ -51,17 +50,7 @@ const ArticlesPlatformSettingsPage = () => {
       case 'theme':
         return <ThemeSettings />
       case 'bg':
-        return (
-          <div className={styles.bgSettings}>
-            <h2>更换首页背景</h2>
-            <div className={styles.bgUploaderContainer}>
-              <BgImageUploader
-                bgImageUrl={bgImageUrl}
-                onBgChange={setBgImageUrl}
-              />
-            </div>
-          </div>
-        );
+        return <BgSettings />
       default:
         return null;
     }
