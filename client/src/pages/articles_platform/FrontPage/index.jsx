@@ -19,6 +19,9 @@ const ArticlesPlatformFrontPage = () => {
   const [recentArticles, setRecentArticles] = useState([]);
   const [popularArticles, setPopularArticles] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [blurEnabled, setBlurEnabled] = useState(
+    localStorage.getItem('bgBlurEnabled') === 'true'
+  );     // 高斯模糊开关切换
 
 
   // 获取最近文章
@@ -87,8 +90,8 @@ const ArticlesPlatformFrontPage = () => {
       <div className={styles.welcomeContainer}>
         <img
           className={styles.backgroundImage}
+          style={{ filter: blurEnabled ? 'blur(6px)' : 'none' }}    // 高斯模糊
           ref={eleRef}
-          // src="/src/assets/articles_platform/home_pic.jpg"
           src={user.bgImageUrl || "/src/assets/articles_platform/home_pic.png"}
         />
         <div className={styles.titles}>

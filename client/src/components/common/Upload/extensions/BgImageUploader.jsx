@@ -10,7 +10,7 @@ import { updateBgImageAPI } from '/src/apis/articles_platform/user';
 const bgUploadCore = new UploadCore({
   maxSize: 2,
   uploadAPI: uploadBgImageAPI,
-  promptMessage: '点击上传后单击图片预览，双击重选'
+  promptMessage: '单击图片进行预览，双击图片重新选择上传'
 });
 
 

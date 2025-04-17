@@ -1,21 +1,31 @@
-import { useState } from 'react';
-import { Button, Space, Image } from 'antd';
+import { useEffect, useState, useContext } from 'react';
+import { Button, Space, Image, Checkbox } from 'antd';
 import BgImageUploader from '../../../components/common/Upload/extensions/BgImageUploader';
 import { getMyAttachmentsAPI } from '/src/apis/articles_platform/attachment'
 import styles from './BgSettings.module.scss';
+import { AuthContext } from '/src/store/AuthContext';
+import { ExclamationCircleOutlined, QuestionCircleFilled } from '@ant-design/icons';
 
 // 默认背景图列表
 const DEFAULT_BGS = [
-  'https://example.com/default-bg1.jpg',
-  'https://example.com/default-bg2.jpg',
+  "/src/assets/articles_platform/home_pic.png",
+  "/articles_platform/front_bg/plain01.jpg",
+  "/articles_platform/front_bg/plain02.jpg",
+  "/articles_platform/front_bg/galaxy.jpg",
 ];
+const PICTURE_LOADING_FAILURE = "/src/assets/articles_platform/picture-loading-failure.svg"
 
 const BgSettings = () => {
+  const { user } = useContext(AuthContext);
   const [bgImageUrl, setBgImageUrl] = useState(null);
   const [showDefaultBgs, setShowDefaultBgs] = useState(false);
   const [showHistoryBgs, setShowHistoryBgs] = useState(false);
   const [historyBgs, setHistoryBgs] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setBgImageUrl(user.bgImageUrl)
+  }, [])
 
   // 加载历史背景图
   const loadHistoryBgs = async () => {
@@ -28,6 +38,12 @@ const BgSettings = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // 切换高斯模糊效果
+  const toggleBlur = (e) => {
+    const isChecked = e.target.checked;
+    localStorage.setItem('bgBlurEnabled', isChecked);
   };
 
   return (
@@ -44,29 +60,38 @@ const BgSettings = () => {
           onBgChange={setBgImageUrl}
         />
       </div>
+      <p className={styles.prompt}><ExclamationCircleOutlined /> 双击上面图片可以上传并应用您喜爱的背景图</p>
+      <hr style={{ marginBottom: '12px', border: '2px solid var(--border-color)' }}></hr>
 
       {/* 操作按钮组 */}
-      <Space className={styles.actionButtons}>
-        <Button 
-          type="text" 
-          onClick={() => {
-            setShowDefaultBgs(true);
-            setShowHistoryBgs(false);
-          }}
-        >
-          选择默认图
-        </Button>
-        <Button 
-          type="text" 
-          onClick={() => {
-            setShowHistoryBgs(true);
-            setShowDefaultBgs(false);
-            loadHistoryBgs();
-          }}
-        >
-          在历史背景中选择
-        </Button>
-      </Space>
+      <div className={styles.actionButtonsContainer}>
+        <p className={styles.prompt}><QuestionCircleFilled /> 不想上传 or 想使用之前的背景？</p>
+        <Space className={styles.actionButtons}>
+          <Button
+            type="text"
+            onClick={() => {
+              setShowDefaultBgs(true);
+              setShowHistoryBgs(false);
+            }}
+          >
+            选择默认图
+          </Button>
+          <Button
+            type="text"
+            onClick={() => {
+              setShowHistoryBgs(true);
+              setShowDefaultBgs(false);
+              loadHistoryBgs();
+            }}
+          >
+            在历史背景中选择
+          </Button>
+          {/* 高斯模糊开关 */}
+          <Checkbox onChange={toggleBlur}>
+            启用背景模糊效果
+          </Checkbox>
+        </Space>
+      </div>
 
       {/* 默认背景图选择区 */}
       {showDefaultBgs && (
@@ -78,8 +103,10 @@ const BgSettings = () => {
                 key={url}
                 src={url}
                 alt="default-bg"
-                width={120}
+                width={256}
+                height={144}
                 preview={false}
+                fallback={PICTURE_LOADING_FAILURE}
                 style={{ cursor: 'pointer', border: bgImageUrl === url ? '2px solid #1890ff' : 'none' }}
                 onClick={() => setBgImageUrl(url)}
               />
@@ -101,8 +128,10 @@ const BgSettings = () => {
                   <Image
                     src={bg.url}
                     alt="history-bg"
-                    width={120}
+                    width={256}
+                    height={144}
                     preview={false}
+                    fallback={PICTURE_LOADING_FAILURE}
                     style={{ cursor: 'pointer', border: bgImageUrl === bg.url ? '2px solid #1890ff' : 'none' }}
                     onClick={() => setBgImageUrl(bg.url)}
                   />
@@ -112,7 +141,7 @@ const BgSettings = () => {
           )}
         </div>
       )}
-      
+
     </div>
   );
 };

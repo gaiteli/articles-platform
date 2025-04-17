@@ -6,6 +6,7 @@ import {
   SettingOutlined,
   PictureOutlined,
   FormatPainterOutlined,
+  ToolOutlined,
 } from '@ant-design/icons';
 const { Sider, Content } = Layout;
 
@@ -25,7 +26,7 @@ const ArticlesPlatformSettingsPage = () => {
     },
     {
       key: 'personalization',
-      icon: <SettingOutlined />,
+      icon: <ToolOutlined />,
       label: '个性化',
       children: [
         {
