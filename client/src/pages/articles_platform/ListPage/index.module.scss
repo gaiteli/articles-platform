@@ -4,7 +4,6 @@
   justify-content: space-between;
   width: 1200px;
   margin: 0 auto;
-  overflow: hidden;
   background-color: var(--gray-2);
   [data-theme='dark'] & {
     background-color: var(--gray-11);
@@ -16,8 +15,17 @@
   padding-bottom: 20px;
   margin: 0 auto;
   background-color: var(--background-color);
-  overflow: hidden;
   z-index: 1;
+  transition: all 0.3s ease-out;
+  transform-origin: right center;
+
+  // 当侧栏可见时
+  &[data-visible="true"] {
+    // transform: scale(0.98);
+    // margin-right: 20px; /* 产生挤压感 */
+    // filter: brightness(0.97);
+    transform: translateX(-10px); // 轻微位移
+  }
 
   :global(.ant-card-body) {
     padding: 0.75rem !important;
@@ -27,15 +35,53 @@
 
 #toggleButton {
   position: fixed;
-  top: 50%;
-  left: calc(50% + 400px + 25px); // 400为文章栏宽的1/2
+  top: 50vh;
+  left: calc(50% + 420px);
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 100;
+  width: 32px;
+  height: 32px;
+  background: var(--background-color-dark);
+  border-radius: 50%;
+  box-shadow: 2px 1px 8px 2px var(--background-color-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  
+  &:hover {
+    background: var(--hover-background-color);
+    box-shadow: 2px 2px 8px 4px var(--hover-background-color);
+  }
+
+  #asideContainer[data-visible="false"] ~ & {
+    animation: buttonClickAnimation 1s ease;
+  }
+  @keyframes buttonClickAnimation {
+    0% { opacity: 0; }
+    60% { opacity: 0.01; }
+    100% { opacity: 1; }
+  }
+  
+  /* 当侧栏可见时 */
+  #asideContainer[data-visible="true"] ~ & {
+    transform: translateX(-180px); // 跟随主栏位移
+    animation: buttonClickAnimationReverse 1s ease;
+  }
+  @keyframes buttonClickAnimationReverse {
+    0% { opacity: 0; }
+    60% { opacity: 0.01; }
+    100% { opacity: 1; }
+  }
 }
 
 .card {
   height: 11.5rem;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
 
   .coverContainer {
     width: 155px;
@@ -131,6 +177,14 @@
   * {
     transition: none;
   }
+  position: sticky;
+  top: 60px;
+  height: fit-content;
+  align-self: flex-start; // 防止被拉伸
+  margin-left: 20px;
+  display: block;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
 }
 
 .sidebar {
@@ -140,9 +194,19 @@
   background: #f4f4f4;
   border-radius: 10px;
   z-index: 0;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
 
   [data-theme='dark'] & {
     background-color: var(--gray-11);
+  }
+
+  .filterSection {
+    margin-bottom: 16px;
+    
+    .ant-typography {
+      display: block;
+      margin-bottom: 8px;
+    }
   }
 }
 

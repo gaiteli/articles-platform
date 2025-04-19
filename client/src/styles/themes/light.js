@@ -29,10 +29,10 @@ export const lightTheme = {
     // 背景色
     '--background-color': 'hsl(230, 70%, 95%)',
     '--background-color-light': 'hsl(230, 60%, 96%)',
-    '--background-color-dark': 'hsl(230, 50%, 20%)',
+    '--background-color-dark': 'hsl(230, 50%, 83%)',
     '--container-color': 'hsl(230, 100%, 97%)',
     '--card-background-color': 'hsl(230, 60%, 98%)',
-    '--hover-background-color': 'hsl(230, 60%, 92%)',
+    '--hover-background-color': 'hsl(230, 60%, 75%)',
     '--active-background-color': 'hsl(230, 60%, 90%)',
     '--mask-background-color': 'rgba(0, 0, 0, 0.45)',
     '--mask-background-color-light': 'rgba(0, 0, 0, 0.2)',

@@ -1,6 +1,6 @@
 $siderMinWidth: 100px;
 $siderWidth: 12vw;
-$topBarHeight: 6vh;
+$topBarHeight: 50px;
 
 .header {
   padding: 0;
@@ -19,6 +19,7 @@ $topBarHeight: 6vh;
     right: 0;
     top: 0;
     display: flex;
+    align-items: center;
     height: $topBarHeight;
     padding-right: 20px;
     color: #fff;

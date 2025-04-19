@@ -118,6 +118,10 @@ router.get('/list', authorize(), async function (req, res, next) {
     const limit = Math.min(pageSize, Math.abs(Number(query.limit)) || pageSize); // 取 pageSize 和 limit 的最小值
     const offset = (currentPage - 1) * pageSize;
 
+    // 日期范围
+    const startTime = query.startTime ? query.startTime : null;
+    const endTime = query.endTime ? query.endTime + ' 23:59:59' : null; // 包含当天
+
     // 排序方式
     const sortBy = query.sortBy || 'createdAt'     // 默认按发布时间排序
     const sortOrder = query.sortOrder || 'DESC'    // 默认降序
@@ -147,14 +151,29 @@ router.get('/list', authorize(), async function (req, res, next) {
     }
 
     // 按分类过滤
-    if (query.channel) {
-      condition.where.channel = query.channel;
+    if (query.channelId) {
+      condition.where.channelId = query.channelId;
     }
 
     // 按标签过滤
     if (query.tags) {
       condition.where.tags = {
         [Op.contains]: query.tags.split(','), // 假设 tags 是数组字段
+      };
+    }
+
+    // 日期范围过滤
+    if (startTime && endTime) {
+      condition.where.createdAt = {
+        [Op.between]: [startTime, endTime]
+      };
+    } else if (startTime) {
+      condition.where.createdAt = {
+        [Op.gte]: startTime
+      };
+    } else if (endTime) {
+      condition.where.createdAt = {
+        [Op.lte]: endTime
       };
     }
 
@@ -187,7 +206,7 @@ router.get('/list', authorize(), async function (req, res, next) {
       },
     });
   } catch (error) {
-    console.log(error);
+    console.error('文章列表查询错误:', error);
     failure(res, error);
   }
 });

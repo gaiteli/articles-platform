@@ -3,32 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CSSTransition } from 'react-transition-group';
 import moment from 'moment';
+import {
+  List, Button, Card, Flex, Typography, Space, Skeleton, Divider, Tag,
+  DatePicker, Cascader, Select, Radio, message
+} from 'antd';
+import {
+  RightOutlined, LeftOutlined, ClockCircleFilled, ClockCircleOutlined,
+  HistoryOutlined, FolderOpenFilled, EyeOutlined, LikeOutlined
+} from '@ant-design/icons';
 
 import { Header } from '/src/components/articles_platform/Header'
-import {
-  List,
-  Button,
-  Card,
-  Flex,
-  Typography,
-  Space,
-  Skeleton,
-  Divider,
-  Tag,
-} from 'antd';
-import { RightOutlined, LeftOutlined, ClockCircleFilled, ClockCircleOutlined, HistoryOutlined, FolderOpenFilled, EyeOutlined, LikeOutlined } from '@ant-design/icons';
-
 import styles from './index.module.scss'
-
 import { getArticleListAPI } from '/src/apis/articles_platform/article'
+import { getNestedChannelsAPI } from '/src/apis/articles_platform/channel';
 
+const { RangePicker } = DatePicker;
+import locale from 'antd/es/date-picker/locale/zh_CN' // 引入汉化包 时间选择器显示中文
+const { Option } = Select;
 
 const ArticlesPlatformListPage = () => {
   moment.locale('zh-cn');
   const navigate = useNavigate()
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  // 获取文章列表
   const [loading, setLoading] = useState(false);
   const [reqData, setReqData] = useState({
     currentPage: 1,
@@ -36,29 +33,75 @@ const ArticlesPlatformListPage = () => {
   })
   const [count, setCount] = useState(0)
   const [list, setList] = useState([])
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+
+
+  // 基于分类进行筛选/排序
+  const [filters, setFilters] = useState({
+    timeRange: null,
+    channel: null,
+    sortBy: 'createdAt',
+  });
+
+  // 获取分类数据
+  const fetchCategories = async () => {
+    if (categories.length > 0 || categoriesLoading) return;
+
+    setCategoriesLoading(true);
+    try {
+      const res = await getNestedChannelsAPI();
+      setCategories(res.data);
+    } catch (error) {
+      message.error('获取分类失败');
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
+  // 切换侧边栏时获取分类
+  const toggleLayout = async () => {
+    setIsSidebarVisible(!isSidebarVisible);
+    if (!isSidebarVisible && categories.length === 0) {
+      await fetchCategories();
+    }
+  };
+
 
   // 文章加载
   const loadMoreData = async () => {
-    if (loading) {
-      return;
-    }
+    if (loading) return
+
     setLoading(true)
-    const res = await getArticleListAPI(reqData)
-    const newList = res.data.articles
-    setList(prevList => [...prevList, ...newList])   // 追加数据
-    console.log('list length: ' + list.length);
-    setCount(res.data.pagination.total)
-    setReqData(prevData => ({
-      ...prevData,
-      currentPage: prevData.currentPage + 1,    // 增加页码
-    }));
-    setLoading(false)
+    try {
+      const params = {
+        ...reqData,
+        startTime: filters.timeRange?.[0]?.format('YYYY-MM-DD'),
+        endTime: filters.timeRange?.[1]?.format('YYYY-MM-DD'),
+        channelId: filters.channel,
+        sortBy: filters.sortBy,
+      };
+
+      const res = await getArticleListAPI(params);
+      const newList = res.data.articles;
+
+      setList(prevList => [...prevList, ...newList])   // 追加数据
+      setCount(res.data.pagination.total);
+      setReqData(prev => ({
+        ...prev,
+        currentPage: prev.currentPage + 1,
+      }));
+    } finally {
+      setLoading(false);
+    }
   }
 
-
-  // 控制副栏是否显示
-  const toggleLayout = () => {
-    setIsSidebarVisible(!isSidebarVisible); // 切换时关闭副栏
+  // 筛选变化处理
+  const handleFilterChange = (type, value) => {
+    console.log('type+value:' + type + value);
+    setFilters(prev => ({ ...prev, [type]: value }));
+    setReqData(prev => ({ ...prev, currentPage: 1 }));
+    setList([]);
   };
 
 
@@ -69,13 +112,14 @@ const ArticlesPlatformListPage = () => {
 
   useEffect(() => {
     loadMoreData()
-  }, [])
+  }, [filters]); // 当筛选条件变化时重新加载
 
   return (
     <>
       <Header position="sticky" />
       <div className={styles.container}>
-        <div className={styles.mainColumnContainer}>
+        {/* 文章列表主体 */}
+        <div className={styles.mainColumnContainer} data-visible={isSidebarVisible}>
           <InfiniteScroll
             dataLength={list.length}
             next={loadMoreData}
@@ -162,29 +206,9 @@ const ArticlesPlatformListPage = () => {
             />
           </InfiniteScroll>
         </div>
-        {/* <Button
-            type="primary"
-            shape="circle"
-            icon={isSidebarVisible ? <LeftOutlined /> : <RightOutlined />}
-            onClick={toggleLayout}
-            className="fixed right-1 transform -translate-y-1/2 translate-x-1/2"
-          /> */}
-        <button
-          onClick={toggleLayout}
-          id={styles.toggleButton}
-          className="-translate-y-1/2 translate-x-1/2 bg-transparent border-none focus:outline-none "
-          style={{ backgroundColor: 'transparent' }}
-        >
-          <div
-            style={{
-              transform: isSidebarVisible ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "transform 0.3s ease-in-out",
-            }}
-          >
-            <RightOutlined />
-          </div>
-        </button>
-        <aside id={styles.asideContainer}>
+
+        {/* 侧边栏内容 */}
+        <aside id={styles.asideContainer} data-visible={isSidebarVisible}>
           <CSSTransition
             in={isSidebarVisible} // {/* 直接赋值为true貌似不影响 */}
             timeout={300}
@@ -199,15 +223,108 @@ const ArticlesPlatformListPage = () => {
             unmountOnExit
           >
             <div className={styles.sidebar}>
-              <Card title="其他信息" bordered>
-                <p>这里是副栏内容...</p>
+              <Card title="筛选和排序" bordered>
+                {/* 排序方式 */}
+                <div className={styles.filterSection}>
+                  <Typography.Text strong>排序方式</Typography.Text>
+                  <Radio.Group
+                    value={filters.sortBy}
+                    onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                    block
+                  >
+                    <Radio.Button value="createdAt">最新</Radio.Button>
+                    <Radio.Button value="readCount">阅读量</Radio.Button>
+                    <Radio.Button value="likeCount">点赞数</Radio.Button>
+                  </Radio.Group>
+                </div>
+
+                {/* 时间范围 */}
+                <div className={styles.filterSection}>
+                  <Typography.Text strong>发布时间</Typography.Text>
+                  <RangePicker
+                    locale={locale}
+                    style={{ width: '100%' }}
+                    value={filters.timeRange}
+                    onChange={(dates) => handleFilterChange('timeRange', dates)}
+                  />
+                </div>
+
+                {/* 分类筛选 */}
+                <div className={styles.filterSection}>
+                  <Typography.Text strong>文章分类</Typography.Text>
+                  <Cascader
+                    options={categories}
+                    loading={categoriesLoading}
+                    value={filters.channel ? [filters.channel] : []}
+                    onChange={(value) => {
+                      const selectedValue = value?.length > 0 ? value[value.length - 1] : null;
+                      handleFilterChange('channel', selectedValue);
+                    }}
+                    placeholder={categoriesLoading ? '加载中请稍后..' : '选择分类'}
+                    displayRender={labels => labels[labels.length - 1]}
+                    expandTrigger="hover"
+                    changeOnSelect
+                    showSearch={{
+                      filter: (inputValue, path) =>
+                        path.some(option =>
+                          option.label.toLowerCase().includes(inputValue.toLowerCase())
+                        )
+                    }}
+                    style={{ width: '100%' }}
+                  />
+                </div>
+
+                {/* 清除筛选 */}
+                <Button
+                  type="link"
+                  danger
+                  onClick={() => {
+                    setFilters({
+                      timeRange: null,
+                      channel: null,
+                      sortBy: 'createdAt',
+                    });
+                  }}
+                  style={{ marginTop: 16, width: '100%' }}
+                >
+                  清除所有筛选
+                </Button>
+
+                <Divider />
+                
+                {/* 热门标签 */}
+                <div className={styles.filterSection}>
+                  <Typography.Text strong>热门标签</Typography.Text>
+                  <Space size={[8, 8]} wrap>
+                    <Tag color="magenta">React</Tag>
+                    <Tag color="red">前端开发</Tag>
+                    <Tag color="volcano">JavaScript</Tag>
+                    <Tag color="orange">算法</Tag>
+                  </Space>
+                </div>
+
               </Card>
             </div>
           </CSSTransition>
         </aside>
 
-      </div>
+        {/* 侧边栏切换按钮 */}
+        <button
+          onClick={toggleLayout}
+          id={styles.toggleButton}
+          className="-translate-y-1/2 translate-x-1/2 border-none focus:outline-none "
+        >
+          <div
+            style={{
+              transform: isSidebarVisible ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 0.3s ease-in-out",
+            }}
+          >
+            <RightOutlined />
+          </div>
+        </button>
 
+      </div>
     </>
   )
 }

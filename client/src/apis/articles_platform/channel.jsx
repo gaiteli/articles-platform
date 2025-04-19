@@ -9,6 +9,15 @@ export function getChannelsAPI(params) {
   });
 }
 
+// 获取频道 嵌套
+export function getNestedChannelsAPI(params) {
+  return request({
+    url: '/articles-platform/channels/nested',
+    method: 'GET',
+    params,
+  });
+}
+
 // 获取频道 根据id
 export function getChannelByIdAPI(id) {
   return request({

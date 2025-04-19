@@ -18,6 +18,7 @@
 //     color var(--theme-transition);
 // }
 body,
-body *:not(script):not(.ant-popover):not(.ant-popconfirm):not(.ant-dropdown) {
-  transition: var(--theme-transition);
+body *:not(script):not(.ant-popover):not(.ant-popconfirm):not(.ant-dropdown),
+body *:not(.ant-select):not(.ant-select-open) {
+  // transition: var(--theme-transition);
 }

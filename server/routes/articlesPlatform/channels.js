@@ -63,6 +63,25 @@ router.get('/', authorize(['article:create'], '查询分类列表'), async funct
 
 });
 
+
+/* 获取分类列表（嵌套结构） */
+router.get('/nested', async (req, res) => {
+  try {
+    const channels = await Channel.findAll({
+      order: [['rank', 'ASC']],
+      attributes: ['id', 'name', 'code', 'rank']
+    });
+
+    const nestedChannels = buildNestedChannels(channels);
+
+    success(res, '获取分类成功', nestedChannels);
+  } catch (error) {
+    console.error('获取分类失败:', error);
+    failure(res, '获取分类失败');
+  }
+});
+
+
 /* 查询单个分类 */
 router.get('/:id', authorize(['article:create']), async function (req, res, next) {
   try {
@@ -91,6 +110,70 @@ async function getChannel(req) {
 
   // 找到分类，返回
   return channel
+}
+
+
+/**
+ * 将平铺的分类数据转换为级联选择器需要的嵌套结构
+ * @param {Array} flatChannels 原始平铺分类数据
+ * @returns {Array} 嵌套结构的分类数据
+ */
+function buildNestedChannels(flatChannels) {
+  // 1. 创建按code分组的map
+  const channelMap = new Map();
+
+  // 2. 先处理所有一级分类（code为1-9或10的倍数且<100）
+  const level1Channels = flatChannels.filter(ch => {
+    const code = parseInt(ch.code);
+    return (code!==0) && ((code <= 9) || (code % 10 === 0 && code < 100));
+  }).sort((a, b) => a.rank - b.rank);
+
+  // 3. 构建嵌套结构
+  level1Channels.forEach(l1 => {
+    const l1Code = parseInt(l1.code);
+
+    // 处理二级分类（两位数且非10的倍数）
+    const level2Channels = flatChannels.filter(ch => {
+      const code = parseInt(ch.code);
+      return code >= 10 &&
+            code < 100 &&
+            code % 10 !== 0 &&
+            Math.floor(code/10) === Math.floor(l1Code/10);
+    }).sort((a, b) => a.rank - b.rank);
+
+    // 处理三级分类（三位数）
+    level2Channels.forEach(l2 => {
+      const l2Code = parseInt(l2.code);
+      l2.children = flatChannels.filter(ch => {
+        const code = parseInt(ch.code);
+        return code >= 100 && code < 1000 &&
+                Math.floor(code/10) === Math.floor(l2Code);
+      }).sort((a, b) => a.rank - b.rank)
+        .map(l3 => ({
+          value: l3.id,
+          label: l3.name
+        }));
+    });
+
+    // 构建一级分类对象
+    channelMap.set(l1.id, {
+      value: l1.id,
+      label: l1.name,
+      children: level2Channels.map(l2 => ({
+        value: l2.id,
+        label: l2.name,
+        children: l2.children || []
+      }))
+    });
+  });
+
+  // 4. 处理特殊分类（code为0或1000）
+  // 不返回
+
+  // 5. 合并返回结果
+  return [
+    ...Array.from(channelMap.values())
+  ];
 }
 
 module.exports = router;
