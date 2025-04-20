@@ -223,7 +223,7 @@ const ArticlesPlatformListPage = () => {
             unmountOnExit
           >
             <div className={styles.sidebar}>
-              <Card title="筛选和排序" bordered>
+              <h2>筛选和排序</h2>
                 {/* 排序方式 */}
                 <div className={styles.filterSection}>
                   <Typography.Text strong>排序方式</Typography.Text>
@@ -303,7 +303,6 @@ const ArticlesPlatformListPage = () => {
                   </Space>
                 </div>
 
-              </Card>
             </div>
           </CSSTransition>
         </aside>

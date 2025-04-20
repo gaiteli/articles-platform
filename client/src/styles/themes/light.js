@@ -15,12 +15,12 @@ export const lightTheme = {
     '--info-color': 'hsl(200, 85%, 60%)',
 
     // 文本颜色
-    '--title-color': 'hsl(230, 70%, 16%)',
+    '--title-color': 'hsl(230, 70%, 25%)',
     '--subtitle-color': 'rgba(256, 256, 256, 0.85)',
     '--text-color': 'hsl(230, 16%, 45%)',
     '--text-color-secondary': 'hsl(230, 16%, 55%)',
     '--text-color-disabled': 'hsl(230, 16%, 75%)',
-    '--muted-text-color': 'hsl(230, 16%, 65%)',
+    '--muted-text-color': 'hsl(230, 50%, 40%)',
     '--heading-color': '#222',
     '--link-color': 'hsl(230, 60%, 50%)',
     '--link-hover-color': 'hsl(230, 70%, 40%)',

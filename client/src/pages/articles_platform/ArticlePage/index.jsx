@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useContext } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { message } from 'antd';
 import { InfoCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -17,9 +17,10 @@ import {
   EditButtonWithPermission,
   LikeButtonWithPermission,
 } from '../../../components/permission/buttons';
+import { AuthContext } from '/src/store/AuthContext';
 
 const ArticlesPlatformArticlePage = () => {
-
+  const { user } = useContext(AuthContext)
   const { id } = useParams();
   const [fetchArticleError, setFetchArticleError] = useState(null);
   const [article, setArticle] = useState({
@@ -75,8 +76,8 @@ const ArticlesPlatformArticlePage = () => {
       } catch (error) {
         console.log(error.response);
         setFetchArticleError({
-          code: error.response.status,
-          type: error.response.data.message,
+          code: error.response?.status || 500,
+          type: error.response?.data?.message || '错误',
           message: error.response.data.errors || '文章不存在'
         })
       } finally {

@@ -236,8 +236,9 @@
  ┃ ┗ 📜token.js
  ┣ 📜index.scss
  ┣ 📜main.jsx
-
+```
  ## server（主要部分）
+```
  📦controllers
  ┣ 📜adminArticleController.js
  ┣ 📜articleController.js

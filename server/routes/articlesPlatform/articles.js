@@ -281,10 +281,15 @@ router.post('/p/:id/like', authenticate, authorize(), async function (req, res, 
 })
 
 /* 用户是否对该篇文章点过赞 */
-router.get('/p/:id/like', authenticate, authorize(), async function (req, res, next) {
+router.get('/p/:id/like', authorize(), async function (req, res, next) {
   try {
     const {id} = req.params;      // 获取文章id
-    const userId = req.user.id;
+    const userId = req.user?.id || null;
+
+    if (!userId) {
+      success(res, '（未登陆用户）', {hasLiked: false});
+      return
+    }
 
     const user = await User.findByPk(userId, {
       include: {

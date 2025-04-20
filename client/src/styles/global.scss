@@ -286,7 +286,10 @@ select {
 .ant-layout-sider,
 .ant-layout-content,
 .ant-menu,
-.ant-menu-item {
+.ant-menu-item,
+.ant-radio-button-wrapper,
+.ant-picker,
+.ant-select-selector {
   
   [data-theme='dark'] & {
     background-color: var(--gray-7) !important;

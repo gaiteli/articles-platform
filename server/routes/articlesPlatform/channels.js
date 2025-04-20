@@ -6,9 +6,10 @@ const { Op } = require('sequelize')
 const { NotFound, BadRequest } = require('http-errors');
 const { success, failure } = require('@utils/responses')
 const {authorize} = require("@middlewares/auth");
+const {authenticate} = require("../../middlewares/auth");
 
 /* 查询分类列表 */
-router.get('/', authorize(['article:create'], '查询分类列表'), async function(req, res, next) {
+router.get('/', authenticate, authorize(['article:create'], '查询分类列表'), async function(req, res, next) {
   try {
     const query = req.query
 
@@ -65,7 +66,7 @@ router.get('/', authorize(['article:create'], '查询分类列表'), async funct
 
 
 /* 获取分类列表（嵌套结构） */
-router.get('/nested', async (req, res) => {
+router.get('/nested', authorize(), async (req, res) => {
   try {
     const channels = await Channel.findAll({
       order: [['rank', 'ASC']],
@@ -83,7 +84,7 @@ router.get('/nested', async (req, res) => {
 
 
 /* 查询单个分类 */
-router.get('/:id', authorize(['article:create']), async function (req, res, next) {
+router.get('/:id', authenticate, authorize(['article:create']), async function (req, res, next) {
   try {
     const channel = await getChannel(req)
 

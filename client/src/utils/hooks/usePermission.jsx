@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { AuthContext } from '/src/store/authContext';
+import { message } from 'antd'
 
 export const usePermission = (type, resource) => {
   const { user } = useContext(AuthContext);
@@ -23,12 +24,15 @@ export const usePermission = (type, resource) => {
       onDenied: () => {}
     }),
 
-    // 点赞按钮 作者禁用
+    // 点赞按钮 游客不可见 作者禁用
     likeArticle: () => ({
       visible: true,
       disabled: user.id === resource.userId,
-      canOperate: user.id !== resource.userId, // 只有非作者可以操作
-      onDenied: () => alert('您不能点赞自己的文章')
+      canOperate: user.role !== 'guest' && user.id !== resource.userId,
+      onDenied: () => {
+        if (user && user.role !== 'guest') message.warning('您不能点赞自己的文章！')
+        else message.warning('请先登陆！')
+      }
     }),
 
     // 审核状态可见性
