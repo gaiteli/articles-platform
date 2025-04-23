@@ -7,6 +7,7 @@ import ArticlesPlatformListPage from "../pages/articles_platform/ListPage/index.
 import ArticlesPlatformArticleEditPage from "../pages/articles_platform/ArticleEditPage/index.jsx";
 import ArticlesPlatformArticlePage from "../pages/articles_platform/ArticlePage/index.jsx";
 import ArticlesPlatformSettingsPage from "../pages/articles_platform/SettingsPage/index.jsx";
+import ArticlesPlatformFeedbackPage from "../pages/articles_platform/FeedbacksPage/index.jsx";
 
 import { GeekLayout as Layout } from "../pages/Layout/index.jsx";
 import Home from "../pages/Home/index.jsx";
@@ -16,6 +17,7 @@ import { AuthRoute } from "/src/components/AuthRoute.jsx";
 import User from "../pages/User/index.jsx";
 import Attachment from "../pages/admin/Attachment/index.jsx";
 import Channel from "../pages/admin/Channel/index.jsx"
+import Tag from "../pages/admin/Tag/index.jsx"
 
 import ErrorPage from "../pages/errors/ErrorPage/index.jsx";
 import TestPage from "../pages/TestPage/index.jsx";
@@ -50,6 +52,14 @@ const router = createBrowserRouter([
     element: (
       <AuthRoute whitelistRoles={['user', 'admin', 'super']}>
         <ArticlesPlatformArticleEditPage />
+      </AuthRoute>
+    )
+  },
+  {
+    path: "/articles/feedback",
+    element: (
+      <AuthRoute whitelistRoles={['user', 'admin', 'super']}>
+        <ArticlesPlatformFeedbackPage />
       </AuthRoute>
     )
   },
@@ -95,6 +105,10 @@ const router = createBrowserRouter([
       {
         path: "channel",
         element: <Channel />
+      },
+      {
+        path: "tag",
+        element: <Tag />
       },
       {
         path: "user",

@@ -1,12 +1,12 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { Popover, Button, Space } from 'antd';
 
 import ImageUploader from '../ImageUploader/ImageUploader';
 import UploadCore from '../core/UploadCore';
-import { 
-  uploadCoverAPI, 
-  getMyAttachmentsAPI, 
-  deleteMyAttachmentAPI 
+import {
+  uploadCoverAPI,
+  getMyAttachmentsAPI,
+  deleteMyAttachmentAPI
 } from '/src/apis/articles_platform/attachment';
 
 const coverUploadCore = new UploadCore({
@@ -45,8 +45,9 @@ export default function CoverUploader({ coverUrl, onCoverChange }) {
 
   // 默认封面选项
   const defaultCovers = [
-    'https://example.com/default1.jpg',
-    'https://example.com/default2.jpg',
+    "/articles_platform/front_bg/plain01.jpg",
+    "/articles_platform/front_bg/plain02.jpg",
+    "/articles_platform/front_bg/galaxy.jpg",
   ];
 
   // Popover 内容
@@ -108,21 +109,21 @@ export default function CoverUploader({ coverUrl, onCoverChange }) {
           imageUrl={coverUrl}
           onImageChange={onCoverChange}
           uploadCore={coverUploadCore}
-          // previewProps={{
-          //   maskClassName: 'custom-preview-mask',
-          //   toolbarRender: (_, { actions }) => (
-          //     <Space>
-          //       <Button onClick={actions.zoomIn}>放大</Button>
-          //       <Button onClick={actions.rotateLeft}>旋转</Button>
-          //       <Button danger onClick={actions.close}>关闭</Button>
-          //     </Space>
-          //   ),
-          //   imageRender: (originalNode) => (
-          //     <Watermark content="机密">
-          //       {originalNode}
-          //     </Watermark>
-          //   )
-          // }}
+        // previewProps={{
+        //   maskClassName: 'custom-preview-mask',
+        //   toolbarRender: (_, { actions }) => (
+        //     <Space>
+        //       <Button onClick={actions.zoomIn}>放大</Button>
+        //       <Button onClick={actions.rotateLeft}>旋转</Button>
+        //       <Button danger onClick={actions.close}>关闭</Button>
+        //     </Space>
+        //   ),
+        //   imageRender: (originalNode) => (
+        //     <Watermark content="机密">
+        //       {originalNode}
+        //     </Watermark>
+        //   )
+        // }}
         />
       </div>
     </Popover>

@@ -214,7 +214,7 @@ body {
       font-size: 0.75rem;
       gap: .5rem;
       margin: 0.5rem;
-    
+
       svg {
         color: purple;
       }
@@ -278,27 +278,45 @@ aside.fixedArea {
       }
     }
   }
-}
 
-// debug
-.debugArea {
-  display: flex;
-  border: 1px solid #ccc;
-  border-top: 1;
-  padding: 10px;
-  margin-top: 10px;
-}
+  // 标签选择器容器
+  .tagSelectorContainer {
+    // display: flex;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
 
-.controlsRight {
-  margin-left: auto;
-}
+  // 选择标签按钮
+  .chooseTagButton {
+    background-color: var(--button-background-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0 0 0;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
 
-.state {
-  margin: 10px 0;
-  font-family: monospace;
-}
+    &:hover {
+      background-color: var(--button-background-color-hover);
+    }
+  }
 
-.stateTitle {
-  color: #999;
-  text-transform: uppercase;
+  // 已选标签预览
+  .selectedTagsPreview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+
+    .ant-tag {
+      display: flex;
+      align-items: center;
+      margin-right: 0;
+    }
+  }
 }

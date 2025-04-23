@@ -18,7 +18,7 @@ export const lightTheme = {
     '--title-color': 'hsl(230, 70%, 25%)',
     '--subtitle-color': 'rgba(256, 256, 256, 0.85)',
     '--text-color': 'hsl(230, 16%, 45%)',
-    '--text-color-secondary': 'hsl(230, 16%, 55%)',
+    '--text-color-secondary': 'hsl(230, 16%, 65%)',
     '--text-color-disabled': 'hsl(230, 16%, 75%)',
     '--muted-text-color': 'hsl(230, 50%, 40%)',
     '--heading-color': '#222',

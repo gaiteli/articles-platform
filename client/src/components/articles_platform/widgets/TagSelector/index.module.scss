@@ -1,0 +1,255 @@
+// 颜色变量
+$primary-color: var(--primary-color);
+$secondary-color: var(--secondary-color);
+$border-color: var(--border-color);
+$bg-light: #f5f5f5;
+$public-tag-color: #2394e5;
+$public-tag-text-color: #0471be;
+$private-tag-color: #87d068;
+$private-tag-text-color: #428824;
+$text-color: #333;
+$light-text: #666;
+
+// 标签选择器主容器
+.tagSelector {
+  width: 100%;
+  margin-bottom: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+// 标签容器 - 显示已选择的标签
+.selectedTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+  min-height: 32px;
+  background-color: var(--background-color-light);
+}
+
+// 标签样式
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 22px;
+  border-radius: 4px;
+  background-color: #f5f5f5;
+  border: 1px solid $border-color;
+  color: $text-color;
+  transition: all 0.3s;
+  
+  &:hover {
+    background-color: #e8e8e8;
+  }
+}
+
+// 公共标签和私人标签的不同样式
+.publicTag {
+  background-color: rgba($public-tag-color, 0.1);
+  border-color: rgba($public-tag-color, 0.2);
+  color: $public-tag-text-color;
+  
+  &:hover {
+    background-color: rgba($public-tag-color, 0.2);
+  }
+}
+
+.privateTag {
+  background-color: rgba($private-tag-color, 0.1);
+  border-color: rgba($private-tag-color, 0.2);
+  color: $private-tag-text-color;
+  
+  &:hover {
+    background-color: rgba($private-tag-color, 0.2);
+  }
+}
+
+// 移除标签按钮
+.removeTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  &:hover {
+    color: rgba(0, 0, 0, 0.85);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+// 提交审核按钮
+.submitReview {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+  background-color: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  &:hover {
+    color: $primary-color;
+    background-color: rgba($primary-color, 0.1);
+  }
+}
+
+// 输入框包装器
+.tagInputWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+// 标签输入容器
+.tagInputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+// 标签输入框
+.tagInput {
+  flex: 1;
+  height: 32px;
+  padding: 4px 11px;
+  font-size: 14px;
+  line-height: 1.5;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  transition: all 0.3s;
+  
+  &:focus {
+    border-color: $secondary-color;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    outline: none;
+  }
+  
+  &::placeholder {
+    color: #bfbfbf;
+  }
+}
+
+// 创建标签按钮
+.createTagBtn {
+  position: absolute;
+  right: 8px;
+  height: 24px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: $primary-color;
+  background-color: transparent;
+  border: 1px solid $primary-color;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  &:hover {
+    color: #fff;
+    background-color: $primary-color;
+  }
+}
+
+// 标签建议下拉框
+.tagSuggestions {
+  position: absolute;
+  width: 60%;
+  max-height: 300px;
+  margin-top: 4px;
+  background-color: #fff;
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  overflow: hidden;
+}
+
+// 建议列表
+.suggestionList {
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+// 单个标签项
+.tagItem {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  &:hover {
+    background-color: $bg-light;
+  }
+}
+
+// 标签名称
+.tagName {
+  flex: 1;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+// 标签类型
+.tagType {
+  font-size: 12px;
+  color: $light-text;
+  margin-right: 8px;
+}
+
+// 标签计数
+.tagCount {
+  font-size: 12px;
+  color: $light-text;
+}
+
+// 加载状态
+.loading {
+  padding: 12px;
+  text-align: center;
+  color: $light-text;
+}
+
+// 无建议提示
+.noSuggestions {
+  padding: 12px;
+  text-align: center;
+  color: $light-text;
+}
+
+// 只读模式下的标签容器
+.tagsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// 标签列表
+.tagsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// 无标签提示
+.noTags {
+  color: $light-text;
+  font-style: italic;
+}

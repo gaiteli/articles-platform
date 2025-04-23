@@ -1,29 +1,30 @@
 import { useEffect, useCallback, useState, useContext, useRef, useMemo } from 'react';
 import { useParams, useNavigate, Navigate, useBlocker, useLocation } from 'react-router-dom';
-import { Spin, message, Button, Modal } from 'antd';
-import { SaveOutlined } from '@ant-design/icons';
+import { Spin, message, Button, Modal, Popover, Tag } from 'antd';
+import { SaveOutlined, TagsOutlined } from '@ant-design/icons';
 
-import { AuthContext } from '/src/store/AuthContext';
+// 组件components
 import { Header } from '/src/components/articles_platform/Header'
 import PopoutChannelPage from '/src/components/articles_platform/popouts/PopoutChannelPage';
-
 import { useJttEditor } from '../../../components/common/JTTEditor/core/useJttEditor';
 import MenuBar from '../../../components/common/JTTEditor/ui/MenuBar';
 import ContentArea from '../../../components/common/JTTEditor/ui/ContentArea';
 import LinkBubble from '../../../components/common/JTTEditor/ui/LinkBubble';
+import { CategoryCard } from '../../../components/articles_platform/widgets/CategoryCard';
+import { CoverUploader } from '/src/components/common/Upload';
+import TagSelector from '../../../components/articles_platform/widgets/TagSelector';
+import CharCountCircle from '../../../components/articles_platform/widgets/others/charCountCircle.jsx';
 
+// 工具函数和样式
 import {
   getArticleByIdWhenEditAPI,
   updateArticleAPI,
   createArticleAPI,
   saveDraftAPI,
   getNewArticleDraftAPI,
-  deleteArticleDraftAPI,
-  deleteNewArticleDraftAPI,
 } from '/src/apis/articles_platform/article';
 import styles from './index.module.scss'
-import { CategoryCard } from '../../../components/articles_platform/widgets/CategoryCard';
-import { CoverUploader } from '/src/components/common/Upload';
+import { AuthContext } from '/src/store/AuthContext';
 import { getArticleLength } from '/src/utils/tiptap';
 import { debounce } from '/src/utils';
 
@@ -31,10 +32,10 @@ const LOCAL_STORAGE_SAVE_INTERVAL = 2000; // 草稿本地保存cd时间
 const LOCAL_STORAGE_KEY = 'article_draft'; // localStorage存储键名
 const MAX_CHARS = 5000;
 
+
 const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   const { id: articleId } = useParams();  // 从路由中获取articleId，若undefined则为首次编辑
   const navigate = useNavigate()
-  const location = useLocation()
   const { user } = useContext(AuthContext)
 
   // core state
@@ -49,6 +50,8 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   const [isSavingDraft, setIsSavingDraft] = useState(false); // For Draft
   const [isEditMode, setIsEditMode] = useState(!!articleId); // 判断是否为编辑模式
   const [isShowChannelPage, setIsShowChannelPage] = useState(false)
+  const [tags, setTags] = useState([]);
+  const [isShowTagModal, setIsShowTagModal] = useState(false);
 
   // 内容长度统计相关
   const [charCount, setCharCount] = useState(0);
@@ -59,7 +62,6 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastSavedDraft, setLastSavedDraft] = useState(null);
   const [draftLoaded, setDraftLoaded] = useState(false); // 标记草稿是否已加载
-  const timeoutRef = useRef(null);
 
 
   // 编辑器更新状态
@@ -68,7 +70,6 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
     const htmlContent = editor.getHTML();
     if (htmlContent !== editorContent) {
       const text = htmlContent === '<p></p>' ? '' : htmlContent
-      // setEditorContent(text);
       const textLength = getArticleLength(text, 'char-no-tag')
       const wordLength = getArticleLength(text, 'word')
       setPercentage(Math.round((100 / MAX_CHARS) * charCount))
@@ -105,6 +106,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
       channelId: selectedCategory?.id || null,
       channelName: selectedCategory?.name || null,
       lastSaved: new Date().toISOString(),
+      tags: tags,
     };
 
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(draftData));
@@ -134,7 +136,8 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
         cover: coverImageUrl,
         content: htmlContent,
         jsonContent: jsonContent,
-        channelId: selectedCategory?.id || null
+        channelId: selectedCategory?.id || null,
+        tags: tags
       };
 
       await saveDraftAPI(draftData);
@@ -243,6 +246,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
                 { id: parsedLocalDraft.channelId, name: parsedLocalDraft.channelName } :
                 null
             );
+            setTags(parsedLocalDraft.tags || []);
 
             if (editor) {
               editor.commands.setContent(parsedLocalDraft.jsonContent || '');
@@ -277,6 +281,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
           setCoverImageUrl(res.data.cover);
           setTitle(res.data.title);
           setSelectedCategory({ id: res.data.channelId, name: res.data.channelName });
+          setTags(res.data.tags);
 
           if (editor) {
             editor.commands.setContent(res.data.jsonContent || '');
@@ -314,6 +319,9 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
                     id: draftRes.data.channelId,
                     name: draftRes.data.channelName || '未分类'
                   });
+                }
+                if (draftRes.data.tags) {
+                  setTags(draftRes.data.tags);
                 }
 
                 if (editor) {
@@ -389,7 +397,8 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
         cover: coverImageUrl || null,
         content: htmlContent,
         jsonContent: plainText ? jsonContent : null,
-        channelId: selectedCategory?.id || 1
+        channelId: selectedCategory?.id || 1,
+        // tagIds: tags.map(tag => tag.id)
       }
       console.log('Submitting Data:', reqData);
 
@@ -417,20 +426,6 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
     }
   }
 
-
-  // 监听标题变化
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-    setHasUnsavedChanges(true);
-  };
-
-  // 监听封面变化
-  const handleCoverChange = (url) => {
-    setCoverImageUrl(url);
-    setHasUnsavedChanges(true);
-  };
-
-
   if (loading && isEditMode) {
     // 编辑模式加载文章数据时显示骨架屏
     return (
@@ -446,7 +441,6 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
   return (
     <div className={styles.pageWrapper}>
       <Header position='static' />
-      {console.log('7 return()')}
       {/* Toolbar部分 */}
       <header className={styles.editorToolbarContainer} >
         <MenuBar editor={editor} preset='article' />
@@ -502,35 +496,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
             <div className={styles.miscInfo}>
               <div className={`${styles.characterCount} ${charCount >= MAX_CHARS ? styles.characterCountWarning : ''}`}>
                 {hasUnsavedChanges && <span>• 未保存</span>}
-                <svg
-                  height="20"
-                  width="20"
-                  viewBox="0 0 20 20"
-                >
-                  <circle
-                    r="10"
-                    cx="10"
-                    cy="10"
-                    fill="#e9ecef"
-                  />
-                  <circle
-                    r="5"
-                    cx="10"
-                    cy="10"
-                    fill="transparent"
-                    stroke="currentColor"
-                    strokeWidth="10"
-                    strokeDasharray={`calc(${percentage} * 31.4 / 100) 31.4`}
-                    transform="rotate(-90) translate(-20)"
-                  />
-                  <circle
-                    r="6"
-                    cx="10"
-                    cy="10"
-                    fill="white"
-                  />
-                </svg>
-
+                <CharCountCircle percentage={percentage} />
                 {charCount} / {MAX_CHARS} 字符
                 <br />
                 {wordCount} 字（单词）
@@ -576,6 +542,58 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
             />
           )}
         </div>
+
+        {/* 标签选择按钮和显示区域 */}
+        <div className={styles.tagSelectorContainer}>
+          <button
+            className={styles.chooseTagButton}
+            onClick={() => setIsShowTagModal(true)}
+          >
+            <TagsOutlined /> 选择标签
+          </button>
+
+          {/* 显示已选标签 */}
+          {tags?.length > 0 && (
+            <div className={styles.selectedTagsPreview}>
+              {tags.map(tag => (
+                <Tag
+                  key={tag.id}
+                  color={tag.type === 'public' ? 'blue' : 'green'}
+                  closable
+                  onClose={() => {
+                    const updatedTags = tags.filter(t => t.id !== tag.id);
+                    setTags(updatedTags);
+                    setHasUnsavedChanges(true);
+                  }}
+                >
+                  {tag.name}
+                </Tag>
+              ))}
+            </div>
+          )}
+
+          {/* 标签选择模态框 */}
+          {isShowTagModal && (
+            <Modal
+              title="选择文章标签"
+              width={800}
+              open={isShowTagModal}
+              onCancel={() => setIsShowTagModal(false)}
+              footer={null}
+            >
+              <TagSelector
+                articleId={articleId}
+                initialTags={tags}
+                onTagsChange={(updatedTags) => {
+                  setTags(updatedTags);
+                  setHasUnsavedChanges(true);
+                }}
+                isEditMode={true}
+              />
+            </Modal>
+          )}
+        </div>
+
       </aside>
     </div>
   )

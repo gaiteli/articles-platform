@@ -43,7 +43,7 @@ export function getAttachmentsAPI(params) {
 // params: { type: 'pic'/'cover'/'bg'/'avatar' }
 export function getMyAttachmentsAPI(params) {
   return request({
-    url: '/article-platform/attachments',
+    url: '/articles-platform/attachments',
     method: 'GET',
     params,
   })
@@ -52,7 +52,7 @@ export function getMyAttachmentsAPI(params) {
 // 删除用户自己上传过的附件...
 export function deleteMyAttachmentAPI(id) {
   return request({
-    url: `/article-platform/attachments/${id}`,
+    url: `/articles-platform/attachments/${id}`,
     method: 'DELETE',
   });
 }

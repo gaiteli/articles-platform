@@ -22,7 +22,8 @@ const BgSettings = () => {
   const [showHistoryBgs, setShowHistoryBgs] = useState(false);
   const [historyBgs, setHistoryBgs] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const [bgBlurEnabled, setBgBlurEnabled] = useState(localStorage.getItem('bgBlurEnabled') || false)
+  console.log(localStorage.getItem('bgBlurEnabled'));
   useEffect(() => {
     setBgImageUrl(user.bgImageUrl)
   }, [])
@@ -43,6 +44,7 @@ const BgSettings = () => {
   // 切换高斯模糊效果
   const toggleBlur = (e) => {
     const isChecked = e.target.checked;
+    setBgBlurEnabled(isChecked)
     localStorage.setItem('bgBlurEnabled', isChecked);
   };
 
@@ -87,7 +89,7 @@ const BgSettings = () => {
             在历史背景中选择
           </Button>
           {/* 高斯模糊开关 */}
-          <Checkbox onChange={toggleBlur}>
+          <Checkbox onChange={toggleBlur} checked={bgBlurEnabled}>
             启用背景模糊效果
           </Checkbox>
         </Space>

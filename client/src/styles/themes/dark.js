@@ -15,10 +15,10 @@ export const darkTheme = {
     '--info-color': 'hsl(200, 85%, 55%)',
 
     // 文本颜色
-    '--title-color': 'hsl(230, 36%, 90%)',
+    '--title-color': 'hsl(230, 16%, 90%)',
     '--subtitle-color': 'rgba(255, 255, 255, 0.75)',
     '--text-color': 'hsl(230, 16%, 85%)',
-    '--text-color-secondary': 'hsl(230, 16%, 40%)',
+    '--text-color-secondary': 'hsl(230, 16%, 66%)',
     '--text-color-disabled': 'hsl(230, 16%, 55%)',
     '--muted-text-color': 'hsl(230, 16%, 75%)',
     '--heading-color': '#eee',
@@ -28,8 +28,8 @@ export const darkTheme = {
 
     // 背景色
     '--background-color': '#121212',
-    '--background-color-light': 'hsl(230, 15%, 75%)',
-    '--background-color-dark': 'hsl(230, 10%, 25%)',
+    '--background-color-light': 'hsl(230, 5%, 25%)',
+    '--background-color-dark': 'hsl(230, 5%, 66%)',
     '--container-color': 'hsl(230, 15%, 18%)',
     '--card-background-color': 'hsl(230, 5%, 66%)',
     '--hover-background-color': 'hsl(230, 15%, 25%)',
@@ -52,9 +52,9 @@ export const darkTheme = {
     '--box-shadow-hover': '0 4px 16px rgba(0, 0, 0, 0.4)',
 
     // 按钮颜色
-    '--button-background-color': 'hsl(230, 0%, 46%)',
-    '--button-background-color-active': 'hsl(230, 5%, 60%)',
-    '--button-background-color-hover': 'hsl(230, 5%, 75%)',
+    '--button-background-color': 'hsl(230, 0%, 30%)',
+    '--button-background-color-active': 'hsl(230, 5%, 50%)',
+    '--button-background-color-hover': 'hsl(230, 5%, 66%)',
     '--button-text-color': 'hsl(230, 100%, 97%)',
     '--button-text-color-hover': 'hsl(230, 100%, 97%)',
     '--button-disabled-background': 'hsl(230, 15%, 30%)',

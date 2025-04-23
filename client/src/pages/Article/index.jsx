@@ -16,6 +16,7 @@ import { useChannels } from '../../utils/hooks/useChannels'
 import { delArticleAPI, getArticleListAPI } from '/src/apis/article'
 import './index.scss'
 import { reviewArticleAPI } from '/src/apis/article';
+import { syncArticlesAPI } from '../../apis/articles_platform/search';
 
 const { RangePicker } = DatePicker
 
@@ -232,15 +233,26 @@ const Article = () => {
     }
   };
 
+  const syncArticlesIndex = async () => {
+    const res = await syncArticlesAPI()
+  }
 
   return (
     <div>
       <Card
         title={
-          <Breadcrumb items={[
-            { title: <Link to={'/'}>首页</Link> },
-            { title: '文章列表' },
-          ]} />
+          <div className='flex justify-between align-middle'>
+            <Breadcrumb items={[
+              { title: <Link to={'/'}>首页</Link> },
+              { title: '文章列表' },
+            ]} />
+            <Button
+              type='text'
+              onClick={syncArticlesIndex}
+            >
+              重建文章搜索索引
+            </Button>
+          </div>
         }
         style={{ marginBottom: 10 }}
       >

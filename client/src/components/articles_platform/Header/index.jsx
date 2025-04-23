@@ -1,12 +1,9 @@
-import { useEffect, useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Link, useNavigate } from "react-router-dom"
-import { Modal, Button, Popconfirm, message } from 'antd';
+import { Popconfirm, message } from 'antd';
 import {
-  SearchOutlined,
   UserOutlined,
   UserAddOutlined,
-  SunOutlined,
-  MoonOutlined,
   SettingOutlined,
   LayoutOutlined,
 } from '@ant-design/icons';
@@ -16,6 +13,7 @@ import { AuthContext } from '/src/store/AuthContext';
 import LoginModal from '../popouts/login/LoginModal';
 import { removeToken } from '/src/utils';
 import ThemeToggle from '../widgets/ThemeToggle';
+import SearchComponent from '../../common/Search';
 
 
 export function Header({ position }) {
@@ -54,13 +52,15 @@ export function Header({ position }) {
               <span>写作</span>
             </Link>
           </li>
+          <li>
+            <Link to={'/articles/feedback'} className={styles.menuLink}>
+              <i></i>
+              <span>留言</span>
+            </Link>
+          </li>
         </ul>
-        <form action="" className={styles.searchForm}>
-          <div className={styles.searchBoxContainer}>
-            <button className={`${styles.searchBtn} iconfont icon-sousuo`}></button>
-            <input type="search" className={styles.searchBox} placeholder='搜索' />
-          </div>
-        </form>
+        {/* 使用抽取出的搜索组件 */}
+        <SearchComponent />
       </div>
       <div className={styles.icons}>
         <ul className={styles.iconsList}>

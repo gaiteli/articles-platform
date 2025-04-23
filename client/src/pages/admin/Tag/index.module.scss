@@ -1,0 +1,77 @@
+.tagManagement {
+  padding: 16px;
+  
+  .filterBar {
+    margin-bottom: 16px;
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+  }
+  
+  .tagsList {
+    margin-top: 8px;
+    
+    .tagItem {
+      display: inline-block;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+  }
+  
+  .tagDetail {
+    .ant-row {
+      margin-bottom: 8px;
+    }
+    
+    .statusBadge {
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      
+      &.approved {
+        background-color: #52c41a;
+        color: white;
+      }
+      
+      &.pending {
+        background-color: #1890ff;
+        color: white;
+      }
+      
+      &.rejected {
+        background-color: #f5222d;
+        color: white;
+      }
+    }
+  }
+  
+  .reviewInfo {
+    background-color: #f5f5f5;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    
+    p {
+      margin-bottom: 8px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  
+  /* 标签样式 */
+  :global {
+    .ant-tag-blue {
+      color: #1890ff;
+      background: #e6f7ff;
+      border-color: #91d5ff;
+    }
+    
+    .ant-tag-green {
+      color: #52c41a;
+      background: #f6ffed;
+      border-color: #b7eb8f;
+    }
+  }
+}

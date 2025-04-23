@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState, useContext } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { message } from 'antd';
 import { InfoCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
@@ -17,10 +17,8 @@ import {
   EditButtonWithPermission,
   LikeButtonWithPermission,
 } from '../../../components/permission/buttons';
-import { AuthContext } from '/src/store/AuthContext';
 
 const ArticlesPlatformArticlePage = () => {
-  const { user } = useContext(AuthContext)
   const { id } = useParams();
   const [fetchArticleError, setFetchArticleError] = useState(null);
   const [article, setArticle] = useState({

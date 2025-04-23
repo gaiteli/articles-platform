@@ -10,6 +10,7 @@ import {
   DownOutlined,
   MoonOutlined,
   NumberOutlined,
+  TagOutlined,
 } from '@ant-design/icons'
 import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
@@ -39,6 +40,11 @@ const items = [
     label: '分类管理',
     key: '/channel',
     icon: <NumberOutlined />
+  },
+  {
+    label: '标签管理',
+    key: '/tag',
+    icon: <TagOutlined />
   },
   {
     label: '用户管理',
