@@ -258,13 +258,11 @@ router.post('/p/:id/like', authenticate, authorize(), async function (req, res, 
     if (!canLike) {
       throw new Forbidden('不能点赞自己的文章');
     }
-    console.log('权限权限！！！！！')
 
     // 检查是否已点赞
     const existingLike = await Like.findOne({where: {articleId, userId}});
 
     if (!existingLike) {
-      console.log('existing like passed!' + existingLike);
       await Like.create({articleId, userId});
       await article.increment('likeCount');
       success(res, '点赞成功');

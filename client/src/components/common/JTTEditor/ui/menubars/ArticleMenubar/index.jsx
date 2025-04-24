@@ -1,5 +1,8 @@
 import React from 'react';
 import {
+  AlignCenterOutlined,
+  AlignLeftOutlined,
+  AlignRightOutlined,
   BoldOutlined,
   CheckSquareOutlined,
   CodeFilled,
@@ -10,10 +13,10 @@ import {
   ItalicOutlined,
   LinkOutlined,
   OrderedListOutlined,
-  PictureFilled,
   PictureOutlined,
   RedoOutlined,
   StrikethroughOutlined,
+  TableOutlined,
   UnderlineOutlined,
   UndoOutlined,
   UnorderedListOutlined,
@@ -153,6 +156,40 @@ const ArticleMenubar = ({ editor }) => {
       disabled: (editor) => !editor.can().chain().focus().toggleCodeBlock().run(),
     },
     {
+      title: 'Table',
+      icon: <TableOutlined />,
+      action: (editor) => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
+      isActive: (editor) => editor.isActive('table'),
+      disabled: (editor) => !editor.can().chain().focus().insertTable().run(),
+    },
+    {
+      type: 'separator',
+    },
+    {
+      title: '左对齐 (Ctrl+Shift+L)',
+      icon: <AlignLeftOutlined />, 
+      action: () => editor.chain().focus().setTextAlign('left').run(),
+      isActive: () => editor.isActive({ textAlign: 'left' }),
+    },
+    {
+      title: '居中对齐 (Ctrl+Shift+E)',
+      icon: <AlignCenterOutlined />, 
+      action: () => editor.chain().focus().setTextAlign('center').run(),
+      isActive: () => editor.isActive({ textAlign: 'center' }),
+    },
+    {
+      title: '右对齐 (Ctrl+Shift+R)',
+      icon: <AlignRightOutlined />,
+      action: () => editor.chain().focus().setTextAlign('right').run(),
+      isActive: () => editor.isActive({ textAlign: 'right' }),
+    },
+    {
+      title: '两端对齐 (Ctrl+Shift+J)',
+      icon: '≡',
+      action: () => editor.chain().focus().setTextAlign('justify').run(),
+      isActive: () => editor.isActive({ textAlign: 'justify' }),
+    },
+    {
       type: 'separator',
     },
     // function
@@ -203,45 +240,47 @@ const ArticleMenubar = ({ editor }) => {
   ]
 
   return (
-    <div className={styles.menuBar}>
-      {items.map((item, index) => {
-        if (item.type === 'separator') {
-          return <span key={`separator-${index}`} className={styles.separator} />
-        }
-        
-        // Check if action requires editor focus; chain it if needed.
-        const action = () => item.action(editor); // Assuming item.action handles focus chaining if needed
+    <>
+      <div className={styles.menuBar}>
+        {items.map((item, index) => {
+          if (item.type === 'separator') {
+            return <span key={`separator-${index}`} className={styles.separator} />
+          }
 
-        // Video
-        if (item.type === 'video') {
-          const isDisabled = !editor.isEditable || (item.disabled && item.disabled(editor));
+          // Check if action requires editor focus; chain it if needed.
+          const action = () => item.action(editor); // Assuming item.action handles focus chaining if needed
+
+          // Video
+          if (item.type === 'video') {
+            const isDisabled = !editor.isEditable || (item.disabled && item.disabled(editor));
+            return (
+              <VideoBubble
+                key={item.title || `video-${index}`}
+                editor={editor}
+                icon={item.icon}
+                tooltip={item.title}
+                buttonClassName={styles.menuItem}
+                action={action}
+                disabled={isDisabled}
+              />
+            );
+          }
+
           return (
-            <VideoBubble
-              key={item.title || `video-${index}`}
-              editor={editor}
-              icon={item.icon}
-              tooltip={item.title}
-              buttonClassName={styles.menuItem}
-              action={action}
-              disabled={isDisabled}
-            />
+            <button
+              key={item.title}
+              title={item.title}
+              type="button"
+              onClick={action}
+              className={`${styles.menuItem} ${item.isActive && item.isActive(editor) ? styles.isActive : ''}`}
+              disabled={!editor.isEditable || (item.disabled && item.disabled(editor))}
+            >
+              {item.icon}
+            </button>
           );
-        }
-
-        return (
-          <button
-            key={item.title}
-            title={item.title}
-            type="button"
-            onClick={action}
-            className={`${styles.menuItem} ${item.isActive && item.isActive(editor) ? styles.isActive : ''}`}
-            disabled={!editor.isEditable || (item.disabled && item.disabled(editor))}
-          >
-            {item.icon}
-          </button>
-        );
-      })}
-    </div>
+        })}
+      </div>
+    </>
   );
 }
 

@@ -11,6 +11,7 @@ const admin = [
   'admin:access',
   'article:manage',
   'user:manage',
+  'tag:manage',
   ...user,
 ]
 const superAdmin = [

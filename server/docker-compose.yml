@@ -10,3 +10,12 @@ services:
       - "3306:3306"
     volumes:
       - ./data/mysql:/var/lib/mysql
+  meilisearch:
+    image: getmeili/meilisearch:v1.13
+    environment:
+      - MEILI_ENV=development
+      - MEILI_MASTER_KEY=Per4CS-nqIOaleb0fWQG_wrGqo5bqLiEHKffZFW_KtQ
+    ports:
+      - "7700:7700"
+    volumes:
+      - ./data/meili_data:/meili_data

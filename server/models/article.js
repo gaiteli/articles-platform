@@ -2,6 +2,8 @@
 const {
   Model
 } = require('sequelize');
+const { indexArticle, deleteArticleFromIndex } = require('../utils/meilisearch');
+
 module.exports = (sequelize, DataTypes) => {
   class Article extends Model {
     /**
@@ -89,6 +91,44 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
   }, {
+    // 为Meilisearch索引增加hook
+    hooks: {
+      afterCreate: async (article, options) => {
+        const Channel = sequelize.models.Channel;
+        const channel = await Channel.findByPk(article.channelId);
+
+        await indexArticle({
+          id: article.id,
+          title: article.title,
+          content: article.content,
+          readCount: article.readCount,
+          likeCount: article.likeCount,
+          createdAt: article.createdAt,
+          updatedAt: article.updatedAt,
+          channelName: channel ? channel.name : null
+        });
+      },
+
+      afterUpdate: async (article, options) => {
+        const Channel = sequelize.models.Channel;
+        const channel = await Channel.findByPk(article.channelId);
+
+        await indexArticle({
+          id: article.id,
+          title: article.title,
+          content: article.content,
+          readCount: article.readCount,
+          likeCount: article.likeCount,
+          createdAt: article.createdAt,
+          updatedAt: article.updatedAt,
+          channelName: channel ? channel.name : null
+        });
+      },
+
+      afterDestroy: async (article, options) => {
+        await deleteArticleFromIndex(article.id);
+      }
+    },
     sequelize,
     modelName: 'Article',
   });

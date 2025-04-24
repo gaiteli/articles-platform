@@ -1,0 +1,86 @@
+.floatingTableMenu {
+  position: absolute;
+  display: flex;
+  flex-wrap: wrap;
+  background-color: var(--background-color-light);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 4px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  max-width: 360px;
+  transition: all 0.5s ease;
+}
+
+.tableMenuItem {
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 4px 4px;
+  margin: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  
+  &:hover {
+    background-color: var(--background-color-light);
+    border-color: #1890ff;
+    
+    .tooltipText {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    &:hover {
+      background: none;
+      border-color: transparent;
+      
+      .tooltipText {
+        visibility: hidden;
+        opacity: 0;
+      }
+    }
+  }
+  
+  .tooltipText {
+    visibility: hidden;
+    width: 120px;
+    background-color: var(--background-color-dark);
+    color: var(--button-text-color);
+    text-align: center;
+    border-radius: 4px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -60px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 12px;
+    pointer-events: none;
+    
+    &::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+    }
+  }
+}
+
+.separator {
+  border-left: 2px solid var(--gray-8);
+  height: 24px;
+  margin: auto 4px;
+}

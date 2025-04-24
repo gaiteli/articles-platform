@@ -116,6 +116,9 @@ const FeedbackPage = () => {
               {dates.map((date, dateIndex) => (
                 <li key={date} className={styles.dateGroup}>
                   {/* 日期标签 */}
+                  <div className={styles.dateBadgeLogo}>
+                    <img src='/src/assets/react.svg' width='20px' />
+                  </div>
                   <div className={styles.dateBadge}>
                     <span className={styles.dateText}>{date}</span>
                   </div>

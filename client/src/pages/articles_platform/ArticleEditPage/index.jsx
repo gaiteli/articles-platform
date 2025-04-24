@@ -10,6 +10,7 @@ import { useJttEditor } from '../../../components/common/JTTEditor/core/useJttEd
 import MenuBar from '../../../components/common/JTTEditor/ui/MenuBar';
 import ContentArea from '../../../components/common/JTTEditor/ui/ContentArea';
 import LinkBubble from '../../../components/common/JTTEditor/ui/LinkBubble';
+import TableMenu from '../../../components/common/JTTEditor/ui/TableMenu/index.jsx';
 import { CategoryCard } from '../../../components/articles_platform/widgets/CategoryCard';
 import { CoverUploader } from '/src/components/common/Upload';
 import TagSelector from '../../../components/articles_platform/widgets/TagSelector';
@@ -465,6 +466,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
           <div className={styles.contentContainer}>
             <LinkBubble editor={editor} />
             <ContentArea editor={editor} />
+            {editor && <TableMenu editor={editor} />}
           </div>
 
           {/* 额外信息栏 */}

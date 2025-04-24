@@ -19,6 +19,9 @@ const uploadsRouter = require('./routes/articlesPlatform/uploads')
 const articlePlatformChannelRouter = require('./routes/articlesPlatform/channels')
 const usersRouter = require('./routes/articlesPlatform/users')
 const articlePlatformAttachmentsRouter = require('./routes/articlesPlatform/attachments')
+const articlePlatformTagsRouter = require('./routes/articlesPlatform/tags')
+const searchRouter = require('./routes/articlesPlatform/search')
+const articlePlatformFeedbacksRouter = require('./routes/articlesPlatform/feedbacks')
 
 // 后台路由
 const adminArticlesRouter = require('./routes/admin/articles')
@@ -27,6 +30,7 @@ const adminAuthRouter = require('./routes/admin/auth')
 const adminAttachmentsRouter = require('./routes/admin/attachments')
 const adminChannelsRouter = require('./routes/admin/channels')
 const adminDashboardRouter = require('./routes/admin/dashboard')
+const adminTagsRouter = require('./routes/admin/tags')
 
 // cors跨域
 const corsOptions = {
@@ -45,7 +49,10 @@ app.use('/articles-platform', weakAuthenticate, articlePlatformArticlesRouter)  
 app.use('/articles-platform/channels', weakAuthenticate, articlePlatformChannelRouter)
 app.use('/users', authenticate, usersRouter)        // /me /permissions
 app.use('/uploads', authenticate, uploadsRouter)
-app.use('/article-platform/attachments', authenticate, articlePlatformAttachmentsRouter)
+app.use('/articles-platform/attachments', authenticate, articlePlatformAttachmentsRouter)
+app.use('/articles-platform/tags', weakAuthenticate, articlePlatformTagsRouter)
+app.use('/search', weakAuthenticate, searchRouter)
+app.use('/articles-platform/feedbacks', authenticate, articlePlatformFeedbacksRouter)
 
 // app.use('/admin/login', adminAuthRouter)
 app.use('/admin/dashboard', authenticate, adminAuthenticate, adminDashboardRouter)
@@ -53,6 +60,7 @@ app.use('/admin/articles', authenticate, adminAuthenticate, adminArticlesRouter)
 app.use('/admin/users', authenticate, adminAuthenticate, adminUsersRouter)
 app.use('/admin/attachments', authenticate, adminAuthenticate, adminAttachmentsRouter)
 app.use('/admin/channels', authenticate, adminAuthenticate, adminChannelsRouter)
+app.use('/admin/tags', authenticate, adminAuthenticate, adminTagsRouter)
 
 
 app.listen(PORT, () => {
