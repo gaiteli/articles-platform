@@ -95,8 +95,8 @@ const ThemeSettings = () => {
 
       <Divider />
 
-      <Title level={4}>自定义主题颜色</Title>
-      <Card>
+      <Title level={4} style={{display: 'none'}}>自定义主题颜色</Title>
+      <Card style={{display: 'none'}}>
         <Space direction="vertical" style={{ width: '100%' }}>
           {themeVariableKeys.map(key => {
             const cssVarName = `--${key}`;

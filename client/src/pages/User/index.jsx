@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import {
   Card,
   Table,
@@ -18,12 +18,9 @@ import img404 from '/src/assets/error.png'
 import './index.scss'
 
 import moment from 'moment';
-import { BASE_URL } from '../../constants'
 import { getAllUsersInfoAPI, updateUserInfoAPI } from '/src/apis/user'
 
 const User = () => {
-  const navigate = useNavigate()
-
   // 准备列数据
   const GENDER = {
     0: <Tag color='success'>男</Tag>,
@@ -70,7 +67,6 @@ const User = () => {
       dataIndex: 'status',
       key: 'status',
       width: 75,
-      // data - 后端返回的状态status。data === 1 => 待审核；data === 2 => 审核通过
       render: data => STATUS[data]
     },
     {
@@ -186,7 +182,7 @@ const User = () => {
       <Card
         title={
           <Breadcrumb items={[
-            { title: <Link to={'/'}>首页</Link> },
+            { title: <Link to={'/admin'}>首页</Link> },
             // { title: `${articleId ? '编辑' : '发布'}文章` },
             { title: '用户管理' }
           ]}
@@ -198,7 +194,6 @@ const User = () => {
           initialValues={{ status: 9 }}
           layout='inline'
           onFinish={onFinish}
-        // form={form}
         >
           <Form.Item label="用户名" name="username" className='username'>
             <Input placeholder="请输入要查询的用户名" style={{ width: 250 }} />

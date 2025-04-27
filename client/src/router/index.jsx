@@ -27,6 +27,7 @@ import ErrorPageWithHeader from "../pages/errors/ErrorPageWithHeader/index.jsx";
 import VerifyEmail from '../pages/VerifyEmail/index.jsx'
 import ForgotPassword from "../pages/Login/ForgotPassword/index.jsx";
 import ResetPassword from "../pages/Login/ResetPassword/index.jsx";
+import Feedback from "../pages/admin/Feedback/index.jsx";
 
 const router = createBrowserRouter([
   // articles_platform 文章平台
@@ -112,6 +113,10 @@ const router = createBrowserRouter([
       {
         path: "tag",
         element: <Tag />
+      },
+      {
+        path: "feedback",
+        element: <Feedback />
       },
       {
         path: "user",

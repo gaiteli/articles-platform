@@ -243,7 +243,7 @@ const Article = () => {
         title={
           <div className='flex justify-between align-middle'>
             <Breadcrumb items={[
-              { title: <Link to={'/'}>首页</Link> },
+              { title: <Link to={'/admin'}>首页</Link> },
               { title: '文章列表' },
             ]} />
             <Button

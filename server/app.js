@@ -32,6 +32,7 @@ const adminAttachmentsRouter = require('./routes/admin/attachments')
 const adminChannelsRouter = require('./routes/admin/channels')
 const adminDashboardRouter = require('./routes/admin/dashboard')
 const adminTagsRouter = require('./routes/admin/tags')
+const adminFeedbackRouter = require('./routes/admin/feedbacks')
 
 // cors跨域
 const corsOptions = {
@@ -63,6 +64,7 @@ app.use('/admin/users', authenticate, adminAuthenticate, adminUsersRouter)
 app.use('/admin/attachments', authenticate, adminAuthenticate, adminAttachmentsRouter)
 app.use('/admin/channels', authenticate, adminAuthenticate, adminChannelsRouter)
 app.use('/admin/tags', authenticate, adminAuthenticate, adminTagsRouter)
+app.use('/admin/feedbacks', authenticate, adminAuthenticate, adminFeedbackRouter)
 
 
 app.listen(PORT, () => {

@@ -307,7 +307,7 @@ const Channels = () => {
         title={
           <div className={`${styles.title} flex justify-between align-center`}>
             <Breadcrumb items={[
-              { title: <Link to={'/'}>首页</Link> },
+              { title: <Link to={'/admin'}>首页</Link> },
               { title: '分类列表' },
             ]} />
             <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd} disabled={isAddButtonDisabled}>
