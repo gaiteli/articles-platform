@@ -10,7 +10,7 @@ import { setToken } from "/src/utils"
 import { AuthContext } from '/src/store/AuthContext';
 
 export default function Login() {
-  const { setAuthState }  = useContext(AuthContext)
+  const { setAuthState } = useContext(AuthContext)
   const navigate = useNavigate()
   const location = useLocation();
   const [captchaData, setCaptchaData] = useState('') // 存储验证码SVG数据
@@ -47,7 +47,7 @@ export default function Login() {
       const token = res.data.token
       const user = res.data.user
       setToken(token)   // 存到localStorage
-      setAuthState({user: user, permissions: []})
+      setAuthState({ user: user, permissions: [] })
 
       // 获取跳转前的页面路径
       const { from } = location.state || { from: { pathname: '/' } };
@@ -58,7 +58,7 @@ export default function Login() {
       console.log('登陆信息提交遇到错误', error);
       // 登录失败时刷新验证码
       fetchCaptcha()
-      
+
       if (error.response && error.response.data && error.response.data.errors) {
         const errorName = error.response.data.errors[0]
         if (errorName.includes('验证码')) {
@@ -129,8 +129,8 @@ export default function Login() {
                 <Input size="large" placeholder="请输入验证码" />
               </Col>
               <Col span={8}>
-                <div 
-                  className="captcha-img" 
+                <div
+                  className="captcha-img"
                   onClick={fetchCaptcha}
                   dangerouslySetInnerHTML={{ __html: captchaData }}
                   style={{ height: '40px', cursor: 'pointer' }}
@@ -151,7 +151,10 @@ export default function Login() {
               登录
             </Button>
           </Form.Item>
-          <Link to="/register">没有账号？去注册</Link>
+          <Flex justify="space-between" align="center" className="register-and-back">
+            <Link to="/register">没有账号？去注册</Link>
+            <Link to="/articles">返回首页</Link>
+          </Flex>
         </Form>
       </Card>
     </div>
