@@ -12,6 +12,7 @@ require('dotenv').config()
 const { authenticate, weakAuthenticate, adminAuthenticate, authorize } = require('./middlewares/auth');
 
 const authRouter = require('./routes/auth')
+const captchaRouter = require('./routes/captcha')
 
 // 文章平台路由
 const articlePlatformArticlesRouter = require('./routes/articlesPlatform/articles')
@@ -45,6 +46,7 @@ app.use(express.json({limit: '100mb'}));
 app.use(express.urlencoded({limit: '100mb', extended: true}));
 
 app.use('/', authRouter)    // /login /signup
+app.use('/captcha', captchaRouter)
 app.use('/articles-platform', weakAuthenticate, articlePlatformArticlesRouter)    // 在子路由中决定是否给予认证和鉴权
 app.use('/articles-platform/channels', weakAuthenticate, articlePlatformChannelRouter)
 app.use('/users', authenticate, usersRouter)        // /me /permissions

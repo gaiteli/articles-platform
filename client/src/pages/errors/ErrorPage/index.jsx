@@ -9,9 +9,9 @@ const ErrorPage = ({ code, type, message }) => {
   return (
     <div className={styles.errorContainer}>
       <div>
-        <h1>{code}</h1>
-        <h4>{type}</h4>
-        <p>{message}</p>
+        <h1>{code || 404}</h1>
+        <h4>{type || '页面不存在'}</h4>
+        <p>{message || ''}</p>
       </div>
       <button
         className={styles.button}

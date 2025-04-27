@@ -7,6 +7,7 @@ const { NotFound, BadRequest } = require('http-errors');
 const { success, failure } = require('@utils/responses')
 const {authorize} = require("@middlewares/auth");
 const {authenticate} = require("../../middlewares/auth");
+const { setKey, getKey } = require('@utils/redis')
 
 /* 查询分类列表 */
 router.get('/', authenticate, authorize(['article:create'], '查询分类列表'), async function(req, res, next) {

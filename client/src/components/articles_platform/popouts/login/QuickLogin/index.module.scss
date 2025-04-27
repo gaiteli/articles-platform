@@ -9,7 +9,20 @@
 
   .socialLogin {
     display: flex;
-    flex-direction: column;
     gap: 8px;
+
+    button {
+      background-color: var(--gray-1);
+
+      [data-theme='dark'] & {
+        background-color: var(--gray-8) !important;
+      }
+    }
+
+    :global(.ant-btn:hover) {
+      color: var(--button-text-color);
+      border-color: var(--border-color);
+      box-shadow: 2px 2px 2px 1px var(--border-color);
+    }
   }
 }

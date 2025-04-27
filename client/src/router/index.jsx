@@ -24,6 +24,9 @@ import TestPage from "../pages/TestPage/index.jsx";
 import Login from "../pages/Login/Login/index.jsx";
 import Register from "../pages/Login/Register/index.jsx";
 import ErrorPageWithHeader from "../pages/errors/ErrorPageWithHeader/index.jsx";
+import VerifyEmail from '../pages/VerifyEmail/index.jsx'
+import ForgotPassword from "../pages/Login/ForgotPassword/index.jsx";
+import ResetPassword from "../pages/Login/ResetPassword/index.jsx";
 
 const router = createBrowserRouter([
   // articles_platform 文章平台
@@ -124,6 +127,18 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />
+  },
+  {
+    path: '/verify-email',
+    element: <VerifyEmail />
+  },
+  {
+    path: '/forgot-password',
+    element: <ForgotPassword />
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPassword />
   },
   {
     path: "/test-page",

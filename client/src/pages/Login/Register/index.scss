@@ -15,7 +15,6 @@
 
   .register-container {
     width: 400px;
-    height: 580px;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -38,6 +37,10 @@
 
     .ant-form-item-explain-error {
       margin-left: 26px; 
+    }
+
+    .ant-input-prefix {
+      margin-right: 8px;
     }
     
   }

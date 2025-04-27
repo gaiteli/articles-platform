@@ -43,6 +43,7 @@ request.interceptors.response.use((response) => {
 
       case 400:
         const errorName = response.data.errors[0];
+        if (errorName.includes('验证码')) break;    // 留给Login表单渲染到表单项下方
         if (response.data.subType === '01') {
           message.warning({
             content: errorName + '\n请检查无误后再提交',
@@ -56,6 +57,10 @@ request.interceptors.response.use((response) => {
           })
           setTimeout(() => relogin(), 1900)
         }
+        message.error({
+          content: errorName,
+          duration: 2,
+        });
         break;
 
       case 401:
@@ -92,6 +97,15 @@ request.interceptors.response.use((response) => {
 
       case 500:
         // 处理 500 服务器错误
+        // 邮件发送550错误
+        if (response.data.message.includes('550')) {    
+          message.error('邮件发送失败，请检查邮件地址是否正确! ')
+          setTimeout(() => {
+            message.warning('若无误，请尝试再次注册，若仍失败请联系管理员。')
+          }, 2000)
+          break;
+        }
+        // 其它错误
         message.error({
           content: '服务器内部错误，请稍后再试。',
           duration: 2,

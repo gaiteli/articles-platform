@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {User} = require('@models');
 const { Op } = require('sequelize')
-const { NotFound } = require('http-errors')
+const { NotFound, BadRequest } = require('http-errors')
 const { success, failure } = require('@utils/responses')
 
 /* 查询用户列表 */
@@ -83,21 +83,6 @@ router.get('/:id', async function (req, res, next) {
   }
 })
 
-/* 创建用户 */
-// router.post('/', async function (req, res, next) {
-//   try {
-
-//     // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
-//     const body = filterBody(req)
-
-//     const user = await User.create(body)
-//     delete user.dataValues.password   // sequelize中的固定用法，删除密码字段以免前台看到密码
-
-//     success(res, 'user created successfully', user, 201)  // 201表示创建了新的资源
-//   } catch(error) {
-//     failure(res, error)
-//   }
-// })
 
 /* 删除用户: 一般做成禁用账号 */
 
@@ -105,11 +90,17 @@ router.get('/:id', async function (req, res, next) {
 /* 更新用户 */
 router.put('/:id', async function (req, res, next) {
   try {
+    console.log(req.body)
+    if (!['active', 'inactive', 'banned'].includes(req.body.status)) {
+      throw new BadRequest('非法的状态值')
+    }
     
     const user = await getUser(req)
 
     // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
-    const body = filterBody(req, user)
+    const body = {
+      status: req.body.status ?? user.status
+    }
     
     await user.update(body)
     delete user.dataValues.password   // sequelize中的固定用法，删除密码字段以免前台看到密码
@@ -148,7 +139,7 @@ function filterBody(req, user) {
     username: req.body.username || user.username,
     avatar: req.body.avatar || user.avatar,
     gender: req.body.gender || user.gender,
-    password: req.body.password || user.password,
+    password: user.password,
     phone: req.body.phone || user.phone,
     email: req.body.email || user.email,
     introduction: req.body.introduction || user.introduction,

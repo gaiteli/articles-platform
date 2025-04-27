@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import {
   Card,
   Table,
@@ -10,7 +10,6 @@ import {
   Radio,
   Input,
   Space,
-  Select,
   message,
   Tooltip
 } from 'antd'
@@ -21,9 +20,6 @@ import './index.scss'
 import moment from 'moment';
 import { BASE_URL } from '../../constants'
 import { getAllUsersInfoAPI, updateUserInfoAPI } from '/src/apis/user'
-import { convertLegacyProps } from 'antd/es/button'
-
-const { Option } = Select
 
 const User = () => {
   const navigate = useNavigate()
@@ -35,9 +31,9 @@ const User = () => {
     99: <Tag color='error'>未填写</Tag>,
   }
   const STATUS = {
-    0: <Tag color='success'>正常</Tag>,
-    1: <Tag color='warning'>禁用</Tag>,
-    2: <Tag color='error'>异常</Tag>,
+    active: <Tag color='success'>正常</Tag>,
+    inactive: <Tag color='warning'>未激活</Tag>,
+    banned: <Tag color='error'>已封禁</Tag>,
   }
   const columns = [
     {
@@ -100,19 +96,26 @@ const User = () => {
         console.log(index);
         return (
           <Space size="middle">
-            {record.status === 0 ?
-              <Tooltip title="禁用" placement='top'>
-                <Button type="primary" danger shape="circle" icon={<StopOutlined />}
-                  onClick={() => onClickBanUser(record.id, { status: 1 })}
+            {record.status === 'banned' ? (
+              <Tooltip title="解除封禁" placement='top'>
+                <Button
+                  type="primary"
+                  shape="circle"
+                  icon={<UndoOutlined />}
+                  onClick={() => onClickBanUser(record.id, {status: 'active'})}
                 />
               </Tooltip>
-              :
-              <Tooltip title="启用" placement='top'>
-                <Button type="primary" shape="circle" icon={<UndoOutlined />}
-                  onClick={() => onClickBanUser(record.id, { status: 0 })}
+            ) : (
+              <Tooltip title="封禁用户" placement='top'>
+                <Button
+                  type="primary"
+                  danger
+                  shape="circle"
+                  icon={<StopOutlined />}
+                  onClick={() => onClickBanUser(record.id, {status: 'banned'})}
                 />
               </Tooltip>
-            }
+            )}
           </Space>
         )
       }

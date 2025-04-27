@@ -90,7 +90,7 @@ function failure(res, error, message) {
 
   res.status(statusCode).json({
     status: false,
-    message: message || `请求失败: ${error.name}`,
+    message: message || `请求失败: ${error.name}: ${error.message}`,
     errors: Array.isArray(errors) ? errors : [errors]
   })
 
