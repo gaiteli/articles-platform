@@ -37,7 +37,12 @@ const adminFeedbackRouter = require('./routes/admin/feedbacks')
 // cors跨域
 const corsOptions = {
   origin: [
-    'https://xxx.cn',
+    'http://jetlive.cn',
+    'https://jetlive.cn',
+    'http://jetlive.cn:5173',
+    'https://jetlive.cn:5173',
+    'http://jetlive.cn:9000',
+    'https://jetlive.cn:9000',
     'http://localhost:5173'
   ]
 }
