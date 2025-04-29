@@ -17,7 +17,7 @@ import './index.scss'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { getUserInfoAPI } from '../../apis/user'
 import { removeToken } from '../../utils/token'
-import { AuthContext } from '/src/store/authContext'
+import { AuthContext } from '/src/store/AuthContext'
 import ThemeToggle from '../../components/articles_platform/widgets/ThemeToggle'
 
 const { Header, Sider } = Layout

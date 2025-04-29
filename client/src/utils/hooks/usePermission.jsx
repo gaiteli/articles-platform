@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { AuthContext } from '/src/store/authContext';
+import { AuthContext } from '/src/store/AuthContext';
 import { message } from 'antd'
 
 export const usePermission = (type, resource) => {
