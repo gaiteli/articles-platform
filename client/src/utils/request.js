@@ -7,7 +7,7 @@ import { useContext, useEffect } from 'react';
 import { AuthContext } from '/src/store/AuthContext';
 
 const request = axios.create({
-  baseURL: 'http://localhost:9000',
+  baseURL: import.meta.env.VITE_AXIOS_BASE_URL,
   timeout: 10000
 })
 
