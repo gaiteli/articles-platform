@@ -8,10 +8,8 @@ import {
   DotChartOutlined
 } from '@ant-design/icons';
 
-import LineChart from './components/LineChart';
 import styles from './index.module.scss';
-import { getStatisticsAPI, getTrendsAPI } from '/src/apis/articles_platform/dashboard';
-
+import { getStatisticsAPI } from '/src/apis/articles_platform/dashboard';
 
 
 const Home = () => {
@@ -80,12 +78,12 @@ const Home = () => {
       <Row gutter={[16, 16]} style={{ marginTop: '24px' }}>
         <Col xs={24} md={12}>
           <Card title="用户增长趋势">
-            <LineChart title="用户数据" />
+            待开发
           </Card>
         </Col>
         <Col xs={24} md={12}>
           <Card title="文章发布趋势">
-            <LineChart title="文章数据" />
+            待开发
           </Card>
         </Col>
       </Row>
