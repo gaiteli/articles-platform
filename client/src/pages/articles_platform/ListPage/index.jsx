@@ -4,8 +4,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { CSSTransition } from 'react-transition-group';
 import moment from 'moment';
 import {
-  List, Button, Card, Flex, Typography, Space, Skeleton, Divider, Tag,
-  DatePicker, Cascader, Select, Radio, message
+  List, Button, Card, Typography, Space, Skeleton, Divider, Tag,
+  DatePicker, Select, Radio, message
 } from 'antd';
 import {
   RightOutlined, LeftOutlined, ClockCircleFilled, ClockCircleOutlined,
@@ -14,11 +14,12 @@ import {
 
 import { Header } from '/src/components/articles_platform/Header'
 import styles from './index.module.scss'
+import noPicture from '@/assets/articles_platform/no_picture_available.svg'
 import { getArticleListAPI } from '/src/apis/articles_platform/article'
-import { getNestedChannelsAPI } from '/src/apis/articles_platform/channel';
 
 const { RangePicker } = DatePicker;
 import locale from 'antd/es/date-picker/locale/zh_CN' // 引入汉化包 时间选择器显示中文
+import CategorySelector from '../../../components/articles_platform/widgets/CategorySelector';
 const { Option } = Select;
 
 const ArticlesPlatformListPage = () => {
@@ -33,8 +34,6 @@ const ArticlesPlatformListPage = () => {
   })
   const [count, setCount] = useState(0)
   const [list, setList] = useState([])
-  const [categories, setCategories] = useState([]);
-  const [categoriesLoading, setCategoriesLoading] = useState(false);
 
 
   // 基于分类进行筛选/排序
@@ -44,27 +43,10 @@ const ArticlesPlatformListPage = () => {
     sortBy: 'createdAt',
   });
 
-  // 获取分类数据
-  const fetchCategories = async () => {
-    if (categories.length > 0 || categoriesLoading) return;
-
-    setCategoriesLoading(true);
-    try {
-      const res = await getNestedChannelsAPI();
-      setCategories(res.data);
-    } catch (error) {
-      message.error('获取分类失败');
-    } finally {
-      setCategoriesLoading(false);
-    }
-  };
 
   // 切换侧边栏时获取分类
-  const toggleLayout = async () => {
+  const toggleLayout = () => {
     setIsSidebarVisible(!isSidebarVisible);
-    if (!isSidebarVisible && categories.length === 0) {
-      await fetchCategories();
-    }
   };
 
 
@@ -78,9 +60,12 @@ const ArticlesPlatformListPage = () => {
         ...reqData,
         startTime: filters.timeRange?.[0]?.format('YYYY-MM-DD'),
         endTime: filters.timeRange?.[1]?.format('YYYY-MM-DD'),
-        channelId: filters.channel,
+        channelId: Array.isArray(filters.channel)
+          ? filters.channel[filters.channel.length - 1]
+          : filters.channel,
         sortBy: filters.sortBy,
       };
+      console.log(params);
 
       const res = await getArticleListAPI(params);
       const newList = res.data.articles;
@@ -161,11 +146,11 @@ const ArticlesPlatformListPage = () => {
                   >
                     <div className={styles.coverContainer}>
                       <img
-                        src={item.cover || "/src/assets/articles_platform/no_picture_available.svg"}
+                        src={item.cover || noPicture}
                         alt="cover"
                         className={styles.articleCover}
                         onError={(e) =>
-                          e.target.src = "/src/assets/articles_platform/no_picture_available.svg"}
+                          e.target.src = noPicture}
                       />
                     </div>
                     <div
@@ -224,84 +209,71 @@ const ArticlesPlatformListPage = () => {
           >
             <div className={styles.sidebar}>
               <h2>筛选和排序</h2>
-                {/* 排序方式 */}
-                <div className={styles.filterSection}>
-                  <Typography.Text strong>排序方式</Typography.Text>
-                  <Radio.Group
-                    value={filters.sortBy}
-                    onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-                    block
-                  >
-                    <Radio.Button value="createdAt">最新</Radio.Button>
-                    <Radio.Button value="readCount">阅读量</Radio.Button>
-                    <Radio.Button value="likeCount">点赞数</Radio.Button>
-                  </Radio.Group>
-                </div>
-
-                {/* 时间范围 */}
-                <div className={styles.filterSection}>
-                  <Typography.Text strong>发布时间</Typography.Text>
-                  <RangePicker
-                    locale={locale}
-                    style={{ width: '100%' }}
-                    value={filters.timeRange}
-                    onChange={(dates) => handleFilterChange('timeRange', dates)}
-                  />
-                </div>
-
-                {/* 分类筛选 */}
-                <div className={styles.filterSection}>
-                  <Typography.Text strong>文章分类</Typography.Text>
-                  <Cascader
-                    options={categories}
-                    loading={categoriesLoading}
-                    value={filters.channel ? [filters.channel] : []}
-                    onChange={(value) => {
-                      const selectedValue = value?.length > 0 ? value[value.length - 1] : null;
-                      handleFilterChange('channel', selectedValue);
-                    }}
-                    placeholder={categoriesLoading ? '加载中请稍后..' : '选择分类'}
-                    displayRender={labels => labels[labels.length - 1]}
-                    expandTrigger="hover"
-                    changeOnSelect
-                    showSearch={{
-                      filter: (inputValue, path) =>
-                        path.some(option =>
-                          option.label.toLowerCase().includes(inputValue.toLowerCase())
-                        )
-                    }}
-                    style={{ width: '100%' }}
-                  />
-                </div>
-
-                {/* 清除筛选 */}
-                <Button
-                  type="link"
-                  danger
-                  onClick={() => {
-                    setFilters({
-                      timeRange: null,
-                      channel: null,
-                      sortBy: 'createdAt',
-                    });
-                  }}
-                  style={{ marginTop: 16, width: '100%' }}
+              {/* 排序方式 */}
+              <div className={styles.filterSection}>
+                <Typography.Text strong>排序方式</Typography.Text>
+                <Radio.Group
+                  value={filters.sortBy}
+                  onChange={(e) => handleFilterChange('sortBy', e.target.value)}
+                  block
                 >
-                  清除所有筛选
-                </Button>
+                  <Radio.Button value="createdAt">最新</Radio.Button>
+                  <Radio.Button value="readCount">阅读量</Radio.Button>
+                  <Radio.Button value="likeCount">点赞数</Radio.Button>
+                </Radio.Group>
+              </div>
 
-                <Divider />
-                
-                {/* 热门标签 */}
-                <div className={styles.filterSection}>
-                  <Typography.Text strong>热门标签</Typography.Text>
-                  <Space size={[8, 8]} wrap>
-                    <Tag color="magenta">React</Tag>
-                    <Tag color="red">前端开发</Tag>
-                    <Tag color="volcano">JavaScript</Tag>
-                    <Tag color="orange">算法</Tag>
-                  </Space>
-                </div>
+              {/* 时间范围 */}
+              <div className={styles.filterSection}>
+                <Typography.Text strong>发布时间</Typography.Text>
+                <RangePicker
+                  locale={locale}
+                  style={{ width: '100%' }}
+                  value={filters.timeRange}
+                  onChange={(dates) => handleFilterChange('timeRange', dates)}
+                />
+              </div>
+
+              {/* 分类筛选 */}
+              <div className={styles.filterSection}>
+                <Typography.Text strong>文章分类</Typography.Text>
+                <CategorySelector
+                  isVisible={isSidebarVisible}
+                  filters={filters}
+                  handleFilterChange={handleFilterChange}
+                />
+              </div>
+
+              {/* 清除筛选 */}
+              <Button
+                type="link"
+                danger
+                onClick={() => {
+                  setFilters({
+                    timeRange: null,
+                    channel: null,
+                    sortBy: 'createdAt',
+                  });
+                  console.log('!!!', document.querySelector('.ant-select-selection-search-input').value);
+                  document.querySelector('.ant-select-selection-search-input').value = ""
+                }}
+                style={{ marginTop: 16, width: '100%' }}
+              >
+                清除所有筛选
+              </Button>
+
+              <Divider />
+
+              {/* 热门标签 */}
+              <div className={styles.filterSection}>
+                <Typography.Text strong>热门标签</Typography.Text>
+                <Space size={[8, 8]} wrap>
+                  <Tag color="magenta">React</Tag>
+                  <Tag color="red">前端开发</Tag>
+                  <Tag color="volcano">JavaScript</Tag>
+                  <Tag color="orange">算法</Tag>
+                </Space>
+              </div>
 
             </div>
           </CSSTransition>

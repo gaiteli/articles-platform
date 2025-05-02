@@ -1,4 +1,18 @@
-@import url('https://fonts.font.im/css2?family=Noto+Sans+SC');
+// 导入字体
+@font-face {
+  font-family: 'Lucida Calligraphy';
+  src: local('Lucida Calligraphy'),
+      url('./fonts/Lucida Calligraphy Italic.ttf');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Noto Sans SC";
+  src: local('Noto Sans SC'),
+      url('https://fonts.proxy.ustclug.org/css2?family=Noto+Sans+SC&display=swap');
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

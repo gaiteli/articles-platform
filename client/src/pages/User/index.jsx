@@ -14,7 +14,7 @@ import {
   Tooltip
 } from 'antd'
 import { StopOutlined, UndoOutlined } from '@ant-design/icons'
-import img404 from '/src/assets/error.png'
+import img404 from '@/assets/error.png'
 import './index.scss'
 
 import moment from 'moment';

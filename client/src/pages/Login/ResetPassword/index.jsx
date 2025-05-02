@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { Card, Form, Input, Button, message, Result, Spin } from 'antd'
 import { LockOutlined } from '@ant-design/icons'
-import logo from '/src/assets/react.svg'
+import logo from '@/assets/react.svg'
 import { validateResetTokenAPI, resetPasswordAPI } from '/src/apis/user'
 import './index.scss'
 

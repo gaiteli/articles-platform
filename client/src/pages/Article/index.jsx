@@ -11,7 +11,7 @@ import moment from 'moment';
 // 导入资源
 import { Table, Tag, Space } from 'antd'
 import { EditOutlined, DeleteOutlined, LockOutlined } from '@ant-design/icons'
-import img404 from '/src/assets/error.png'
+import img404 from '@/assets/error.png'
 import { useChannels } from '../../utils/hooks/useChannels'
 import { delArticleAPI, getArticleListAPI } from '/src/apis/article'
 import './index.scss'

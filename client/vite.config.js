@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     extesions: [".js", ".ts", ".jsx", ".tsx", ".css"],
     alias: {
-      "@": resolve(__dirname, "/src"),
+      "@": resolve(__dirname, "src"),
     },
   },
   plugins: [

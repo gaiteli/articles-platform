@@ -20,9 +20,7 @@
 }
 
 .content {
-  width: 45%;
-  height: 70%;
-  min-height: 400px;
+  width: 250px;
   position: relative;
   background-color: white;
   padding: 20px;
@@ -68,58 +66,9 @@
 }
 
 
-/* 分类列表 */
-.infiniteScrollContainer {
-  overflow-y: scroll;
-  padding: 0;
-  margin: 0;
-}
-
-.categoryListItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #eee;
-  &:last-child {
-    border-bottom: none;
-  }
-  &.selected {
-    background-color: #f0f0f0;
-  }
-}
-
-.categoryInfo {
-  display: flex;
-  width: 40%;
-  justify-content: space-between;
-}
-
-.categoryName {
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.categoryCode {
-  color: #666;
-  font-size: 13px;
-}
-
-.selectButton {
-  background-color: #1890ff;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  &:hover {
-    background-color: #40a9ff;
-  }
-}
-
-
 .submitButton {
   width: 100%;
-  background-color: #1890ff;
+  background-color: var(--button-background-color);
   color: white;
   border: none;
   padding: 10px;
@@ -127,6 +76,6 @@
   cursor: pointer;
   margin-top: 20px;
   &:hover {
-    background-color: #40a9ff;
+    background-color: var(--button-background-color-hover);
   }
 }

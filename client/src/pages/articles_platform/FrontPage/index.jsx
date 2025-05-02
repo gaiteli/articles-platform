@@ -3,6 +3,7 @@ import { List, Card, Typography, Spin } from 'antd';
 import { CaretDownOutlined } from '@ant-design/icons'
 
 import styles from './index.module.scss'
+import homePic from '@/assets/articles_platform/home_pic.png'
 import { Header } from '/src/components/articles_platform/Header'
 import Footer from '/src/components/articles_platform/Footer';
 import { debounce } from '../../../utils/index.js';
@@ -92,7 +93,7 @@ const ArticlesPlatformFrontPage = () => {
           className={styles.backgroundImage}
           style={{ filter: blurEnabled ? 'blur(6px)' : 'none' }}    // 高斯模糊
           ref={eleRef}
-          src={user.bgImageUrl || "/src/assets/articles_platform/home_pic.png"}
+          src={user.bgImageUrl || homePic}
         />
         <div className={styles.titles}>
           <h1>GatesLee's study</h1>

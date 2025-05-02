@@ -2,18 +2,20 @@ import { useEffect, useState, useContext } from 'react';
 import { Button, Space, Image, Checkbox } from 'antd';
 import BgImageUploader from '../../../components/common/Upload/extensions/BgImageUploader';
 import { getMyAttachmentsAPI } from '/src/apis/articles_platform/attachment'
+
 import styles from './BgSettings.module.scss';
+import homePic from '@/assets/articles_platform/home_pic.png'
 import { AuthContext } from '/src/store/AuthContext';
 import { ExclamationCircleOutlined, QuestionCircleFilled } from '@ant-design/icons';
 
 // 默认背景图列表
 const DEFAULT_BGS = [
-  "/src/assets/articles_platform/home_pic.png",
+  homePic,
   "/articles_platform/front_bg/plain01.jpg",
   "/articles_platform/front_bg/plain02.jpg",
   "/articles_platform/front_bg/galaxy.jpg",
 ];
-const PICTURE_LOADING_FAILURE = "/src/assets/articles_platform/picture-loading-failure.svg"
+const PICTURE_LOADING_FAILURE = "articles_platform/picture-loading-failure.svg"
 
 const BgSettings = () => {
   const { user } = useContext(AuthContext);

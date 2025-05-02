@@ -1,86 +1,37 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { Card, Skeleton, Divider, List } from 'antd';
-
-import { getChannelsAPI } from '/src/apis/articles_platform/channel';
-import { debounce } from '/src/utils';
+import CategorySelector from '../../widgets/CategorySelector';
+import { getChannelByIdAPI } from "../../../../apis/articles_platform/channel";
 import styles from './index.module.scss';
 
 
 const PopoutChannelPage = ({ chosenCategory, onClose, onSubmit }) => {
-  console.log('popout!');
-  console.log(chosenCategory);
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState(chosenCategory)
-  // 获取分类列表
-  const [categories, setCategories] = useState([])
-  const [count, setCount] = useState(0)
-  const [reqData, setReqData] = useState({
-    name: null,
-    currentPage: 1,
-    pageSize: 10
-  })
+  console.log('Initial chosenCategory:', chosenCategory);
+  const [filters, setFilters] = useState({
+    channel: null,
+  });
 
-
-  // InfiniteScroll 加载更多数据函数
-  const loadMoreData = async () => {
-    const res = await getChannelsAPI(reqData);
-    const newList = res.data.channels
-    setCategories(prevList => [...prevList, ...newList])   // 追加数据
-    setCount(res.data.pagination.total)
-    setReqData(prevData => ({
-      ...prevData,
-      currentPage: prevData.currentPage + 1,    // 增加页码
-    }));
-  }
-
-  useEffect(() => {
-    loadMoreData()
-  }, [])
-
-
-  // 获取文章分类信息
-  const fetchCategories = async (keyword) => {
-
-    const formData = {
-      name: keyword,
-      currentPage: 1,
-      pageSize: 10
-    }
-    const res = await getChannelsAPI(formData);
-    console.log(res);
-    setCategories(res.data.channels)   // 追加数据
-
-    setCount(res.data.pagination.total)
-  }
-
-  // 防抖处理后的搜索函数
-  const debouncedFetchCategories = useCallback(
-    debounce((keyword) => {
-      fetchCategories(keyword);
-    }, 500),
-    []
-  );
-
-  // 用户输入触发搜索
-  const handleSearchChange = (e) => {
-    const keyword = e.target.value;
-    setSearchTerm(keyword);
-    debouncedFetchCategories(keyword);
-  }
-
-  // 选择分类
-  const handleSelectCategory = (category) => {
-    setSelectedCategory(category);
+  const handleFilterChange = (type, value) => {
+    console.log('type+value:' + type + value);
+    setFilters(prev => ({ ...prev, [type]: value }));
   };
 
+
   // 提交结果
-  const handleSubmit = () => {
-    if (selectedCategory) {
-      onSubmit(selectedCategory); // 将选中的分类传递给父组件
+  const handleSubmit = async () => {
+    const channelId = Array.isArray(filters.channel)
+      ? filters.channel[filters.channel.length - 1]
+      : filters.channel
+    const {data} = channelId ? await getChannelByIdAPI(channelId) : {data: null};
+
+    if (data) {
+      onSubmit(data); // 将选中的分类传递给父组件
       onClose(); // 关闭弹出页
     } else {
-      alert('请选择一个分类');
+      if (chosenCategory) {
+        onSubmit(chosenCategory); // 将选中的分类传递给父组件
+        onClose(); // 关闭弹出页
+      }
+      else alert('请选择一个分类');
     }
   };
 
@@ -110,67 +61,15 @@ const PopoutChannelPage = ({ chosenCategory, onClose, onSubmit }) => {
         {/* 标题 */}
         <h2 className={styles.title}>选择分类</h2>
 
-        {/* 搜索框 */}
-        <input
-          type="text"
-          placeholder="搜索分类"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className={styles.searchInput}
-        />
-
-        {/* 提示信息 */}
-        <p className={styles.tip}>至多只能选一个分类</p>
+        <p className={styles.tip}>至多只能选一个分类哦</p>
 
         {/* 分类列表 */}
         <div className={styles.infiniteScrollContainer}>
-          <InfiniteScroll
-            dataLength={categories.length}
-            next={loadMoreData}
-            hasMore={categories.length < count}
-            loader={
-              <div className={styles.loadingCard}>
-                <Card className={styles.card}>
-                  <Skeleton
-                    paragraph={{
-                      rows: 1,
-                    }}
-                    active
-                    style={{
-                      padding: '7px 0px',
-                      marginLeft: '10px'
-                    }}
-                  />
-                </Card>
-              </div>
-            }
-            endMessage={searchTerm && (
-              <Divider plain>已经到底了 🤐</Divider>
-            )}
-            scrollableTarget="scrollableDiv"
-          >
-            <List
-              itemLayout='vertical'
-              size='large'
-              dataSource={categories}
-              renderItem={(category, index) => (
-                <List.Item style={{ borderBottom: 'none', padding: '7px 20px' }}>
-                  <div className={styles.categoryListItem}>
-                    <div className={styles.categoryInfo}>
-                      <span className={styles.categoryName}>{category.name}</span>
-                      <span className={styles.categoryCode}>{category.code}</span>
-                    </div>
-                    <button
-                      className={styles.selectButton}
-                      onClick={() => handleSelectCategory(category)}
-                    >
-                      {selectedCategory?.id === category.id ? '已选择' : '选择'}
-                    </button>
-                  </div>
-                </List.Item>
-              )}
-            />
-          </InfiniteScroll>
+          <CategorySelector
+            isVisible={true}
+            filters={filters}
+            handleFilterChange={handleFilterChange}
+          />
         </div>
 
         {/* 确定按钮 */}

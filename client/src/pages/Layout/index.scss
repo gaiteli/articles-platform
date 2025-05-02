@@ -10,7 +10,7 @@ $topBarHeight: 50px;
     width: $siderWidth;
     min-width: $siderMinWidth;
     height: $topBarHeight;
-    background: url('/src/assets/react.svg') no-repeat center 50% / 5vh auto;
+    background: url('~@/assets/react.svg') no-repeat center 50% / 5vh auto;
     // 50%：与center一起，指定图像在垂直方向的位置；25%：缩放比；auto表示保持原宽高比
   }
 

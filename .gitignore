@@ -15,6 +15,10 @@ dist-ssr
 
 # 忽略所有 Docker 数据卷
 data/
+meili_data/
+redis/
+# 忽略mysql配置
+config.json
 
 # Editor directories and files
 .vscode/*

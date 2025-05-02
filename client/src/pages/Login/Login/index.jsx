@@ -3,7 +3,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom'
 import './index.scss'
 import { Card, Form, Input, Button, message, Flex, Checkbox, Row, Col } from 'antd'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import logo from '/src/assets/react.svg'
+import logo from '@/assets/react.svg'
 import { loginAPI } from '/src/apis/user'
 import { getCaptchaAPI } from '/src/apis/articles_platform/captcha'
 import { setToken } from "/src/utils"

@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { submitFeedbackAPI, getFeedbacksAPI } from '/src/apis/articles_platform/feedback';
+
 import styles from './index.module.scss';
+import reactLogo from '@/assets/react.svg'
+import lotus from '@/assets/articles_platform/lotus.svg'
 import { Header } from '../../../components/articles_platform/Header';
 
 const FeedbackPage = () => {
@@ -117,7 +120,7 @@ const FeedbackPage = () => {
                 <li key={date} className={styles.dateGroup}>
                   {/* 日期标签 */}
                   <div className={styles.dateBadgeLogo}>
-                    <img src='/src/assets/react.svg' width='20px' />
+                    <img src={reactLogo} width='20px' />
                   </div>
                   <div className={styles.dateBadge}>
                     <span className={styles.dateText}>{date}</span>
@@ -133,7 +136,7 @@ const FeedbackPage = () => {
                             {feedback.content}
                           </div>
                           <span className={styles.timelineCardHeader}>
-                            <span><img src='/src/assets/articles_platform/lotus.svg' width='16px' /></span>
+                            <span><img src={lotus} width='16px' /></span>
                             <span className={styles.nickname}>{feedback.nickname || '匿名用户'}</span>
                             <span className={styles.time}>
                               {new Date(feedback.createdAt).toLocaleTimeString()}

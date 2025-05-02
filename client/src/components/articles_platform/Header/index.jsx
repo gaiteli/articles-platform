@@ -9,6 +9,7 @@ import {
 } from '@ant-design/icons';
 
 import styles from './index.module.scss';
+import logo from '@/assets/articles_platform/article_logo.svg'
 import { AuthContext } from '/src/store/AuthContext';
 import LoginModal from '../popouts/login/LoginModal';
 import { removeToken } from '/src/utils';
@@ -29,7 +30,7 @@ export function Header({ position }) {
   return (
     <div className={`${styles.header} ${position === 'sticky' ? 'sticky top-0' : 'static'}`} >
       <div className={styles.logo} onClick={() => navigate('/articles')}>
-        <img className={styles.logoSVG} src='/src/assets/articles_platform/article_logo.svg' alt=""></img>
+        <img className={styles.logoSVG} src={logo} alt=""></img>
         <span className={styles.logoCharacter}>JetArticles</span>
       </div>
       <div className={styles.menu}>

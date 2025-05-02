@@ -2,7 +2,7 @@ import React from 'react';
 import { usePermission } from '/src/utils/hooks/usePermission';
 
 export const withPermission = (WrappedComponent) => {
-  console.log('withpermission entered！')
+  // console.log('withpermission entered！')
   return ({ type, resource, onClick, ...props }) => {
     const { visible, disabled, canOperate, onDenied } = usePermission(type, resource);
     
