@@ -2,14 +2,15 @@
 @font-face {
   font-family: 'Lucida Calligraphy';
   src: local('Lucida Calligraphy'),
-      url('./fonts/Lucida Calligraphy Italic.ttf');
+      url('/fonts/LucidaCalligraphy-Italic.woff2') format('woff2'),
+      url('/fonts/LucidaCalligraphy-Italic.woff') format('woff2');
   font-display: swap;
 }
 
 @font-face {
   font-family: "Noto Sans SC";
   src: local('Noto Sans SC'),
-      url('https://fonts.proxy.ustclug.org/css2?family=Noto+Sans+SC&display=swap');
+      url('https://fonts.font.im/css2?family=Noto+Sans+SC');
   font-display: swap;
 }
 
