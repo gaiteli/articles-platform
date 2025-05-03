@@ -31,7 +31,7 @@ import { debounce } from '/src/utils';
 
 const LOCAL_STORAGE_SAVE_INTERVAL = 2000; // 草稿本地保存cd时间
 const LOCAL_STORAGE_KEY = 'article_draft'; // localStorage存储键名
-const MAX_CHARS = 5000;
+const MAX_CHARS = 10000;
 
 
 const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
@@ -71,8 +71,8 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
     const htmlContent = editor.getHTML();
     if (htmlContent !== editorContent) {
       const text = htmlContent === '<p></p>' ? '' : htmlContent
-      const textLength = getArticleLength(text, 'char-no-tag')
-      const wordLength = getArticleLength(text, 'word')
+      const textLength = getArticleLength(text, 'chars')
+      const wordLength = getArticleLength(text, 'words')
       setPercentage(Math.round((100 / MAX_CHARS) * charCount))
       setCharCount(textLength)
       setWordCount(wordLength)
@@ -251,8 +251,8 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
 
             if (editor) {
               editor.commands.setContent(parsedLocalDraft.jsonContent || '');
-              setCharCount(getArticleLength(parsedLocalDraft.content || '', 'char-no-tag'));
-              setWordCount(getArticleLength(parsedLocalDraft.content || '', 'word'))
+              setCharCount(getArticleLength(parsedLocalDraft.content || '', 'chars'));
+              setWordCount(getArticleLength(parsedLocalDraft.content || '', 'words'))
             }
 
             setDraftLoaded(true);
@@ -286,8 +286,8 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
 
           if (editor) {
             editor.commands.setContent(res.data.jsonContent || '');
-            setCharCount(getArticleLength(editor.getHTML(), 'char-no-tag'));
-            setWordCount(getArticleLength(editor.getHTML(), 'word'))
+            setCharCount(getArticleLength(editor.getHTML(), 'chars'));
+            setWordCount(getArticleLength(editor.getHTML(), 'words'))
           }
 
           document.querySelector('.ant-upload .anticon+div').innerHTML = '上传封面';
@@ -327,8 +327,8 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
 
                 if (editor) {
                   editor.commands.setContent(draftRes.data.jsonContent || '');
-                  setCharCount(getArticleLength(draftRes.data.content || '', 'char-no-tag'));
-                  setWordCount(getArticleLength(draftRes.data.content || '', 'word'))
+                  setCharCount(getArticleLength(draftRes.data.content || '', 'chars'));
+                  setWordCount(getArticleLength(draftRes.data.content || '', 'words'))
                 }
               }
             }
@@ -388,7 +388,7 @@ const ArticlesPlatformArticleEditPage = ({ isAuthorized }) => {
         message.error('请输入文章内容')
         return
       }
-      if (getArticleLength(htmlContent, 'char-no-tag') > MAX_CHARS) {
+      if (getArticleLength(htmlContent, 'chars') > MAX_CHARS) {
         message.error(`文章长度超出限制`);
         return;
       }

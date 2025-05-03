@@ -62,7 +62,7 @@ const ArticlesPlatformArticlePage = () => {
           editor.commands.setContent(articleRes.data.jsonContent || '');
 
           // 计算长度
-          setArticleLength(getArticleLength(articleRes.data.content, 'char-no-tag'));
+          setArticleLength(getArticleLength(articleRes.data.content, 'chars'));
 
           // 提取标题
           setTimeout(() => {

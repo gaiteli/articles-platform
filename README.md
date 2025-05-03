@@ -235,7 +235,7 @@
  ┃ ┃ ┣ 📜useChannels.jsx
  ┃ ┃ ┗ 📜usePermission.jsx
  ┃ ┣ 📂tiptap
- ┃ ┃ ┣ 📜getArticleLength.js
+ ┃ ┃ ┣ 📜validateContentLength.js
  ┃ ┃ ┣ 📜index.js
  ┃ ┃ ┗ 📜setTitleContent.js
  ┃ ┣ 📜debounce.js

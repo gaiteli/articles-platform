@@ -7,6 +7,10 @@ const {success, failure} = require('@utils/responses')
 const {getChannel} = require("ali-oss/lib/rtmp");
 const {ROLE_PERMISSIONS} = require("@constants/permissions")
 const {authenticate, authorize} = require("@middlewares/auth")
+const {validateContentLength } = require("@utils/validateContentLength");
+
+const MAX_CHARS = 10000
+const MAX_TOTAL = 15000
 
 /* 创建文章 */
 router.post('/write', authenticate, authorize(['article:create'], '创建文章'), async function (req, res, next) {
@@ -15,12 +19,11 @@ router.post('/write', authenticate, authorize(['article:create'], '创建文章'
     const {title, cover, content, jsonContent, channelId} = req.body;
 
     // 字数限制判定
-    const plainText = content.replace(/<[^>]*>/g, '').trim();
-    if (plainText.length > 5000 ) {
-      throw new BadRequest('字符数超出限制');
-    }
-    if (content.length > 10000) { throw new BadRequest('文章总长（含标签等）超出限制')}
-    if (content.length < 1 || plainText.length < 1) throw new BadRequest('文章没有内容')
+    validateContentLength(content, {
+      maxTotal: MAX_TOTAL,
+      maxChars: MAX_CHARS,
+      minChars: 1
+    });
 
     // 白名单过滤（强参数过滤）：防止用户不安全的输入影响数据库
     const body = {
@@ -82,12 +85,11 @@ router.put('/p/:id/edit', authenticate, authorize(), async function (req, res, n
     const {title, cover, content, jsonContent, channelId} = req.body;
 
     // 字数限制判定
-    const plainText = content.replace(/<[^>]*>/g, '').trim();
-    if (plainText.length > 5000 ) {
-      throw new BadRequest('字符数超出限制');
-    }
-    if (content.length > 10000) { throw new BadRequest('文章总长（含标签等）超出限制')}
-    if (content.length < 1 || plainText.length < 1) throw new BadRequest('文章没有内容')
+    validateContentLength(content, {
+      maxTotal: MAX_TOTAL,
+      maxChars: MAX_CHARS,
+      minChars: 1
+    });
 
     // 更新文章内容
     const body = {
@@ -332,6 +334,13 @@ router.post('/drafts', authenticate, authorize(), async function (req, res, next
       if (!canEdit) {
         throw new Forbidden('没有编辑此文章的权限！');
       }
+
+      // 字数限制判定
+      validateContentLength(content, {
+        maxTotal: MAX_TOTAL,
+        maxChars: MAX_CHARS,
+        minChars: 1
+      });
 
       // 查找或创建草稿
       draft = await Draft.findOne({
