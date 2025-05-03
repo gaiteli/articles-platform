@@ -18,7 +18,7 @@ data/
 meili_data/
 redis/
 # 忽略mysql配置
-config.json
+config/config.json
 
 # Editor directories and files
 .vscode/*

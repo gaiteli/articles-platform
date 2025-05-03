@@ -150,7 +150,11 @@ exports.verifyEmail = async (req, res) => {
     }
 
     // 查找用户
-    const user = await User.findByPk(decoded.id);
+    const user = await User.findOne({
+      where: {
+        username: decoded.username
+      }
+    });
     if (!user) {
       throw new NotFound('用户不存在！');
     }
